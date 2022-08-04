@@ -1,0 +1,16 @@
+{
+  "name": "3card-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "workspaces": [
+    "packages/hardhat",
+    "packages/expo-app",
+    "packages/web",
+    "packages/subgraph"
+  ],
+  "scripts": {
+    "hardhat": "yarn workspace @3card-monorepo/hardhat hardhat"
+  }
+}
