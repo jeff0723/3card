@@ -6,7 +6,7 @@ type Props = {}
 const Navbar = (props: Props) => {
     return (
         <div>
-            {/* <ConnectButton /> */}
+            <ConnectButton />
         </div>
     )
 }

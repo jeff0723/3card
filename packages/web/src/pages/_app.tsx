@@ -1,4 +1,5 @@
 import '../styles/globals.css'
+import "@rainbow-me/rainbowkit/styles.css";
 import type { AppProps } from 'next/app'
 import Layout from 'components/Layout'
 import { chain, configureChains, createClient, WagmiConfig } from 'wagmi'
@@ -11,6 +12,8 @@ import {
   getDefaultWallets,
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
+
+
 
 const { chains, provider } = configureChains(
   [chain.polygon, chain.polygonMumbai],
