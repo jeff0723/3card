@@ -8,7 +8,7 @@ type Props = {}
 const NavbarContainer = styled.div`
     display: flex;
     justify-content: space-between;
-    padding: 10px 22px;
+    padding: 10px 16px;
     position: sticky;
 `
 const Navbar = (props: Props) => {

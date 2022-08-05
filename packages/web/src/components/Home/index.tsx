@@ -30,6 +30,7 @@ const Content = styled.div`
   gap: 20px;
   overflow-y: scroll;
   height:100vh;
+  flex-shrink: 0;
 `
 const Title = styled.h1`
   font-weight: 700;
@@ -100,18 +101,18 @@ const BlueText = styled.span`
 const FunctionContainer = styled.div`
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    padding: 10px 16px;
     gap: 10px;
+    width: 100%;
+
 `
 const FilterContainer = styled.div`
-    width: 405px;
     height: 211px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     padding: 16px;
 `
 const CardContainer = styled.div`
-    width: 409px;
     height: 195px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
@@ -143,7 +144,7 @@ const Home = ({ feeds }: Props) => {
   }
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div style={{ display: 'flex', width: '100%' }}>
       <Content>
         <div>
           <Title>Feeds</Title>

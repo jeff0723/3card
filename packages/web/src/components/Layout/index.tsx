@@ -9,7 +9,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import { CURRENT_USER_QUERY } from 'graphql/query/user'
 import Cookies from 'js-cookie'
 
-const Navbar = dynamic(() => import('components/Navbar'), { suspense: true })
+const Navbar = dynamic(() => import('./Navbar'), { suspense: true })
 const SideBar = dynamic(() => import('./SideBar'), { suspense: true })
 interface Props {
     children: ReactNode
