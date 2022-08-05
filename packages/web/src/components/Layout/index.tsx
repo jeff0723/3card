@@ -8,6 +8,8 @@ import { useLazyQuery, useMutation } from '@apollo/client'
 import toast, { Toaster } from 'react-hot-toast'
 import { CURRENT_USER_QUERY } from 'graphql/query/user'
 import Cookies from 'js-cookie'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { setCurrentUser, setIsAuthenticated, setIsConnected } from 'state/user/reducer'
 
 const Navbar = dynamic(() => import('./Navbar'), { suspense: true })
 const SideBar = dynamic(() => import('./SideBar'), { suspense: true })
@@ -44,6 +46,10 @@ const toastOptions = {
     loading: { className: 'border border-gray-300' }
 }
 const Layout: FC<Props> = ({ children }) => {
+
+    const dispatch = useAppDispatch()
+
+
     const [mounted, setMounted] = useState<boolean>(false)
     const { address, isDisconnected, isConnected } = useAccount()
     const { chain } = useNetwork()
@@ -95,9 +101,15 @@ const Layout: FC<Props> = ({ children }) => {
             })
             Cookies.set("accessToken", auth?.data?.authenticate?.accessToken)
             // Get authed profiles
+            dispatch(setIsConnected({ isConnected: true }))
+            dispatch(setIsAuthenticated({ isAuthenticated: true }))
             const { data: profilesData } = await getProfiles({
                 variables: { ownedBy: address }
             })
+            if (profilesData?.profiles?.items?.length > 0) {
+                // Cookies.set("profileId", profilesData?.profiles?.items[0].id)
+                dispatch(setCurrentUser({ currentUser: profilesData?.profiles?.items[0] }))
+            }
             // console.log("profile data", profilesData)
 
         } catch (err) {
@@ -123,6 +135,7 @@ const Layout: FC<Props> = ({ children }) => {
 
     return (
         <Container>
+
             <Toaster position="top-right" toastOptions={toastOptions} />
             <Suspense fallback={<h1>Loading</h1>}>
                 <Navbar />
