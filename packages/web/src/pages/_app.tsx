@@ -17,10 +17,12 @@ import { ThemeProvider } from 'styled-components';
 import React from 'react';
 import { client } from 'apollo';
 import { ApolloProvider } from '@apollo/client';
+import { Provider } from 'react-redux'
+import store from "state"
 
 
 
-const { chains, provider } = configureChains(
+const { chains, provider, webSocketProvider } = configureChains(
   [chain.polygon, chain.polygonMumbai],
   [
     alchemyProvider({ apiKey: ALCHEMY_KEY }),
@@ -32,24 +34,32 @@ const { connectors } = getDefaultWallets({
   chains
 });
 
+const appInfo = {
+  appName: '3card',
+
+}
+
 const wagmiClient = createClient({
   autoConnect: true,
   connectors,
-  provider
+  provider,
+  webSocketProvider
 })
 
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains} theme={midnightTheme()} showRecentTransactions={true}>
-        <ApolloProvider client={client}>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </ApolloProvider>
-      </RainbowKitProvider>
-    </WagmiConfig>
+    <Provider store={store}>
+      <WagmiConfig client={wagmiClient}>
+        <RainbowKitProvider appInfo={appInfo} chains={chains} theme={midnightTheme()} showRecentTransactions={true}>
+          <ApolloProvider client={client}>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </ApolloProvider>
+        </RainbowKitProvider>
+      </WagmiConfig>
+    </Provider>
   )
 }
 

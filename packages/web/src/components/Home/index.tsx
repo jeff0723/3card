@@ -1,26 +1,25 @@
-import RssFeeds from 'components/RssFeeds'
+
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import { getFeed } from 'lib/rss'
 import { FeedType } from 'xml'
 import Link from 'next/link'
 import styled from 'styled-components'
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useEffect, useState } from 'react'
 interface Feed {
-    [key: string]: string
-    pubDate: string
-    title: string
-    isoDate: string
-    link: string
-    thumbnail: string
-    creator: string
+  [key: string]: string
+  pubDate: string
+  title: string
+  isoDate: string
+  link: string
+  thumbnail: string
+  creator: string
 }
 
 interface Props {
-    feeds?: Feed[]
+  feeds?: Feed[]
 
 }
 const Content = styled.div`
@@ -121,59 +120,59 @@ const CardContainer = styled.div`
 const BATCHSIZE = 30
 
 const formatText = (text: string) => {
-    if (!text) return <></>
-    return <FeedText>{text.slice(0, 200)}... <BlueText>Read More</BlueText></FeedText>
+  if (!text) return <></>
+  return <FeedText>{text.slice(0, 200)}... <BlueText>Read More</BlueText></FeedText>
 }
 const Home = ({ feeds }: Props) => {
-    const [items, setItems] = useState<Feed[]>([])
-    const [hasMore, setHasMore] = useState(true)
-    const [feedLength, setFeedLength] = useState(0)
-    const [itemLength, setItemLength] = useState(0)
+  const [items, setItems] = useState<Feed[]>([])
+  const [hasMore, setHasMore] = useState(true)
+  const [feedLength, setFeedLength] = useState(0)
+  const [itemLength, setItemLength] = useState(0)
 
-    useEffect(() => {
-        setItems(feeds?.slice(0, BATCHSIZE) || [])
-        setFeedLength(feeds?.length || 0)
-        setItemLength(BATCHSIZE || 0)
-    }, [])
-    const fetchMoreData = () => {
-        if (itemLength + BATCHSIZE >= feedLength) {
-            setHasMore(false)
-        }
-        setItemLength(items.length + BATCHSIZE)
-        setItems([...items, ...feeds?.slice(items.length, items.length + BATCHSIZE) || []])
+  useEffect(() => {
+    setItems(feeds?.slice(0, BATCHSIZE) || [])
+    setFeedLength(feeds?.length || 0)
+    setItemLength(BATCHSIZE || 0)
+  }, [])
+  const fetchMoreData = () => {
+    if (itemLength + BATCHSIZE >= feedLength) {
+      setHasMore(false)
     }
+    setItemLength(items.length + BATCHSIZE)
+    setItems([...items, ...feeds?.slice(items.length, items.length + BATCHSIZE) || []])
+  }
 
-    return (
-        <div style={{ display: 'flex' }}>
-            <Content>
-                <div>
-                    <Title>Feeds</Title>
-                    <Subtitle>Things keep you ahead in web3</Subtitle>
-                </div>
-                <InfiniteScroll
-                    dataLength={items.length}
-                    next={fetchMoreData}
-                    hasMore={hasMore}
-                    loader={<div>loading</div>}
-                    endMessage={<h4>Nothing more to show</h4>}
-                >
-                    {
-                        items?.map((item, index) => (
-                            <a href={item.link} target="_blank" key={index}>
-                                <FeedContainer>
-                                    <FeedImage image={item.thumbnail} />
-                                    <FeedContent>
-                                        <FeedTitle>{item.title}</FeedTitle>
-                                        <FeedSubtitle>  <BlueText>{item.creator} </BlueText> <FeedDate>{new Date(item.pubDate).toDateString()}</FeedDate></FeedSubtitle>
+  return (
+    <div style={{ display: 'flex' }}>
+      <Content>
+        <div>
+          <Title>Feeds</Title>
+          <Subtitle>Things keep you ahead in web3</Subtitle>
+        </div>
+        <InfiniteScroll
+          dataLength={items.length}
+          next={fetchMoreData}
+          hasMore={hasMore}
+          loader={<div>loading</div>}
+          endMessage={<h4>Nothing more to show</h4>}
+        >
+          {
+            items?.map((item, index) => (
+              <a href={item.link} target="_blank" key={index}>
+                <FeedContainer>
+                  <FeedImage image={item.thumbnail} />
+                  <FeedContent>
+                    <FeedTitle>{item.title}</FeedTitle>
+                    <FeedSubtitle>  <BlueText>{item.creator} </BlueText> <FeedDate>{new Date(item.pubDate).toDateString()}</FeedDate></FeedSubtitle>
 
-                                        <FeedText>{formatText(item['content:encodedSnippet'])}</FeedText>
-                                    </FeedContent>
-                                </FeedContainer>
-                            </a>
-                        ))
-                    }
-                </InfiniteScroll>
-                {/* {FeedList.map((url) => (
+                    <FeedText>{formatText(item['content:encodedSnippet'])}</FeedText>
+                  </FeedContent>
+                </FeedContainer>
+              </a>
+            ))
+          }
+        </InfiniteScroll>
+        {/* {FeedList.map((url) => (
         <div>
           <Link href={`/${url}`}>
             {url}
@@ -185,17 +184,17 @@ const Home = ({ feeds }: Props) => {
           08- ALL
         </Link>
       </div> */}
-            </Content>
-            <FunctionContainer >
-                <FilterContainer>
-                    Filter
-                </FilterContainer>
-                <CardContainer>
-                    Card
-                </CardContainer>
-            </FunctionContainer>
-        </div>
-    )
+      </Content>
+      <FunctionContainer >
+        <FilterContainer>
+          Filter
+        </FilterContainer>
+        <CardContainer>
+          Card
+        </CardContainer>
+      </FunctionContainer>
+    </div>
+  )
 }
 
 
