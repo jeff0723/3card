@@ -11,7 +11,12 @@ import { publicProvider } from 'wagmi/providers/public';
 import {
   getDefaultWallets,
   RainbowKitProvider,
+  midnightTheme
 } from '@rainbow-me/rainbowkit';
+import { ThemeProvider } from 'styled-components';
+import React from 'react';
+import { client } from 'apollo';
+import { ApolloProvider } from '@apollo/client';
 
 
 
@@ -23,7 +28,7 @@ const { chains, provider } = configureChains(
   ]
 );
 const { connectors } = getDefaultWallets({
-  appName: 'My RainbowKit App',
+  appName: '3card',
   chains
 });
 
@@ -37,13 +42,15 @@ const wagmiClient = createClient({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+      <RainbowKitProvider chains={chains} theme={midnightTheme()} showRecentTransactions={true}>
+        <ApolloProvider client={client}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </ApolloProvider>
       </RainbowKitProvider>
     </WagmiConfig>
   )
 }
 
-export default MyApp
+export default React.memo(MyApp)
