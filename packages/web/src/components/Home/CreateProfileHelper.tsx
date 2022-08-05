@@ -24,7 +24,7 @@ const CreateButon = styled.div`
 const CreateProfileHelper = (props: Props) => {
     return (
         <Container>
-            <div>You don't have a profile yet
+            <div>You don&apos;t  have a profile yet
             </div>
             <CreateButon>Create</CreateButon>
         </Container>

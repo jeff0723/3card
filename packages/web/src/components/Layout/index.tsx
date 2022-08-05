@@ -48,8 +48,7 @@ const toastOptions = {
 const Layout: FC<Props> = ({ children }) => {
 
     const dispatch = useAppDispatch()
-
-
+    const userIsConnected = useAppSelector(state => state.user.isConnected)
     const [mounted, setMounted] = useState<boolean>(false)
     const { address, isDisconnected, isConnected } = useAccount()
     const { chain } = useNetwork()
@@ -81,6 +80,14 @@ const Layout: FC<Props> = ({ children }) => {
                 )
             }
         })
+    const logout = () => {
+        dispatch(setIsConnected({ isConnected: false }))
+        dispatch(setIsAuthenticated({ isAuthenticated: false }))
+        dispatch(setCurrentUser({ currentUser: null }))
+        Cookies.remove('accessToken')
+        Cookies.remove('refreshToken')
+        if (disconnect) disconnect()
+    }
     const handleSign = async () => {
         try {
             // Get challenge
@@ -100,6 +107,7 @@ const Layout: FC<Props> = ({ children }) => {
                 variables: { request: { address, signature } }
             })
             Cookies.set("accessToken", auth?.data?.authenticate?.accessToken)
+            Cookies.set("refreshToken", auth?.data?.authenticate?.refreshToken)
             // Get authed profiles
             dispatch(setIsConnected({ isConnected: true }))
             dispatch(setIsAuthenticated({ isAuthenticated: true }))
@@ -126,11 +134,18 @@ const Layout: FC<Props> = ({ children }) => {
         disconnect
     ]])
     useEffect(() => {
-        if (isConnected && mounted) {
+        //This entire section should be rewrote
+        if (isConnected && mounted && !userIsConnected) {
             toast.success("logged in successfully")
             handleSign()
+            return
         }
-    }, [isConnected])
+        if (isDisconnected && mounted) {
+            toast.success("logged out successfully")
+            logout()
+            return
+        }
+    }, [isConnected, isDisconnected])
     if (!mounted) return <h1>Loading</h1>
 
     return (
