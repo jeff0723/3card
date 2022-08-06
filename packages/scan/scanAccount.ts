@@ -32,7 +32,7 @@ export const sortActivities = async (account: string, txList: Array<any>) => {
 }
 
 const main = async () => {
-    const lensUsers = readFileSync('./lens-users.txt').toString().split('\n').slice(100, 150);
+    const lensUsers = readFileSync('./lens-users.txt').toString().split('\n').slice(150, 200);
     console.log("User count:", lensUsers.length);
     for (const user of lensUsers) {
         const txList = await scanAccount(user);
