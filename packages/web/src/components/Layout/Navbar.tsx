@@ -3,6 +3,8 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BsTwitter } from 'react-icons/bs';
 
 import styled from 'styled-components';
+import { useAppSelector } from 'state/hooks';
+import CreateProfileHelper from 'components/Home/CreateProfileHelper';
 
 type Props = {}
 const NavbarContainer = styled.div`
@@ -11,12 +13,16 @@ const NavbarContainer = styled.div`
     padding: 10px 16px;
     position: sticky;
 `
+
 const Navbar = (props: Props) => {
     return (
-        <NavbarContainer >
-            <BsTwitter style={{ fontSize: '32px' }} />
-            <ConnectButton />
-        </NavbarContainer>
+        <>
+            <NavbarContainer >
+                <BsTwitter style={{ fontSize: '32px' }} />
+                <ConnectButton />
+            </NavbarContainer>
+
+        </>
     )
 }
 

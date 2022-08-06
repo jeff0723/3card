@@ -109,10 +109,12 @@ const FunctionContainer = styled.div`
 
 `
 const FilterContainer = styled.div`
-    height: 211px;
+    display: flex;
+    flex-direction: column;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     padding: 16px;
+    gap: 10px;
 `
 const CardContainer = styled.div`
     height: 195px;
@@ -195,7 +197,18 @@ const Home = ({ feeds }: Props) => {
         </Content>
         <FunctionContainer >
           <FilterContainer>
-            Filter
+            <div>
+              Filter
+            </div>
+            {
+              ["Today", "Project Update", "Research", "Newsletter"].map((item, index) => (
+                <div className='flex items-center' key={index}>
+                  <input checked type="checkbox" value="" className="accent-primary-blue" />
+                  <label className='ml-2'>{item}</label>
+                </div>
+              ))
+            }
+
           </FilterContainer>
           <CardContainer>
             Card
