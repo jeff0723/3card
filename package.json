@@ -5,7 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "workspaces": [
-    "packages/hardhat",
+    "packages/scan",
     "packages/expo-app",
     "packages/web",
     "packages/subgraph"
