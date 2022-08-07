@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { PROFILE_QUERY } from 'graphql/query/profile'
@@ -7,8 +7,17 @@ import { useAppSelector } from 'state/hooks'
 import Button from 'components/UI/Button'
 import { HiOutlineUserAdd } from "react-icons/hi";
 import { FiMail } from "react-icons/fi";
+import ProfileTabs from './ProfileTabs'
+import Content from './Content'
 type Props = {}
-
+export enum TabType {
+    POST = 'POST',
+    COMMENT = 'COMMENT',
+    MIRROR = 'MIRROR',
+    NFT = 'NFT',
+    ACTIVITIES = 'ACTIVITIES',
+    RANKING = 'RANKING'
+}
 const tags = [
     "Uniswap V2 Trader",
     "Uniswap V3 LP",
@@ -17,6 +26,7 @@ const tags = [
 const Profile: NextPage = (props: Props) => {
     const currentUser = useAppSelector(state => state.user.currentUser)
     const { query: { username } } = useRouter()
+    const [currentTab, setCurrentTab] = useState<string>(TabType.POST)
     const { data, loading, error } = useQuery(PROFILE_QUERY, {
         variables: { request: { handle: username }, who: currentUser?.id ?? null },
         skip: !username,
@@ -32,6 +42,8 @@ const Profile: NextPage = (props: Props) => {
         }
     })
     const profile = data?.profile
+    console.log(profile)
+
     return (
         <div className='flex flex-col w-full '>
             <div className='h-52 sm:h-80 bg-white bg-opacity-50' style={{
@@ -98,20 +110,16 @@ const Profile: NextPage = (props: Props) => {
                         <div className='flex flex-col items-start'>
                             <div># {profile?.id}</div>
                             <div>ens</div>
+                            {profile?.onChainIdentity?.ens?.name && <div>{profile?.onChainIdentity?.ens?.name}</div>}
                             <div>twitter</div>
 
                         </div>
                     </div>
                 </div>
                 <div className='col-span-2 flex flex-col'>
-                    <div className='flex gap-[24px] text-[16px] px-4 py-2'>
-                        <button>Posts</button>
-                        <button>Comments</button>
-                        <button>Mirrors</button>
-                        <button>NFTs</button>
-                        <button>Activities</button>
-                        <button>Ranking</button>
-                    </div>
+                    <ProfileTabs setCurrentTab={setCurrentTab} currentTab={currentTab} />
+                    <Content profile={profile} currentTab={currentTab} />
+
                 </div>
             </div>
 

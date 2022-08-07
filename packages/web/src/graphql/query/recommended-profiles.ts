@@ -1,6 +1,5 @@
-import { gql } from '@apollo/client'
+import { gql } from '@apollo/client';
 
-import { MinimalProfileFields } from "./minimal-profile-fields";
 
 export const RECOMMENDED_PROFILES_QUERY = gql`
 query RecommendedProfiles {

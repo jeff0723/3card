@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client"
-import { MinimalProfileFields } from "./minimal-profile-fields"
+import { MinimalProfileFields } from "../fields/minimal-profile-fields"
 
 
 export const CURRENT_USER_QUERY = gql`
