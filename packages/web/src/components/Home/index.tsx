@@ -4,8 +4,10 @@ import InfiniteScroll from "react-infinite-scroll-component"
 import { useAppSelector } from 'state/hooks'
 import styled from 'styled-components'
 import CreateProfileHelper from './CreateProfileHelper'
+import Feed from './Feed'
+import RecommendUser from './RecommendUser'
 
-interface Feed {
+interface Item {
   [key: string]: string
   pubDate: string
   title: string
@@ -16,7 +18,7 @@ interface Feed {
 }
 
 interface Props {
-  feeds?: Feed[]
+  feeds?: Item[]
 
 }
 const Content = styled.div`
@@ -25,8 +27,8 @@ const Content = styled.div`
   align-items: flex-start;
   padding: 0px 16px;
   overflow-y: scroll;
-  height:100vh;
   flex-shrink: 0;
+  border-right: 1px solid #2F3336;
 `
 const Header = styled.div`
   display: flex;
@@ -44,62 +46,6 @@ const Subtitle = styled.div`
   font-size: 20px;
   line-height: 24px;
 `
-const FeedContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 12px 12px;
-  gap: 20px;
-  border-bottom: 1px solid #2F3336;
-  border-radius: 4px;
-  &:hover {
-    border: 1px solid rgba(0, 148, 255, 1);;
-  }
-`
-const FeedImage = styled.div<{ image: string }>`
-  min-width: 130px;
-  height: 78px;
-  background: url(${({ image }) => image});
-  border-radius: 4px;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-`
-const FeedContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 463px;
-  height: 99px;
-`
-const FeedSubtitle = styled.div`
-  display: flex;
-  gap:10px
-`
-const FeedTitle = styled.div`
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 19px;
-`
-const FeedDate = styled.div`
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 16px;
-  color: rgba(255, 255, 255, 0.5);
-`
-const FeedText = styled.div`
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 16px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  width: 463px;
-  height: 64px;
-`
-
-const BlueText = styled.span`
-  color: #1890FF
-`
 const FunctionContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -116,26 +62,17 @@ const FilterContainer = styled.div`
     padding: 16px;
     gap: 10px;
 `
-const CardContainer = styled.div`
-    height: 195px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 16px;
-`
+
 const BATCHSIZE = 30
 
-const formatText = (text: string) => {
-  if (!text) return <></>
-  return <FeedText>{text.slice(0, 200)}... <BlueText>Read More</BlueText></FeedText>
-}
 const Home = ({ feeds }: Props) => {
-  const [items, setItems] = useState<Feed[]>([])
+  const [items, setItems] = useState<Item[]>([])
   const [hasMore, setHasMore] = useState(true)
   const [feedLength, setFeedLength] = useState(0)
   const [itemLength, setItemLength] = useState(0)
   const isConnected = useAppSelector(state => state.user.isConnected)
   const currentUser = useAppSelector(state => state.user.currentUser)
-
+  const isLoading = useAppSelector(state => state.application.isApplicationLoading)
   useEffect(() => {
     setItems(feeds?.slice(0, BATCHSIZE) || [])
     setFeedLength(feeds?.length || 0)
@@ -154,7 +91,7 @@ const Home = ({ feeds }: Props) => {
     <>
       <div style={{ display: 'flex', width: '100%' }}>
         <Content>
-          {isConnected && !currentUser && <CreateProfileHelper />}
+          {!isLoading && isConnected && !currentUser && <CreateProfileHelper />}
           <Header>
             <Title>Feeds</Title>
             <Subtitle>Things keep you ahead in web3</Subtitle>
@@ -168,32 +105,11 @@ const Home = ({ feeds }: Props) => {
           >
             {
               items?.map((item, index) => (
-                <a href={item.link} target="_blank" key={index}>
-                  <FeedContainer>
-                    <FeedImage image={item.thumbnail} />
-                    <FeedContent>
-                      <FeedTitle>{item.title}</FeedTitle>
-                      <FeedSubtitle>  <BlueText>{item.creator} </BlueText> <FeedDate>{new Date(item.pubDate).toDateString()}</FeedDate></FeedSubtitle>
-
-                      <FeedText>{formatText(item['content:encodedSnippet'])}</FeedText>
-                    </FeedContent>
-                  </FeedContainer>
-                </a>
+                <Feed key={index} item={item} />
               ))
             }
           </InfiniteScroll>
-          {/* {FeedList.map((url) => (
-        <div>
-          <Link href={`/${url}`}>
-            {url}
-          </Link>
-        </div>
-      ))}
-      <div>
-        <Link href={`/feeds`}>
-          08- ALL
-        </Link>
-      </div> */}
+
         </Content>
         <FunctionContainer >
           <FilterContainer>
@@ -210,9 +126,7 @@ const Home = ({ feeds }: Props) => {
             }
 
           </FilterContainer>
-          <CardContainer>
-            Card
-          </CardContainer>
+          <RecommendUser />
         </FunctionContainer>
       </div>
     </>

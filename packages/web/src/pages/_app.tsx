@@ -1,29 +1,25 @@
-import '../styles/globals.css'
-import "@rainbow-me/rainbowkit/styles.css";
-import type { AppProps } from 'next/app'
-import Layout from 'components/Layout'
-import { chain, configureChains, createClient, WagmiConfig } from 'wagmi'
-import { InjectedConnector } from 'wagmi/connectors/injected'
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { ALCHEMY_KEY } from 'constants/constants'
-import { publicProvider } from 'wagmi/providers/public';
-import {
-  getDefaultWallets,
-  RainbowKitProvider,
-  midnightTheme
-} from '@rainbow-me/rainbowkit';
-import { ThemeProvider } from 'styled-components';
-import React from 'react';
-import { client } from 'apollo';
 import { ApolloProvider } from '@apollo/client';
-import { Provider } from 'react-redux'
-import store from "state"
+import {
+  getDefaultWallets, midnightTheme, RainbowKitProvider
+} from '@rainbow-me/rainbowkit';
+import "@rainbow-me/rainbowkit/styles.css";
+import { client } from 'apollo';
+import Layout from 'components/Layout';
+import { ALCHEMY_KEY } from 'constants/constants';
+import type { AppProps } from 'next/app';
+import React from 'react';
+import { Provider } from 'react-redux';
+import store from "state";
+import ApplicationUpdater from 'state/application/updater';
+import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { publicProvider } from 'wagmi/providers/public';
+import '../styles/globals.css';
 
 
 
 const { chains, provider, webSocketProvider } = configureChains(
-  [chain.polygon, chain.polygonMumbai],
+  [chain.polygonMumbai, chain.polygon],
   [
     alchemyProvider({ apiKey: ALCHEMY_KEY }),
     publicProvider()
@@ -46,6 +42,13 @@ const wagmiClient = createClient({
   webSocketProvider
 })
 
+function Updaters() {
+  return (
+    <>
+      <ApplicationUpdater />
+    </>
+  )
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -53,6 +56,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <WagmiConfig client={wagmiClient}>
         <RainbowKitProvider appInfo={appInfo} chains={chains} theme={midnightTheme()} showRecentTransactions={true}>
           <ApolloProvider client={client}>
+            <Updaters />
             <Layout>
               <Component {...pageProps} />
             </Layout>

@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import Button from 'components/UI/Button';
 import { useMutation } from '@apollo/client';
 import { CREATE_PROFILE_MUTATION } from 'graphql/mutation/create-profile';
+import Pending from './Pending';
 
 type Props = {}
 const Container = styled.div`
@@ -53,7 +54,7 @@ const CreateProfileHelper = (props: Props) => {
     const [open, setOpen] = useState(false)
     const [uploading, setUploading] = useState(false)
     const [avatar, setAvatar] = useState('')
-    const { register, handleSubmit } = useForm<FormValues>();
+    const { register, handleSubmit, getValues } = useForm<FormValues>();
 
     const [createProfile, { data, loading }] = useMutation(
         CREATE_PROFILE_MUTATION
@@ -88,7 +89,11 @@ const CreateProfileHelper = (props: Props) => {
             },
             onCompleted: (data) => {
                 console.log('create profile success: ', data)
-                toast.success('Profile created')
+                if (data?.createProfile?.reason == "HANDLE_TAKEN") {
+                    toast.error("Handle taken! Please use another handle!")
+                    return
+                }
+                toast.success('Create profile transaction sent!')
                 closeModal()
             },
             onError: (error) => {
@@ -97,7 +102,9 @@ const CreateProfileHelper = (props: Props) => {
         })
 
     });
+
     return (
+
         <>
             <Transition appear show={open} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={closeModal}>
@@ -110,7 +117,7 @@ const CreateProfileHelper = (props: Props) => {
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <div className="fixed inset-0 bg-white bg-opacity-20" />
+                        <div className="fixed inset-0 bg-black bg-opacity-75" />
                     </Transition.Child>
 
                     <div className="fixed inset-0 overflow-y-auto">
@@ -125,7 +132,7 @@ const CreateProfileHelper = (props: Props) => {
                                 leaveTo="opacity-0 scale-95"
                             >
 
-                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-black p-6 text-left align-middle shadow-xl transition-all">
+                                <Dialog.Panel className="border border-white border-opacity-20 w-full max-w-md transform overflow-hidden rounded-2xl bg-black p-6 text-left align-middle shadow-xl transition-all">
                                     <form onSubmit={onSubmit}>
 
                                         <div className='flex justify-between items-center'>
@@ -154,6 +161,7 @@ const CreateProfileHelper = (props: Props) => {
                                                     <label>avatar: </label>
                                                 </div>
                                                 <ChooseFile onChange={handleUpload} />
+                                                {/* should refactor this info UI/components/Spinner */}
                                                 {uploading && <div className='animate-spin rounded-full border-t-primary-blue border-black h-8 w-8 border-2' />}
                                             </div>
                                         </div>
@@ -162,6 +170,7 @@ const CreateProfileHelper = (props: Props) => {
                                             <Button
                                                 type="submit"
                                                 disabled={loading}
+                                                // should refactor this info UI/components/Spinner
                                                 icon={
                                                     loading && <div className='animate-spin rounded-full border-t-primary-blue border-black h-4 w-4 border-2' />
                                                 }

@@ -10,6 +10,7 @@ import { CURRENT_USER_QUERY } from 'graphql/query/user'
 import Cookies from 'js-cookie'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { setCurrentUser, setIsAuthenticated, setIsConnected } from 'state/user/reducer'
+import { updateLoadingStatus } from 'state/application/reducer'
 
 const Navbar = dynamic(() => import('./Navbar'), { suspense: true })
 const SideBar = dynamic(() => import('./SideBar'), { suspense: true })
@@ -23,6 +24,8 @@ const Container = styled.div`
 
 const Content = styled.div`
     display: flex;
+    padding-top: 60px;
+    height: 100vh;
 `
 const toastOptions = {
     style: {
@@ -91,6 +94,7 @@ const Layout: FC<Props> = ({ children }) => {
     const handleSign = async () => {
         try {
             // Get challenge
+            dispatch(updateLoadingStatus({ isApplicationLoading: true }))
             const challenge = await loadChallenge({
                 variables: { request: { address } }
             })
@@ -122,6 +126,9 @@ const Layout: FC<Props> = ({ children }) => {
 
         } catch (err) {
 
+        }
+        finally {
+            dispatch(updateLoadingStatus({ isApplicationLoading: false }))
         }
     }
     useEffect(() => {
