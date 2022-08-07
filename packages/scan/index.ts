@@ -6,8 +6,8 @@ dotenv.config();
 
 async function main() {
     // target info
-    const chain = 'bsc';
     const account = '0x6c77a5a88c0ae712baeabe12fea81532060dcbf5';
+    const chain = 'bsc';
     const startBlock = 0;
     
     // construct scanner
@@ -17,58 +17,59 @@ async function main() {
         process.env.BSCSCAN_API_KEY,
     );
 
-    // config scanner
-    scanner.config(chain, account, startBlock);
+    // target account
+    scanner.target(account);
+    if (!scanner.check(chain, startBlock)) return
 
-    // fetch tx list
-    if (await scanner.fetchTxList()) {
-        console.log("tx count:", scanner.txList.length);
-        const frequencyMap = await scanner.getFrequency();
-        console.log("frequency map count:", frequencyMap.size);
-        const uploadParams = {
-            Bucket: '3card',
-            Key: `onchain/${scanner.account}/${scanner.chain}/ranking`,
-            Body: JSON.stringify(Object.fromEntries(frequencyMap)),
-        };
-        const uploadPromise = S3.upload(uploadParams).promise();
-        uploadPromise.then(function (data) {
-            console.log('Upload succeed', data.Location);
-        }).catch(function (err) {
-            console.log("Upload error", err);
-        });
-    }
-
-    // fetch erc20 event
-    if (await scanner.fetchERC20EventList()) {
-        console.log("erc20 event count:", scanner.erc20EventList.length);
-        const uploadParams = {
-            Bucket: '3card',
-            Key: `onchain/${scanner.account}/${scanner.chain}/erc20events`,
-            Body: JSON.stringify(Object.fromEntries(scanner.erc20EventList)),
-        };
-        const uploadPromise = S3.upload(uploadParams).promise();
-        uploadPromise.then(function (data) {
-            console.log('Upload succeed', data.Location);
-        }).catch(function (err) {
-            console.log("Upload error", err);
-        });
-    }
+    // fetch tx list, get ranking and upload S3
+    const txList = await scanner.fetchTxList(chain, startBlock);
+    console.log("ethereum tx count:", txList.length);
+    const ranking = await scanner.getRanking(txList);
+    console.log("ethereum ranking count:", ranking.size);
+    const rankingPayload = {
+        Bucket: '3card',
+        Key: `onchain/${scanner.account}/${chain}/ranking`,
+        Body: JSON.stringify(Object.fromEntries(ranking)),
+    };
+    S3.upload(rankingPayload).promise()
+    .then(function (data) {
+        console.log('Upload succeed', data.Location);
+    })
+    .catch(function (err) {
+        console.log("Upload error", err);
+    });
     
-    // fetch erc721 event
-    if (await scanner.fetchERC721EventList()) {
-        console.log("erc721 event count:", scanner.erc721EventList.length);
-        const uploadParams = {
-            Bucket: '3card',
-            Key: `onchain/${scanner.account}/${scanner.chain}/erc721events`,
-            Body: JSON.stringify(Object.fromEntries(scanner.erc721EventList)),
-        };
-        const uploadPromise = S3.upload(uploadParams).promise();
-        uploadPromise.then(function (data) {
-            console.log('Upload succeed', data.Location);
-        }).catch(function (err) {
-            console.log("Upload error", err);
-        });
-    }
+    // fetch erc20 events and upload S3
+    const erc20Events = await scanner.fetchERC20EventList(chain, startBlock);
+    console.log("erc20 event count:", erc20Events.length);
+    const erc20EventPayload = {
+        Bucket: '3card',
+        Key: `onchain/${scanner.account}/${chain}/erc20events`,
+        Body: JSON.stringify(erc20Events),
+    };
+    S3.upload(erc20EventPayload).promise()
+    .then(function (data) {
+        console.log('Upload succeed', data.Location);
+    })
+    .catch(function (err) {
+        console.log("Upload error", err);
+    });
+    
+    // fetch erc721 events
+    const erc721Events = await scanner.fetchERC721EventList(chain, startBlock);
+    console.log("erc721 event count:", erc721Events.length);
+    const erc721EventPayload = {
+        Bucket: '3card',
+        Key: `onchain/${scanner.account}/${chain}/erc721events`,
+        Body: JSON.stringify(erc721Events),
+    };
+    S3.upload(erc721EventPayload).promise()
+    .then(function (data) {
+        console.log('Upload succeed', data.Location);
+    })
+    .catch(function (err) {
+        console.log("Upload error", err);
+    });
 }
 
 main().catch((error) => {
