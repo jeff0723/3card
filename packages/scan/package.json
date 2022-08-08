@@ -11,6 +11,8 @@
   "dependencies": {
     "aws-sdk": "^2.1187.0",
     "dotenv": "^16.0.1",
-    "node-fetch": "2.6.6"
+    "ethers": "^5.6.9",
+    "node-fetch": "2.6.6",
+    "unidata.js": "^0.6.8"
   }
 }
