@@ -6,7 +6,8 @@ import {
     NftImage,
     Profile
 } from 'generated/types'
-import { FiArrowUpRight } from 'react-icons/fi'
+import Link from 'next/link'
+
 type Props = {}
 
 const Card = styled.div`
@@ -51,28 +52,30 @@ const RecommendUser = (props: Props) => {
             Frens Card Today
             {profile ?
                 <>
-                    <Content >
-                        <img className='w-[96px] h-[96px] rounded-full' src={profile?.picture?.original?.url || profile?.picture?.uri} />
-                        <div className='flex flex-col gap-2 flex-1'>
-                            <InfoBox>
-                                <div>{profile?.name?.slice(0, 20)}</div>
-                                <div className='text-gray-400'>@{profile?.handle}</div>
-                            </InfoBox>
-                            <div className='flex justify-between'>
+                    <Link href={`/user/${profile?.handle}`}>
+                        <Content >
+                            <img className='w-[96px] h-[96px] rounded-full' src={profile?.picture?.original?.url || profile?.picture?.uri} />
+                            <div className='flex flex-col gap-2 flex-1'>
                                 <InfoBox>
-                                    <div>{profile.stats.totalFollowing}</div>
-                                    <div>following</div>
+                                    <div>{profile?.name?.slice(0, 20)}</div>
+                                    <div className='text-gray-400'>@{profile?.handle}</div>
                                 </InfoBox>
-                                <InfoBox>
-                                    <div>{profile.stats.totalFollowers}</div>
-                                    <div>followers</div>
-                                </InfoBox>
+                                <div className='flex justify-between'>
+                                    <InfoBox>
+                                        <div>{profile.stats.totalFollowing}</div>
+                                        <div>following</div>
+                                    </InfoBox>
+                                    <InfoBox>
+                                        <div>{profile.stats.totalFollowers}</div>
+                                        <div>followers</div>
+                                    </InfoBox>
+                                </div>
+
                             </div>
 
-                        </div>
-
-                    </Content>
-                    <div className='text-primary-blue'>Show more</div>
+                        </Content>
+                    </Link>
+                    <div className='text-[#1890FF]'>Show more</div>
                 </>
                 :
                 <div>No profile</div>

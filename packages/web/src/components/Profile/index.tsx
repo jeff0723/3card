@@ -45,19 +45,22 @@ const Profile: NextPage = (props: Props) => {
     console.log(profile)
 
     return (
-        <div className='flex flex-col w-full '>
-            <div className='h-52 sm:h-80 bg-white bg-opacity-50' style={{
+        <div className='flex flex-col justify-start w-full overflow-y-scroll'>
+            <div className='h-52 sm:h-80 bg-black bg-opacity-50' style={{
                 backgroundImage: `url(${profile?.coverPicture?.original?.url})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center center',
                 backgroundRepeat: 'no-repeat',
             }} />
+
             <div className='grid grid-cols-3 '>
-                <div className='col-span-1 h-full flex flex-col items-center -mt-24 gap-[10px]'>
-                    <img
-                        className='ring-8 ring-black rounded-full bg-black'
-                        src={profile?.picture?.original?.url || profile?.picture?.uri}
-                        height={196} width={196} />
+                <div className='col-span-1 h-full flex flex-col items-center -mt-24 gap-[10px] object-cover'>
+                    <div className='h-[196px] w-[196px] '>
+                        <img
+                            className='ring-8 ring-black rounded-full bg-black object-center w-[196px] h-[196px] object-cover'
+                            src={profile?.picture?.original?.url || profile?.picture?.uri}
+                        />
+                    </div>
                     <div className='flex flex-col justify-center items-start gap-[12px]'>
                         <div>
                             <div className='text-[20px]'>

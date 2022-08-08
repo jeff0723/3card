@@ -9,7 +9,7 @@ interface Props {
 const PostHeader = ({ profile }: Props) => {
 
     return (
-        <div className='flex flex-col'>
+        <div className='flex flex-col min-w-fit'>
             <img
                 src={profile?.picture?.original?.url || profile?.picture?.uri}
                 className="rounded-full w-10 h-10" />
