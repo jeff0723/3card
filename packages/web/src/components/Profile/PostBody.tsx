@@ -8,12 +8,13 @@ import { BsChat } from "react-icons/bs";
 
 interface Props {
     post: Publication
+    mirror?: boolean
 }
 dayjs.extend(relativeTime)
-const PostBody = ({ post }: Props) => {
-    const profile = post.profile as Profile
+const PostBody = ({ post, mirror }: Props) => {
+    const profile = mirror ? post.mirrorOf.profile as Profile : post.profile as Profile
     return (
-        <div className='flex flex-col text-[15px] gap-2'>
+        <div className='flex flex-col text-[15px] gap-2 pb-4'>
             <div className='flex gap-2'>
                 <div>{profile?.name}</div>
                 <div className='text-gray-400'>@{profile?.handle} · {dayjs(new Date(post?.createdAt)).fromNow()}</div>

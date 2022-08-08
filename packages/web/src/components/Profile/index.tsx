@@ -9,6 +9,8 @@ import { HiOutlineUserAdd } from "react-icons/hi";
 import { FiMail } from "react-icons/fi";
 import ProfileTabs from './ProfileTabs'
 import Content from './Content'
+import { current } from '@reduxjs/toolkit'
+import NFTFeed from './NFTFeed'
 type Props = {}
 export enum TabType {
     POST = 'POST',
@@ -42,10 +44,9 @@ const Profile: NextPage = (props: Props) => {
         }
     })
     const profile = data?.profile
-    console.log(profile)
 
     return (
-        <div className='flex flex-col justify-start w-full overflow-y-scroll'>
+        <div className='flex flex-col justify-start w-full'>
             <div className='h-52 sm:h-80 bg-black bg-opacity-50' style={{
                 backgroundImage: `url(${profile?.coverPicture?.original?.url})`,
                 backgroundSize: 'cover',
@@ -121,7 +122,15 @@ const Profile: NextPage = (props: Props) => {
                 </div>
                 <div className='col-span-2 flex flex-col'>
                     <ProfileTabs setCurrentTab={setCurrentTab} currentTab={currentTab} />
-                    <Content profile={profile} currentTab={currentTab} />
+                    <div className='px-4 py-2 flex flex-col gap-2'>
+                        {(currentTab === 'POST' ||
+                            currentTab === 'COMMENT' ||
+                            currentTab === 'MIRROR') && (
+                                <Content profile={profile} currentTab={currentTab} />
+                            )}
+                        {currentTab === 'NFT' && (<NFTFeed profile={profile} />)}
+                    </div>
+
 
                 </div>
             </div>

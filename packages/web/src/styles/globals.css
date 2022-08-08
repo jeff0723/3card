@@ -9,6 +9,10 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
+.loading{
+  @apply animate-pulse;
+  @apply bg-gray-300;
+}
 a {
   color: inherit;
   text-decoration: none;

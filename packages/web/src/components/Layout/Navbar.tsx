@@ -12,6 +12,7 @@ const NavbarContainer = styled.div`
     max-width: 1200px;
     width: 100%;
     height: 60px;
+    background-color: #000000;
 `
 
 const Navbar = (props: Props) => {

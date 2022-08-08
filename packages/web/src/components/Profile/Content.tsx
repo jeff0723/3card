@@ -6,6 +6,8 @@ import { useAppSelector } from 'state/hooks'
 import PostHeader from './PostHeader'
 import PostBody from './PostBody'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import ProfileLoading from './ProfileLoading'
+import { HiOutlineHeart, HiOutlineSwitchHorizontal, } from "react-icons/hi";
 
 interface Props {
     currentTab: string
@@ -53,22 +55,42 @@ const Content = ({ currentTab, profile }: Props) => {
         })
     }
     return (
-        <div className='px-4 py-2 flex flex-col gap-2'>
-            <InfiniteScroll
-                dataLength={publications.length}
-                next={fetchMoreData}
-                loader={<div>loading</div>}
-                hasMore={pageInfo?.next && pageInfo?.totalCount && publications.length !== pageInfo?.totalCount}
-                endMessage={<h4>Nothing more to show</h4>}
-            >
-                {publications.map((post, index) => (
-                    <div className='flex gap-[10px] border-b border-border-gray pb-4' key={index}>
-                        <PostHeader profile={post?.profile as Profile & { picture: MediaSet & NftImage }} />
-                        <PostBody post={post} />
-                    </div>
-                ))}
-            </InfiniteScroll>
-        </div>
+        <>
+            {loading && <ProfileLoading />}
+            {!error && !loading && data?.publications?.items?.length !== 0 && (
+
+                <InfiniteScroll
+                    dataLength={publications.length}
+                    next={fetchMoreData}
+                    loader={<div>loading</div>}
+                    hasMore={pageInfo?.next && pageInfo?.totalCount && publications.length !== pageInfo?.totalCount}
+                    endMessage={<h4>Nothing more to show</h4>}
+                >
+                    {publications.map((post, index) => (
+                        <div className='flex flex-col border-b border-border-gray pt-4' key={index}>
+                            {currentTab === "MIRROR" &&
+                                <div className='flex items-center pb-4 gap-2 text-gray-400 font-bold'>
+                                    <HiOutlineSwitchHorizontal />
+                                    <div> {profile.name} mirrored {post.mirrorOf?.profile?.name}'s post</div>
+                                </div>}
+                            {currentTab === "COMMENT" &&
+                                <div className='flex gap-[10px]'>
+                                    <PostHeader profile={post?.commentOn?.profile as Profile & { picture: MediaSet & NftImage }} comment />
+                                    <PostBody post={post?.commentOn as Publication} />
+                                </div>
+                            }
+
+                            <div className='flex gap-[10px]'>
+                                {currentTab !== "MIRROR" && <PostHeader profile={post?.profile as Profile & { picture: MediaSet & NftImage }} />}
+                                {currentTab === "MIRROR" && <PostHeader profile={post?.mirrorOf.profile as Profile & { picture: MediaSet & NftImage }} />}
+                                <PostBody post={post} mirror={currentTab === "MIRROR"} />
+                            </div>
+                        </div>
+                    ))}
+                </InfiniteScroll>
+            )}
+        </>
+
     )
 }
 
