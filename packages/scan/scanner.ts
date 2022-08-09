@@ -91,7 +91,7 @@ export class Scanner {
             const interactiveAddress = this.account === tx.from ? tx.to : tx.from;
             if (frequencyMap.has(interactiveAddress)) {
                 const currFreq = frequencyMap.get(interactiveAddress);
-                frequencyMap.set(interactiveAddress, currFreq);
+                frequencyMap.set(interactiveAddress, currFreq+1);
             } else {
                 frequencyMap.set(interactiveAddress, 1);
             }
