@@ -46,7 +46,7 @@ const Profile: NextPage = (props: Props) => {
     const profile = data?.profile
 
     return (
-        <div>
+        <div className='w-full'>
             <div className='h-52 sm:h-80 bg-black bg-opacity-50' style={{
                 backgroundImage: `url(${profile?.coverPicture?.original?.url})`,
                 backgroundSize: 'cover',

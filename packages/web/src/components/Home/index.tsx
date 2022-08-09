@@ -29,6 +29,7 @@ const Content = styled.div`
   overflow-y: scroll;
   flex-shrink: 0;
   border-right: 1px solid #2F3336;
+}
 `
 const Header = styled.div`
   display: flex;

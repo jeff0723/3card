@@ -25,7 +25,7 @@ const Container = styled.div`
 const Content = styled.div`
     display: flex;
     padding-top: 60px;
-    height: 100vh;
+    max-height: 100vh;
 `
 const toastOptions = {
     style: {
