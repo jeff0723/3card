@@ -86,7 +86,6 @@ const Home = ({ feeds }: Props) => {
     setItems([...items, ...feeds?.slice(items.length, items.length + BATCHSIZE) || []])
   }
 
-
   return (
     <>
       <div style={{ display: 'flex', width: '100%' }}>

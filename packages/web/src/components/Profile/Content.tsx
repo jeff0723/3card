@@ -58,7 +58,6 @@ const Content = ({ currentTab, profile }: Props) => {
         <>
             {loading && <ProfileLoading />}
             {!error && !loading && data?.publications?.items?.length !== 0 && (
-
                 <InfiniteScroll
                     dataLength={publications.length}
                     next={fetchMoreData}
