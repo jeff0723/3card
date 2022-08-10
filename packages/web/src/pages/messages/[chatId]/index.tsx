@@ -10,7 +10,6 @@ import { listMessages } from 'graphql/amplify/queries'
 import { Message, ListMessagesQuery } from "API"
 
 interface Props {
-    messages: Message[]
 
 }
 const profile = {
@@ -19,11 +18,10 @@ const profile = {
     avatar: "https://ipfs.io/ipfs/QmPJqhBrLwRucVfwbtH6F2h1ratAA85c33F6mh228Ztzwg"
 
 }
-const index: NextPage<Props> = ({ messages }) => {
+const index: NextPage<Props> = () => {
     const { address } = useAccount()
     const { query: { chatId } } = useRouter()
     const [peerAddress, setPeerAddress] = useState("")
-    const [conversationId, setConversationId] = useState("")
     useEffect(() => {
         if (address && chatId?.includes('-')) {
             //@ts-ignore
@@ -31,15 +29,8 @@ const index: NextPage<Props> = ({ messages }) => {
             const peer = list.find((item: string) => item !== address)
             setPeerAddress(peer)
         }
-        if (chatId) {
-            setConversationId(chatId as string)
-        }
     }, [address])
-    if (chatId?.includes('-')) {
 
-    }
-    console.log(chatId)
-    console.log("messages:", messages)
     return (
         <div className='grid grid-cols-3 w-full'>
             <div className='col-span-1 flex flex-col overflow-y-auto border border-transparent border-r-[#2F3336]'>
@@ -56,7 +47,7 @@ const index: NextPage<Props> = ({ messages }) => {
                             <div className='text-gray-400'>{profile.handle}</div>
                         </div>
                     </div>
-                    <MessageBox conversationId={conversationId} peerAddress={peerAddress} messages={messages} />
+                    <MessageBox conversationId={chatId as string} peerAddress={peerAddress} />
                 </div>
             </div>
         </div>
@@ -64,19 +55,4 @@ const index: NextPage<Props> = ({ messages }) => {
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const { query: { chatId } } = context
-    const { data } = await GraphQLAPI.graphql(
-        {
-            query: listMessages,
-            variables: {
-                filter: { conversationId: { eq: chatId } }
-            },
-        }) as { data: ListMessagesQuery }
-    return {
-        props: {
-            messages: data.listMessages?.items
-        },
-    }
-}
 export default index

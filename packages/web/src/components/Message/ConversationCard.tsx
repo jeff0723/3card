@@ -37,7 +37,8 @@ const ConversationCard = ({ conversationId, participants, lastMessage, updateAt 
     <Link href={`/messages/${conversationId}`}>
       <div className='flex gap-2 p-4 '>
         <div>
-          <img src={avatar} className='rounded-full w-12 h-12' />
+          {!avatar && <div className="rounded-full loading w-12 h-12" />}
+          {avatar && <img src={avatar} className='rounded-full w-12 h-12' />}
         </div>
         <div className='flex flex-col'>
           <div>{name} <span className='text-gray-400'>@{handle} · {dayjs(new Date(updateAt)).fromNow()}</span></div>

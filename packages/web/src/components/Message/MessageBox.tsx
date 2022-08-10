@@ -12,13 +12,12 @@ import SingleMessage from './SingleMessage'
 type Props = {
     conversationId: string
     peerAddress: string
-    messages: Message[]
 }
 
-const MessageBox = ({ messages, conversationId, peerAddress }: Props) => {
+const MessageBox = ({ conversationId, peerAddress }: Props) => {
 
     const { address } = useAccount()
-    const [stateMessages, setStateMessages] = useState<Message[]>([...messages])
+    const [stateMessages, setStateMessages] = useState<Message[]>([])
     const [message, setMesaage] = useState("")
     useEffect(() => {
         const subscription = API.graphql({
@@ -44,6 +43,20 @@ const MessageBox = ({ messages, conversationId, peerAddress }: Props) => {
             });
         }
     }, []);
+    useEffect(() => {
+        const fechtMessages = async () => {
+            const { data } = await GraphQLAPI.graphql(
+                {
+                    query: listMessages,
+                    variables: {
+                        filter: { conversationId: { eq: conversationId } }
+                    },
+                }) as { data: ListMessagesQuery }
+            setStateMessages(data.listMessages?.items as Message[] || [])
+        }
+        fechtMessages()
+
+    }, [conversationId])
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMesaage(e.target.value)
     }
@@ -73,7 +86,7 @@ const MessageBox = ({ messages, conversationId, peerAddress }: Props) => {
 
     return (
         <div className='h-full py-4 flex flex-col justify-end '>
-            <div className='h-[600px] flex flex-col overflow-y-auto gap-2'>
+            <div className='h-[700px] flex flex-col overflow-y-auto gap-2 py-4'>
                 {stateMessages
                     .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
                     .map((item, index) => (
@@ -86,7 +99,7 @@ const MessageBox = ({ messages, conversationId, peerAddress }: Props) => {
                     ))}
             </div>
             {/* <div className='flex justify-between py-2 px-2 border border-[#2F3336]'> */}
-            <form className='flex justify-between py-2 px-2 mt-4' onSubmit={handleSend}>
+            <form className='flex justify-between py-2 px-2' onSubmit={handleSend}>
                 <input placeholder='Start a new message' onChange={handleChange} value={message}
                     className='bg-black focus:outline-none' />
                 <button type='submit' className='text-primary-blue'>SEND</button>
