@@ -24,7 +24,6 @@ const messagesList = Array(100).fill(messageChannel)
 const Sidebar: FC<Props> = () => {
     const { address } = useAccount()
     const dispatch = useAppDispatch()
-    const open = useAppSelector(state => state.application.isNewMessageModalOpen)
     const openModal = () => {
         dispatch(setIsNewMessageModalOpen({ isNewMessageModalOpen: true }))
     }
@@ -43,7 +42,6 @@ const Sidebar: FC<Props> = () => {
     useEffect(() => {
         listConversationQuery()
     }, [address])
-    console.log(conversations)
     return (
         <div>
             <div className='flex justify-between items-center px-4 bg-black'>
