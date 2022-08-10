@@ -31,10 +31,9 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
                 next: ({ provider, value }: any) => {
                     console.log(value)
                     setStateMessages(
-                        (stateMessages) =>
-                            [...stateMessages,
-                            value.data.onCreateMessageByConversationId
-                            ]
+                        [...stateMessages,
+                        value.data.onCreateMessageByConversationId
+                        ]
                     )
                 },
                 error: (error: any) => {
@@ -75,14 +74,12 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
                     }
                 }
             }) as { data: CreateMessageMutation }
-            console.log(data)
         } catch (e) {
             console.log(e)
         } finally {
             setMesaage("")
         }
     }
-    console.log("state messages:", stateMessages)
 
     return (
         <div className='h-full py-4 flex flex-col justify-end '>

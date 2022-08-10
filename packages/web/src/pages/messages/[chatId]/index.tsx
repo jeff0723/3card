@@ -9,7 +9,7 @@ import GraphQLAPI from '@aws-amplify/api-graphql'
 import { listMessages } from 'graphql/amplify/queries'
 import { Message, ListMessagesQuery } from "API"
 import { CURRENT_USER_QUERY } from 'graphql/query/user'
-import { useQuery } from '@apollo/client'
+import { useLazyQuery, useQuery } from '@apollo/client'
 
 
 
@@ -21,23 +21,35 @@ const ChatPage: NextPage = () => {
     const [avatar, setAvatar] = useState("")
     const [name, setName] = useState("")
     const [handle, setHandle] = useState("")
+    const updateProfile = async () => {
+        const { data } = await getProfiles()
+        setAvatar(data?.profiles?.items[0]?.picture?.original?.url)
+        setName(data?.profiles?.items[0]?.name)
+        setHandle(data?.profiles?.items[0]?.handle)
+    }
     useEffect(() => {
         if (address && chatId?.includes('-')) {
             //@ts-ignore
             const list = chatId.split('-')
             const peer = list.find((item: string) => item !== address)
             setPeerAddress(peer)
+            updateProfile()
         }
-    }, [address])
-    const { data, loading, error } =
-        useQuery(CURRENT_USER_QUERY, {
-            variables: { ownedBy: [peerAddress] },
-            onCompleted(data) {
-                setAvatar(data?.profiles?.items[0]?.picture?.original?.url)
-                setName(data?.profiles?.items[0]?.name)
-                setHandle(data?.profiles?.items[0]?.handle)
-            }
-        })
+    }, [address, chatId])
+
+    const [getProfiles, { error: errorProfiles, loading: profilesLoading }] =
+        useLazyQuery(CURRENT_USER_QUERY,
+            {
+                variables: { ownedBy: [peerAddress] },
+                onCompleted(data) {
+                    console.log("[Lazy query completed]", data)
+                    setAvatar(data?.profiles?.items[0]?.picture?.original?.url)
+                    setName(data?.profiles?.items[0]?.name)
+                    setHandle(data?.profiles?.items[0]?.handle)
+                }
+            })
+
+    console.log("Peer address:", peerAddress)
     return (
         <div className='grid grid-cols-3 w-full'>
             <div className='col-span-1 flex flex-col overflow-y-auto border border-transparent border-r-[#2F3336]'>
