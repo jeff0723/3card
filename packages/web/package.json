@@ -18,6 +18,7 @@
     "aws-amplify": "^4.3.30",
     "dayjs": "^1.11.4",
     "ethers": "^5.6.9",
+    "global": "^4.4.0",
     "graphql": "^16.5.0",
     "http": "^0.0.1-security",
     "js-cookie": "^3.0.1",
