@@ -6,11 +6,13 @@ export interface ApplicationState {
     recommendUser?: Profile | null,
     isApplicationLoading: boolean,
     recommendedProfiles: Profile[],
+    isNewMessageModalOpen: boolean
 }
 export const initialState: ApplicationState = {
     recommendUser: null,
     isApplicationLoading: false,
-    recommendedProfiles: []
+    recommendedProfiles: [],
+    isNewMessageModalOpen: false
 }
 
 const applicationSlice = createSlice({
@@ -25,6 +27,9 @@ const applicationSlice = createSlice({
         },
         updateRecommendedProfiles(state, { payload: { recommendedProfiles } }) {
             state.recommendedProfiles = recommendedProfiles
+        },
+        setIsNewMessageModalOpen(state, { payload: { isNewMessageModalOpen } }) {
+            state.isNewMessageModalOpen = isNewMessageModalOpen
         }
 
     }
@@ -33,6 +38,7 @@ const applicationSlice = createSlice({
 export const {
     updateRecommedUser,
     updateLoadingStatus,
-    updateRecommendedProfiles
+    updateRecommendedProfiles,
+    setIsNewMessageModalOpen
 } = applicationSlice.actions
 export default applicationSlice.reducer

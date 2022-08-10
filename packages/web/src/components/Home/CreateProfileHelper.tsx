@@ -67,9 +67,11 @@ const CreateProfileHelper = (props: Props) => {
         setUploading(true)
         if (e.target?.files) {
             try {
+                // this part should be adjusted
                 const client = makeStorageClient()
+                const filename = e.target.files[0].name
                 const cid = await client.put([e.target.files[0]])
-                setAvatar(`https://ipfs.io/ipfs/${cid}`)
+                setAvatar(`https://ipfs.io/ipfs/${cid}/${filename}`)
             } finally {
                 setUploading(false)
             }
@@ -120,7 +122,7 @@ const CreateProfileHelper = (props: Props) => {
                         <div className="fixed inset-0 bg-black bg-opacity-75" />
                     </Transition.Child>
 
-                    <div className="fixed inset-0 overflow-y-auto">
+                    <div className="fixed top-[50px] inset-x-0 overflow-y-auto">
                         <div className="flex items-center justify-center p-4 text-center">
                             <Transition.Child
                                 as={Fragment}

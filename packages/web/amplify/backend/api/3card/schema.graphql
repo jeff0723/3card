@@ -12,9 +12,14 @@ type Message @model {
   receiver: String!
 }
 
-type Coversation @model {
+type Conversation @model {
   conversationId: String! @primaryKey
   participants: [String!]!
   lastMessage: String
   lastUpdate: AWSDateTime
+}
+
+type Subscription {
+  onCreateMessageByConversationId(conversationId: String!): Message
+    @aws_subscribe(mutations: ["createMessage"])
 }
