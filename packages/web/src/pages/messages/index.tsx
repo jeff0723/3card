@@ -11,7 +11,7 @@ import NewMessageModal from 'components/Message/NewMessageModal'
 
 type Props = {}
 
-const index: NextPage = (props: Props) => {
+const ChatHome: NextPage = (props: Props) => {
 
     const dispatch = useAppDispatch()
     const openModal = () => {
@@ -42,4 +42,4 @@ const index: NextPage = (props: Props) => {
     )
 }
 
-export default index
+export default ChatHome

@@ -10,8 +10,9 @@ const ProfileTabs = ({ setCurrentTab, currentTab }: Props) => {
 
     return (
         <div className='flex gap-[24px] text-[16px] px-4 py-2'>
-            {Object.keys(TabType).map((tab) => (
+            {Object.keys(TabType).map((tab, index) => (
                 <button
+                    key={index}
                     className={clsx(
                         {
                             'border-b-[2px] border-primary-blue': currentTab === tab,

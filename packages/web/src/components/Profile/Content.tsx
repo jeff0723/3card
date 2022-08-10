@@ -70,7 +70,7 @@ const Content = ({ currentTab, profile }: Props) => {
                             {currentTab === "MIRROR" &&
                                 <div className='flex items-center pb-4 gap-2 text-gray-400 font-bold'>
                                     <HiOutlineSwitchHorizontal />
-                                    <div> {profile.name} mirrored {post.mirrorOf?.profile?.name}'s post</div>
+                                    <div> {profile.name} mirrored {post.mirrorOf?.profile?.name}&apos;s post</div>
                                 </div>}
                             {currentTab === "COMMENT" &&
                                 <div className='flex gap-[10px]'>

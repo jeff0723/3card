@@ -2,16 +2,16 @@ import React from 'react'
 import styled from 'styled-components'
 
 interface Item {
-    [key: string]: string
-    pubDate: string
-    title: string
-    isoDate: string
-    link: string
-    thumbnail: string
-    creator: string
+  [key: string]: string
+  pubDate: string
+  title: string
+  isoDate: string
+  link: string
+  thumbnail: string
+  creator: string
 }
 interface Props {
-    item: Item
+  item: Item
 }
 const FeedContainer = styled.div`
   display: flex;
@@ -71,20 +71,20 @@ const BlueText = styled.span`
 
 
 const Feed = ({ item }: Props) => {
-    return (
-        <a href={item.link} target="_blank" >
+  return (
+    <a href={item.link} target="_blank" rel="noopener noreferrer" >
 
-            <FeedContainer>
-                <FeedImage image={item.thumbnail} />
-                <FeedContent>
-                    <FeedTitle>{item.title}</FeedTitle>
-                    <FeedSubtitle>  <BlueText>{item.creator} </BlueText> <FeedDate>{new Date(item.pubDate).toDateString()}</FeedDate></FeedSubtitle>
+      <FeedContainer>
+        <FeedImage image={item.thumbnail} />
+        <FeedContent>
+          <FeedTitle>{item.title}</FeedTitle>
+          <FeedSubtitle>  <BlueText>{item.creator} </BlueText> <FeedDate>{new Date(item.pubDate).toDateString()}</FeedDate></FeedSubtitle>
 
-                    <FeedText>{item['content:encodedSnippet']}</FeedText>
-                </FeedContent>
-            </FeedContainer>
-        </a>
-    )
+          <FeedText>{item['content:encodedSnippet']}</FeedText>
+        </FeedContent>
+      </FeedContainer>
+    </a>
+  )
 }
 
 export default Feed

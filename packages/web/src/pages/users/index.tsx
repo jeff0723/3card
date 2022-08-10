@@ -9,7 +9,7 @@ import { useAppSelector } from 'state/hooks'
 
 type Props = {}
 
-const index = (props: Props) => {
+const UserPage = (props: Props) => {
 
     const [users, setUsers] = useState<Profile[]>([])
     const [pageInfo, setPageInfo] = useState<PaginatedResultInfo>()
@@ -78,4 +78,4 @@ const index = (props: Props) => {
     )
 }
 
-export default index
+export default UserPage

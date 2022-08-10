@@ -11,17 +11,10 @@ import { Message, ListMessagesQuery } from "API"
 import { CURRENT_USER_QUERY } from 'graphql/query/user'
 import { useQuery } from '@apollo/client'
 
-interface Props {
 
-}
-const profile = {
-    name: "John Doe",
-    handle: "@johndoe",
-    avatar: "https://ipfs.io/ipfs/QmPJqhBrLwRucVfwbtH6F2h1ratAA85c33F6mh228Ztzwg"
 
-}
 
-const index: NextPage<Props> = () => {
+const ChatPage: NextPage = () => {
     const { address } = useAccount()
     const { query: { chatId } } = useRouter()
     const [peerAddress, setPeerAddress] = useState("")
@@ -73,4 +66,4 @@ const index: NextPage<Props> = () => {
     )
 }
 
-export default index
+export default ChatPage

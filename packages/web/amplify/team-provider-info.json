@@ -10,6 +10,14 @@
       "StackName": "amplify-3card-dev-165637",
       "StackId": "arn:aws:cloudformation:us-east-1:248031398405:stack/amplify-3card-dev-165637/2eb2f340-17c1-11ed-ba0a-0acdbdb96775",
       "AmplifyAppId": "d1ii4vecbnpvlp"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d1ii4vecbnpvlp",
+          "type": "manual"
+        }
+      }
     }
   }
 }

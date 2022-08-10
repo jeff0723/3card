@@ -1,5 +1,4 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import Image from 'next/image';
 import styled from 'styled-components';
 
 type Props = {}
@@ -20,7 +19,7 @@ const Navbar = (props: Props) => {
     return (
         <>
             <NavbarContainer >
-                <Image src='/logo.png' width={50} height={50} />
+                <img src='/logo.png' width={50} height={50} />
                 <ConnectButton />
             </NavbarContainer>
 

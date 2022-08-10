@@ -91,6 +91,7 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
                     .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
                     .map((item, index) => (
                         <SingleMessage
+                            key={index}
                             message={item.body}
                             user={address}
                             isMe={item.sender === address}

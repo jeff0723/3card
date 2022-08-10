@@ -106,7 +106,7 @@ const Profile: NextPage = (props: Props) => {
                         </div>
                         <div className='w-[200px] flex flex-wrap gap-[10px] border-b border-[#536471] pb-[16px]'>
                             {tags.map((item, index) => (
-                                <div className='px-2 py-1 bg-primary-blue bg-opacity-30 rounded-lg'>
+                                <div key={index} className='px-2 py-1 bg-primary-blue bg-opacity-30 rounded-lg'>
                                     {item}
                                 </div>
                             ))}
