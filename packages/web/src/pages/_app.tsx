@@ -15,7 +15,7 @@ import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import '../styles/globals.css';
-import awsconfig from "../aws-exports";
+import { awsconfig } from "../settings";
 import { Amplify } from "aws-amplify";
 Amplify.configure({ ...awsconfig, ssr: true });
 
