@@ -49,109 +49,11 @@ const toastOptions = {
 }
 const Layout: FC<Props> = ({ children }) => {
 
-    const dispatch = useAppDispatch()
-    const userIsConnected = useAppSelector(state => state.user.isConnected)
+
     const [mounted, setMounted] = useState<boolean>(false)
-    const { address, isDisconnected, isConnected } = useAccount()
-    const { chain } = useNetwork()
-    const { disconnect } = useDisconnect()
-    const { signMessageAsync, isLoading: signLoading } = useSignMessage({
-        onError(error) {
-            toast.error(error?.message)
-        }
-    })
-    const [loadChallenge, { error: errorChallenge, loading: challengeLoading }] =
-        useLazyQuery(CHALLENGE_QUERY, {
-            fetchPolicy: 'no-cache',
-            onCompleted(data) {
-                console.log(
-                    '[Lazy Query]',
-                    `Fetched auth challenge - ${data?.challenge?.text}`
-                )
-            }
-        })
-
-    const [authenticate, { error: errorAuthenticate, loading: authLoading }] =
-        useMutation(AUTHENTICATE_MUTATION)
-    const [getProfiles, { error: errorProfiles, loading: profilesLoading }] =
-        useLazyQuery(CURRENT_USER_QUERY, {
-            onCompleted(data) {
-                console.log(
-                    '[Lazy Query]',
-                    `Fetched ${data?.profiles?.items?.length} user profiles for auth`
-                )
-            }
-        })
-    const logout = () => {
-        dispatch(setIsConnected({ isConnected: false }))
-        dispatch(setIsAuthenticated({ isAuthenticated: false }))
-        dispatch(setCurrentUser({ currentUser: null }))
-        Cookies.remove('accessToken')
-        Cookies.remove('refreshToken')
-        if (disconnect) disconnect()
-    }
-    const handleSign = async () => {
-        try {
-            // Get challenge
-            dispatch(updateLoadingStatus({ isApplicationLoading: true }))
-            const challenge = await loadChallenge({
-                variables: { request: { address } }
-            })
-
-            if (!challenge?.data?.challenge?.text) return toast.error("Something went wrong!")
-
-            // Get signature
-            const signature = await signMessageAsync({
-                message: challenge?.data?.challenge?.text
-            })
-
-            // Auth user and set cookies
-            const auth = await authenticate({
-                variables: { request: { address, signature } }
-            })
-            Cookies.set("accessToken", auth?.data?.authenticate?.accessToken)
-            Cookies.set("refreshToken", auth?.data?.authenticate?.refreshToken)
-            // Get authed profiles
-            dispatch(setIsConnected({ isConnected: true }))
-            dispatch(setIsAuthenticated({ isAuthenticated: true }))
-            const { data: profilesData } = await getProfiles({
-                variables: { ownedBy: address }
-            })
-            if (profilesData?.profiles?.items?.length > 0) {
-                // Cookies.set("profileId", profilesData?.profiles?.items[0].id)
-                dispatch(setCurrentUser({ currentUser: profilesData?.profiles?.items[0] }))
-            }
-            // console.log("profile data", profilesData)
-
-        } catch (err) {
-
-        }
-        finally {
-            dispatch(updateLoadingStatus({ isApplicationLoading: false }))
-        }
-    }
     useEffect(() => {
         setMounted(true)
-
-    }, [[
-        isDisconnected,
-        address,
-        chain,
-        disconnect
-    ]])
-    useEffect(() => {
-        //This entire section should be rewrote
-        if (isConnected && mounted && !userIsConnected) {
-            toast.success("logged in successfully")
-            handleSign()
-            return
-        }
-        if (isDisconnected && mounted) {
-            toast.success("logged out successfully")
-            logout()
-            return
-        }
-    }, [isConnected, isDisconnected])
+    }, [])
     if (!mounted) return <h1>Loading</h1>
 
     return (
