@@ -1,21 +1,14 @@
 import * as dotenv from 'dotenv';
-import { Scanner } from './scanner';
+import { scanner } from './scanner';
 import { S3 } from './aws';
 
 dotenv.config();
 
 async function main() {
     // target info
-    const account = '0x6c77a5a88c0ae712baeabe12fea81532060dcbf5';
+    const account = '0x4a1a2197f307222cd67a1762d9a352f64558d9be';
     const chain = 'bsc';
     const startBlock = 0;
-    
-    // construct scanner
-    const scanner = new Scanner(
-        process.env.ETHERSCAN_API_KEY,
-        process.env.POLYGONSCAN_API_KEY,
-        process.env.BSCSCAN_API_KEY,
-    );
 
     // target account
     scanner.target(account);
@@ -23,9 +16,9 @@ async function main() {
 
     // fetch tx list, get ranking and upload S3
     const txList = await scanner.fetchTxList(chain, startBlock);
-    console.log("ethereum tx count:", txList.length);
+    console.log("tx count:", txList.length);
     const ranking = await scanner.getRanking(txList);
-    console.log("ethereum ranking count:", ranking.size);
+    console.log("ranking count:", ranking.size);
     const rankingPayload = {
         Bucket: '3card',
         Key: `onchain/${scanner.account}/${chain}/ranking`,

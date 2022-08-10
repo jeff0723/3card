@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 import fetch from 'node-fetch';
-import { utils, BigNumber } from 'ethers';
+import { utils } from 'ethers';
 
 dotenv.config();
 
@@ -99,3 +99,9 @@ export class Scanner {
         return new Map([...frequencyMap.entries()].sort((a,b) => b[1] - a[1]));
     }
 }
+
+export const scanner = new Scanner(
+    process.env.ETHERSCAN_API_KEY,
+    process.env.POLYGONSCAN_API_KEY,
+    process.env.BSCSCAN_API_KEY,
+)
