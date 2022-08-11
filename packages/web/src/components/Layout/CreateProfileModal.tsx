@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Dispatch, Fragment, useState } from "react";
 import styled from "styled-components";
 import { Dialog, Transition } from "@headlessui/react";
 import { FiX } from "react-icons/fi";
@@ -10,29 +10,13 @@ import toast from "react-hot-toast";
 import Button from "components/UI/Button";
 import { useMutation } from "@apollo/client";
 import { CREATE_PROFILE_MUTATION } from "graphql/mutation/create-profile";
-import Pending from "./Pending";
 
-type Props = {};
-const Container = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  background: rgba(0, 148, 255, 0.3);
-  gap: 10px;
-  padding: 8px;
-`;
-const CreateButon = styled.div`
-  padding: 8px 16px;
-  background: rgba(0, 148, 255, 0.3);
-  color: #1890ff;
-  border-radius: 8px;
-  &:hover {
-    background: rgba(0, 148, 255, 0.5);
-    cursor: pointer;
-  }
-`;
+
+type Props = {
+    open: boolean;
+    setOpen: Dispatch<boolean>;
+};
+
 const TextInput = styled.input`
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
@@ -49,8 +33,7 @@ type FormValues = {
     handle: string;
 };
 
-const CreateProfileHelper = (props: Props) => {
-    const [open, setOpen] = useState(false);
+const CreateProfileModal = ({ open, setOpen }: Props) => {
     const [uploading, setUploading] = useState(false);
     const [avatar, setAvatar] = useState("");
     const { register, handleSubmit, getValues } = useForm<FormValues>();
@@ -191,12 +174,9 @@ const CreateProfileHelper = (props: Props) => {
                     </div>
                 </Dialog>
             </Transition>
-            <Container>
-                <div>You don&apos;t have a profile yet</div>
-                <Button onClick={() => setOpen(true)}>Create</Button>
-            </Container>
+
         </>
     );
 };
 
-export default CreateProfileHelper;
+export default CreateProfileModal;

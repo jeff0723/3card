@@ -1,64 +1,68 @@
-import React, { FC, ReactNode, Suspense, useEffect, useState, } from 'react'
-import Head from 'next/head'
-import styled from 'styled-components'
-import dynamic from 'next/dynamic'
-import { useAccount, useDisconnect, useNetwork, useSignMessage } from 'wagmi'
-import { AUTHENTICATE_MUTATION, CHALLENGE_QUERY } from 'graphql/query/authentication'
-import { useLazyQuery, useMutation } from '@apollo/client'
-import toast, { Toaster } from 'react-hot-toast'
-import { CURRENT_USER_QUERY } from 'graphql/query/user'
-import Cookies from 'js-cookie'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { setCurrentUser, setIsAuthenticated, setIsConnected } from 'state/user/reducer'
-import { updateLoadingStatus } from 'state/application/reducer'
+import React, { FC, ReactNode, Suspense, useEffect, useState } from "react";
+import Head from "next/head";
+import styled from "styled-components";
+import dynamic from "next/dynamic";
+import { useAccount, useDisconnect, useNetwork, useSignMessage } from "wagmi";
+import {
+    AUTHENTICATE_MUTATION,
+    CHALLENGE_QUERY,
+} from "graphql/query/authentication";
+import { useLazyQuery, useMutation } from "@apollo/client";
+import toast, { Toaster } from "react-hot-toast";
+import { CURRENT_USER_QUERY } from "graphql/query/user";
+import Cookies from "js-cookie";
+import { useAppDispatch, useAppSelector } from "state/hooks";
+import {
+    setCurrentUser,
+    setIsAuthenticated,
+    setIsConnected,
+} from "state/user/reducer";
+import { updateLoadingStatus } from "state/application/reducer";
 
-const Navbar = dynamic(() => import('./Navbar'), { suspense: true })
-const SideBar = dynamic(() => import('./SideBar'), { suspense: true })
+const Navbar = dynamic(() => import("./Navbar"), { suspense: true });
+const SideBar = dynamic(() => import("./SideBar"), { suspense: true });
 interface Props {
-    children: ReactNode
+    children: ReactNode;
 }
 const Container = styled.div`
-    max-width: 1200px;
-    margin: 0 auto;
-`
+  max-width: 1200px;
+  margin: 0 auto;
+`;
 
 const Content = styled.div`
-    display: flex;
-    padding-top: 60px;
-`
+  display: flex;
+  padding-top: 60px;
+`;
 const toastOptions = {
     style: {
         background: "rgba(0, 0, 0)",
-        color: "#ffffff"
+        color: "#ffffff",
     },
     success: {
-        className: 'border border-green-500',
+        className: "border border-green-500",
         iconTheme: {
-            primary: '#10B981',
-            secondary: 'white'
-        }
+            primary: "#10B981",
+            secondary: "white",
+        },
     },
     error: {
-        className: 'border border-red-500',
+        className: "border border-red-500",
         iconTheme: {
-            primary: '#EF4444',
-            secondary: 'white'
-        }
+            primary: "#EF4444",
+            secondary: "white",
+        },
     },
-    loading: { className: 'border border-gray-300' }
-}
+    loading: { className: "border border-gray-300" },
+};
 const Layout: FC<Props> = ({ children }) => {
-
-
-    const [mounted, setMounted] = useState<boolean>(false)
+    const [mounted, setMounted] = useState<boolean>(false);
     useEffect(() => {
-        setMounted(true)
-    }, [])
-    if (!mounted) return <h1>Loading</h1>
+        setMounted(true);
+    }, []);
+    if (!mounted) return <h1>Loading</h1>;
 
     return (
         <Container>
-
             <Toaster position="top-right" toastOptions={toastOptions} />
             <Suspense fallback={<h1>Loading</h1>}>
                 <Navbar />
@@ -68,7 +72,7 @@ const Layout: FC<Props> = ({ children }) => {
                 </Content>
             </Suspense>
         </Container>
-    )
-}
+    );
+};
 
-export default Layout
+export default Layout;
