@@ -22,36 +22,42 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
         const subscription = API.graphql({
             query: onCreateMessageByConversationId,
             variables: {
-                conversationId: conversationId,
-            },
-        });
-        if ("subscribe" in subscription) {
-            const sb = subscription.subscribe({
-                next: ({ provider, value }: any) => {
-                    console.log(value);
-                    setStateMessages([
-                        ...stateMessages,
-                        value.data.onCreateMessageByConversationId,
-                    ]);
-                },
-                error: (error: any) => {
-                    console.log(error);
-                },
-            });
-        }
-    }, []);
-    useEffect(() => {
+                conversationId: conversationId
+            }
+        })
         const fechtMessages = async () => {
-            const { data } = (await GraphQLAPI.graphql({
-                query: listMessages,
-                variables: {
-                    filter: { conversationId: { eq: conversationId } },
-                },
-            })) as { data: ListMessagesQuery };
-            setStateMessages((data.listMessages?.items as Message[]) || []);
-        };
-        fechtMessages();
-    }, [conversationId]);
+            const { data } = await GraphQLAPI.graphql(
+                {
+                    query: listMessages,
+                    variables: {
+                        filter: { conversationId: { eq: conversationId } }
+                    },
+                }) as { data: ListMessagesQuery }
+            setStateMessages(data.listMessages?.items as Message[])
+        }
+        fechtMessages()
+            .then(() => {
+                console.log("subscription:", subscription)
+                if ('subscribe' in subscription) {
+                    const sb = subscription.subscribe({
+                        next: ({ provider, value }: any) => {
+                            setStateMessages(
+                                [...stateMessages,
+                                value.data.onCreateMessageByConversationId as Message
+                                ]
+                            )
+                        },
+                        error: (error: any) => {
+                            console.log(error)
+                        }
+                    });
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }, []);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMesaage(e.target.value);
     };

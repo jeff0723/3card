@@ -17,7 +17,7 @@ async function main() {
     );
     for (const user of users.slice(0,10000)) {
         scanner.target(user);
-        const txList = await scanner.fetchTxList(chain, 0);
+        const txList = await scanner.fetchNormalTxList(chain, 0);
         console.log(user, ':', txList.length);
         txList.map((tx) => {
             const interactiveAddress = scanner.account === tx.from ? tx.to : tx.from;

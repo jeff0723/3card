@@ -1,15 +1,88 @@
 import * as dotenv from 'dotenv';
 import fetch from 'node-fetch';
-import { utils, BigNumber } from 'ethers';
+import { utils } from 'ethers';
 
 dotenv.config();
 
 const { isAddress } = utils;
 
-export type TxList = Array<any>;
-export type ERC20EventList = Array<any>;
-export type ERC721EventList = Array<any>;
+export type NormalTrasaction = {
+    blockNumber: string,
+    timeStamp: string,
+    hash: string,
+    nonce: string,
+    blockHash: string,
+    transactionIndex: string,
+    from: string,
+    to: string,
+    value: string,
+    gas: string,
+    gasPrice: string,
+    isError: boolean,
+    txreceipt_status: number,
+    input: string,
+    contractAddress: string,
+    cumulativeGasUsed: string,
+    gasUsed: string,
+    confirmations: string,
+    methodId: string,
+    functionName: string,
+};
+
+export type ERC20Event = {
+    blockNumber: string,
+    timeStamp: string,
+    hash: string,
+    nonce: string,
+    blockHash: string,
+    from: string,
+    contractAddress: string,
+    to: string,
+    value: string,
+    tokenName: string,
+    tokenSymbol: string,
+    tokenDecimal: string,
+    transactionIndex: string,
+    gas: string,
+    gasPrice: string,
+    gasUsed: string,
+    cumulativeGasUsed: string,
+    input: string,
+    confirmations: string,
+};
+
+export type ERC721Event = {
+    blockNumber: string,
+    timeStamp: string,
+    hash: string,
+    nonce: string,
+    blockHash: string,
+    from: string,
+    contractAddress: string,
+    to: string,
+    tokenID: string,
+    tokenName: string,
+    tokenSymbol: string,
+    tokenDecimal: string,
+    transactionIndex: string,
+    gas: string,
+    gasPrice: string,
+    gasUsed: string,
+    cumulativeGasUsed: string,
+    input: string,
+    confirmations: string,
+};
+
+export type Frequency = {
+    contractAddress: string,
+    frequency: number,
+}
+
+export type NormalTxList = Array<NormalTrasaction>;
+export type FrequencyRanking = Array<Frequency>;
+export type ERC20EventList = Array<ERC20Event>;
 export type ERC20AssetList = Array<any>;
+export type ERC721EventList = Array<ERC721Event>;
 export type ERC721AssetList = Array<any>;
 
 export class Scanner {
@@ -53,18 +126,18 @@ export class Scanner {
             console.error("invalid target address");
             return false;
         }
-        if (!chain || startBlock < 0) {
-            console.error("invalid scan parameters");
-            return false;
-        }
         if (!this.scanTxUrlMap.has(chain)) {
             console.error("not supported chain");
+            return false;
+        }
+        if (startBlock < 0) {
+            console.error("scan from negative block number");
             return false;
         }
         return true;
     }
 
-    async fetchTxList(chain: string, startBlock: number): Promise<TxList> {
+    async fetchNormalTxList(chain: string, startBlock: number): Promise<NormalTxList> {
         if (!this.check(chain, startBlock)) return [];
         const queryURL = this.scanTxUrlMap.get(chain) + `&address=${this.account}&startblock=${startBlock}`;
         const res = await fetch(queryURL);
@@ -85,9 +158,9 @@ export class Scanner {
         return (await res.json()).result;
     }
 
-    async getRanking(txList: TxList): Promise<Map<string, number>> {
+    async getFrequencyRanking(normalTxList: NormalTxList): Promise<FrequencyRanking> {
         const frequencyMap = new Map<string, number>();
-        txList.map((tx) => {
+        normalTxList.map((tx) => {
             const interactiveAddress = this.account === tx.from ? tx.to : tx.from;
             if (frequencyMap.has(interactiveAddress)) {
                 const currFreq = frequencyMap.get(interactiveAddress);
@@ -96,6 +169,16 @@ export class Scanner {
                 frequencyMap.set(interactiveAddress, 1);
             }
         });
-        return new Map([...frequencyMap.entries()].sort((a,b) => b[1] - a[1]));
+        const frequencyPairs = [...frequencyMap.entries()].sort((a,b) => b[1] - a[1]);
+        return frequencyPairs.map(pair => ({
+            contractAddress: pair[0],
+            frequency: pair[1],
+        }));
     }
 }
+
+export const scanner = new Scanner(
+    process.env.ETHERSCAN_API_KEY,
+    process.env.POLYGONSCAN_API_KEY,
+    process.env.BSCSCAN_API_KEY,
+)
