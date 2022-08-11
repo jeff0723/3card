@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useReducer } from 'react'
 import { Message, ListMessagesQuery, CreateMessageMutation } from "API"
 import GraphQLAPI, { graphqlOperation } from '@aws-amplify/api-graphql'
 import { listMessages } from 'graphql/amplify/queries'
@@ -8,6 +8,8 @@ import { onCreateMessageByConversationId } from 'graphql/amplify/subscriptions'
 import { useAccount } from 'wagmi'
 import { API } from 'aws-amplify'
 import SingleMessage from './SingleMessage'
+import { useRouter } from 'next/router'
+import { time } from 'node:console'
 
 type Props = {
     conversationId: string
@@ -15,21 +17,22 @@ type Props = {
 }
 
 const MessageBox = ({ conversationId, peerAddress }: Props) => {
-
     const { address } = useAccount()
     const [stateMessages, setStateMessages] = useState<Message[]>([])
-    const [message, setMesaage] = useState("")
+    const [message, setMessage] = useState("")
     useEffect(() => {
+
         const subscription = API.graphql({
             query: onCreateMessageByConversationId,
             variables: {
                 conversationId: conversationId
             }
         });
+        console.log(subscription)
         if ('subscribe' in subscription) {
+
             const sb = subscription.subscribe({
                 next: ({ provider, value }: any) => {
-                    console.log(value)
                     setStateMessages(
                         [...stateMessages,
                         value.data.onCreateMessageByConversationId
@@ -41,9 +44,9 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
                 }
             });
         }
-    }, []);
+    }, [conversationId]);
     useEffect(() => {
-        const fechtMessages = async () => {
+        const fetchMessages = async () => {
             const { data } = await GraphQLAPI.graphql(
                 {
                     query: listMessages,
@@ -51,17 +54,19 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
                         filter: { conversationId: { eq: conversationId } }
                     },
                 }) as { data: ListMessagesQuery }
-            setStateMessages(data.listMessages?.items as Message[] || [])
+            const sortedData = (data.listMessages?.items as Message[])
+                .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+            setStateMessages(sortedData)
         }
-        fechtMessages()
-
+        fetchMessages()
     }, [conversationId])
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setMesaage(e.target.value)
+        setMessage(e.target.value)
     }
     const handleSend = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (!message) return
+        if (message.trim() === '') return
+        if (!address) return
         try {
             const { data } = await GraphQLAPI.graphql({
                 query: createMessage,
@@ -74,18 +79,34 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
                     }
                 }
             }) as { data: CreateMessageMutation }
+            const timestamp = (new Date()).toISOString()
+            const newMessage: Message =
+            {
+                __typename: "Message",
+                id: "",
+                conversationId,
+                body: message,
+                createdAt: timestamp,
+                sender: address,
+                receiver: peerAddress,
+                updatedAt: timestamp,
+            }
+            setStateMessages(
+                [...stateMessages,
+                    newMessage
+                ])
         } catch (e) {
             console.log(e)
         } finally {
-            setMesaage("")
+            setMessage("")
         }
     }
+
 
     return (
         <div className='h-full py-4 flex flex-col justify-end '>
             <div className='h-[700px] flex flex-col overflow-y-auto gap-2 py-4'>
                 {stateMessages
-                    .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
                     .map((item, index) => (
                         <SingleMessage
                             key={index}

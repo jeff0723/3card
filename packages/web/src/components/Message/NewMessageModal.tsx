@@ -30,7 +30,7 @@ const NewMessageModal = (props: Props) => {
     }
     const isButtonEnable = address !== undefined && searchInput.length > 0
 
-    const creaeteNewConversation = async () => {
+    const createNewConversation = async () => {
         if (searchInput && address) {
             try {
                 setLoading(true)
@@ -119,7 +119,7 @@ const NewMessageModal = (props: Props) => {
                                     </div>
                                     <Button
                                         disabled={!isButtonEnable}
-                                        onClick={creaeteNewConversation}
+                                        onClick={createNewConversation}
                                         icon={loading && <Spinner size='xs' />}
                                     >
                                         Next
