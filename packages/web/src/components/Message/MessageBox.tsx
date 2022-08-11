@@ -25,24 +25,7 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
             variables: {
                 conversationId: conversationId
             }
-        });
-        if ('subscribe' in subscription) {
-            const sb = subscription.subscribe({
-                next: ({ provider, value }: any) => {
-                    console.log(value)
-                    setStateMessages(
-                        [...stateMessages,
-                        value.data.onCreateMessageByConversationId
-                        ]
-                    )
-                },
-                error: (error: any) => {
-                    console.log(error)
-                }
-            });
-        }
-    }, []);
-    useEffect(() => {
+        })
         const fechtMessages = async () => {
             const { data } = await GraphQLAPI.graphql(
                 {
@@ -51,11 +34,31 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
                         filter: { conversationId: { eq: conversationId } }
                     },
                 }) as { data: ListMessagesQuery }
-            setStateMessages(data.listMessages?.items as Message[] || [])
+            setStateMessages(data.listMessages?.items as Message[])
         }
         fechtMessages()
+        .then(() => {
+            console.log("subscription:", subscription)
+            if ('subscribe' in subscription) {
+                const sb = subscription.subscribe({
+                    next: ({ provider, value }: any) => {
+                        setStateMessages(
+                            [...stateMessages,
+                            value.data.onCreateMessageByConversationId as Message
+                            ]
+                        )
+                    },
+                    error: (error: any) => {
+                        console.log(error)
+                    }
+                });
+            }
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    }, []);
 
-    }, [conversationId])
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMesaage(e.target.value)
     }

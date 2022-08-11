@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
+import AWS from 'aws-sdk';
 import { utils } from 'ethers';
 import * as dotenv from 'dotenv';
 
@@ -10,6 +11,13 @@ const scanAPIKeyMap = new Map<string, string | undefined>([
   ['polygon', process.env.polygonscanAPIKey],
   ['bsc', process.env.bscscanAPIKey],
 ]);
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
+
+const S3 = new AWS.S3();
 
 export default async function handler(
   req: NextApiRequest,
@@ -56,11 +64,23 @@ export default async function handler(
         frequency: pair[1],
       }));
       res.status(200).json({
-        account: account,
-        chain: chain,
-        txlist: txlist,
-        ranking: ranking,
+        account,
+        chain,
+        txlist,
+        ranking,
       });
+      const txListPayload = {
+        Bucket: '3card',
+        Key: `onchain/${account}/${chain}/txlist`,
+        Body: JSON.stringify(txlist),
+      };
+      S3.upload(txListPayload).promise();
+      const rankingPayload = {
+        Bucket: '3card',
+        Key: `onchain/${account}/${chain}/ranking`,
+        Body: JSON.stringify(ranking),
+      };
+      S3.upload(rankingPayload).promise();
     }
   }
 }
