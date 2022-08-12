@@ -23,9 +23,7 @@ import CreateProfileModal from "./CreateProfileModal"
 import ProfileCard from "./ProfileCard"
 
 type Props = {}
-const Container = styled.div`
-    height: calc(100vh - 60px);
-`
+
 const Column = styled.div`
     display: flex;
     flex-direction: column;
@@ -120,7 +118,7 @@ function SideBar({ }: Props) {
         }
     };
     return (
-        <Container className='border border-transparent border-r-[#2F3336] flex flex-col justify-between px-4 pb-10'>
+        <div className='border border-transparent border-r-[#2F3336] flex flex-col justify-between px-4 pb-4'>
             <Column>
                 <Link href='/'>
                     <div className='rounded-md hover:bg-white hover:bg-opacity-10'>
@@ -136,20 +134,36 @@ function SideBar({ }: Props) {
                         </Text>
                     </div>
                 </Link>
-                <Link href='/messages'>
-                    <div className='rounded-md hover:bg-white hover:bg-opacity-10'>
-                        <Text>
-                            Messages
-                        </Text>
-                    </div>
-                </Link>
-                <Link href='/profile'>
-                    <div className='rounded-md hover:bg-white hover:bg-opacity-10'>
-                        <Text>
-                            Profile
-                        </Text>
-                    </div>
-                </Link>
+
+                {
+                    currentUser && (
+                        <>
+                            <Link href='/messages'>
+                                <div className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                                    <Text>
+                                        Messages
+                                    </Text>
+                                </div>
+                            </Link>
+                            <Link href={`/card`}>
+                                <div className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                                    <Text>
+                                        Card
+                                    </Text>
+                                </div>
+                            </Link>
+                            <Link href={`/user/${currentUser.handle}`}>
+                                <div className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                                    <Text>
+                                        Profile
+                                    </Text>
+                                </div>
+                            </Link>
+
+                        </>
+                    )
+                }
+
 
             </Column>
             <div className="flex flex-col gap-2">
@@ -170,7 +184,7 @@ function SideBar({ }: Props) {
                 {!isLoading && isConnected && currentUser && <ProfileCard profile={currentUser} />}
             </div>
             <CreateProfileModal open={open} setOpen={setOpen} />
-        </Container>
+        </div>
     )
 }
 

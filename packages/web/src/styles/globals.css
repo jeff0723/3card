@@ -9,6 +9,11 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
+[contenteditable=true]:empty:before{
+  content: attr(placeholder);
+  @apply text-gray-400;
+}
+
 .loading{
   @apply animate-pulse;
   @apply bg-gray-300;

@@ -1,3 +1,4 @@
+import { Spinner } from "components/UI/Spinner";
 import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useAppSelector } from "state/hooks";
@@ -5,7 +6,10 @@ import styled from "styled-components";
 import CreateProfileHelper from "./CreateProfileHelper";
 import Feed from "./Feed";
 import RecommendUser from "./RecommendUser";
-
+import { HiPlus } from 'react-icons/hi'
+import Modal from "components/UI/Modal";
+import { FiX } from "react-icons/fi";
+import CreatePost from "./CreatePost";
 interface Item {
   [key: string]: string;
   pubDate: string;
@@ -24,7 +28,6 @@ const Content = styled.div`
   flex-direction: column;
   align-items: flex-start;
   padding: 0px 16px;
-  overflow-y: scroll;
   flex-shrink: 0;
   border-right: 1px solid #2F3336;
 }
@@ -68,6 +71,9 @@ const Home = ({ feeds }: Props) => {
   const [hasMore, setHasMore] = useState(true);
   const [feedLength, setFeedLength] = useState(0);
   const [itemLength, setItemLength] = useState(0);
+  const [open, setOpen] = useState(false)
+  const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
+  const currentUser = useAppSelector(state => state.user.currentUser)
   useEffect(() => {
     setItems(feeds?.slice(0, BATCHSIZE) || []);
     setFeedLength(feeds?.length || 0);
@@ -77,32 +83,46 @@ const Home = ({ feeds }: Props) => {
     if (itemLength + BATCHSIZE >= feedLength) {
       setHasMore(false);
     }
+
     setItemLength(items.length + BATCHSIZE);
     setItems([
       ...items,
       ...(feeds?.slice(items.length, items.length + BATCHSIZE) || []),
     ]);
+
   };
 
   return (
     <>
-      <div style={{ display: "flex", width: "100%" }}>
-        <Content>
+      <div style={{ display: "flex", width: "100%", position: 'relative' }}>
+        <Content >
+          {isAuthenticated && currentUser &&
+            <button
+              className="absolute flex items-center justify-center w-14 h-14 rounded-full bg-primary-blue bg-opacity-30 bottom-5 right-10 text-[20px] text-sky-400 hover:bg-opacity-50 disabled:bg-opacity-50"
+              onClick={() => { setOpen(true) }}>
+              <HiPlus />
+            </button>
+          }
+
+          <CreatePost open={open} setOpen={setOpen} />
           <Header>
             <Title>Feeds</Title>
             <Subtitle>Things keep you ahead in web3</Subtitle>
           </Header>
-          <InfiniteScroll
-            dataLength={items.length}
-            next={fetchMoreData}
-            hasMore={hasMore}
-            loader={<div>loading</div>}
-            endMessage={<h4>Nothing more to show</h4>}
-          >
-            {items?.map((item, index) => (
-              <Feed key={index} item={item} />
-            ))}
-          </InfiniteScroll>
+          <div className="overflow-y-auto" id='scrollableDiv'>
+            <InfiniteScroll
+              dataLength={items.length}
+              next={fetchMoreData}
+              hasMore={hasMore}
+              loader={<div className="flex justify-center"><Spinner size="md" /></div>}
+              endMessage={<h4>Nothing more to show</h4>}
+              scrollableTarget="scrollableDiv"
+            >
+              {items?.map((item, index) => (
+                <Feed key={index} item={item} />
+              ))}
+            </InfiniteScroll>
+          </div>
         </Content>
         <FunctionContainer>
           <FilterContainer>
@@ -121,7 +141,6 @@ const Home = ({ feeds }: Props) => {
               )
             )}
           </FilterContainer>
-          <RecommendUser />
         </FunctionContainer>
       </div>
     </>

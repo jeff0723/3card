@@ -11,6 +11,7 @@ import ProfileTabs from './ProfileTabs'
 import Content from './Content'
 import { current } from '@reduxjs/toolkit'
 import NFTFeed from './NFTFeed'
+import getIPFSLink from 'utils/getIPFSLink'
 type Props = {}
 export enum TabType {
     POST = 'POST',
@@ -57,10 +58,13 @@ const Profile: NextPage = (props: Props) => {
             <div className='grid grid-cols-3 '>
                 <div className='col-span-1 h-full flex flex-col items-center -mt-24 gap-[10px] object-cover'>
                     <div className='h-[196px] w-[196px] '>
-                        <img
-                            className='ring-8 ring-black rounded-full bg-black object-center w-[196px] h-[196px] object-cover'
-                            src={profile?.picture?.original?.url || profile?.picture?.uri}
-                        />
+                        {
+                            profile?.picture?.original?.url || profile?.picture?.uri ? (<img
+                                className='ring-8 ring-black rounded-full bg-black object-center w-[196px] h-[196px] object-cover'
+                                src={getIPFSLink(profile?.picture?.original?.url || profile?.picture?.uri)}
+                            />) : <div className='ring-8 ring-black rounded-full bg-black object-center w-[196px] h-[196px] object-cover' />
+                        }
+
                     </div>
                     <div className='flex flex-col justify-center items-start gap-[12px]'>
                         <div>

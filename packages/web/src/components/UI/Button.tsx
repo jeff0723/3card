@@ -45,7 +45,7 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
                     'border border-yellow bg-black text-yello text-yellow':
                         outline && color === 'yellow',
                 },
-                'flex space-x-1.5 justify-center items-center rounded-[16px] px-2 py-2 text-sm font-medium disabled:bg-opacity-50 disabled:cursor-not-allowed',
+                'flex space-x-1.5 justify-center items-center rounded-[16px] px-4 py-2 text-sm font-medium disabled:bg-opacity-50 disabled:cursor-not-allowed',
                 className)}
             disabled={loading}
             type={rest.type}
