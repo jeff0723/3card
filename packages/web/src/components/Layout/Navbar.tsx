@@ -7,7 +7,7 @@ const NavbarContainer = styled.div`
     justify-content: space-between;
     padding: 10px 16px 0px 16px;
     position: fixed;
-    z-index: 40;
+    z-index: 1;
     max-width: 1200px;
     width: 100%;
     height: 60px;

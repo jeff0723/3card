@@ -1,12 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { Profile } from 'generated/types';
+import { Profile, MediaSet, NftImage } from 'generated/types';
 
 
 export interface UserState {
     isConnected: boolean;
     isAuthenticated: boolean;
     hasProfile: boolean;
-    currentUser: Profile | null;
+    currentUser: Profile & { picture: MediaSet & NftImage } | null;
 }
 export const initialState: UserState = {
     isConnected: false,

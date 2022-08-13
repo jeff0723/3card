@@ -8,6 +8,7 @@ import PostBody from './PostBody'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import ProfileLoading from './ProfileLoading'
 import { HiOutlineHeart, HiOutlineSwitchHorizontal, } from "react-icons/hi";
+import { Spinner } from 'components/UI/Spinner'
 
 interface Props {
     currentTab: string
@@ -61,7 +62,7 @@ const Content = ({ currentTab, profile }: Props) => {
                 <InfiniteScroll
                     dataLength={publications.length}
                     next={fetchMoreData}
-                    loader={<div>loading</div>}
+                    loader={<div className='flex justify-center'><Spinner size='md' /></div>}
                     hasMore={pageInfo?.next && pageInfo?.totalCount && publications.length !== pageInfo?.totalCount}
                     endMessage={<h4>Nothing more to show</h4>}
                 >

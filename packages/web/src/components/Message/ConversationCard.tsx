@@ -30,9 +30,6 @@ const ConversationCard = ({ conversationId, participants, lastMessage, updateAt 
         setHandle(data?.profiles?.items[0]?.handle)
       }
     })
-  console.log(data)
-  console.log(user)
-  console.log("loading", loading)
   return (
     <Link href={`/messages/${conversationId}`}>
       <div className='flex gap-2 p-4 '>
