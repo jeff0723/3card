@@ -1,23 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import AWS from 'aws-sdk';
+import { S3 } from 'aws';
+import { scanAPIKeyMap } from 'scan';
 import { utils } from 'ethers';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
-
-const scanAPIKeyMap = new Map<string, string | undefined>([
-  ['ether', process.env.etherscanAPIKey],
-  ['polygon', process.env.polygonscanAPIKey],
-  ['bsc', process.env.bscscanAPIKey],
-]);
-
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-});
-
-const S3 = new AWS.S3();
 
 export default async function handler(
   req: NextApiRequest,
@@ -43,14 +28,14 @@ export default async function handler(
   } else {
     S3.getObject({
       Bucket: '3card',
-      Key: `onchain/${account.toLowerCase()}/${chain}/erc20events`,
+      Key: `onchain/${account.toLowerCase()}/${chain}/ranking`,
     }, (err, out) => {
       if (err === null) {
-        const erc20events = out.Body? JSON.parse(out.Body.toString()):[];
+        const ranking = out.Body? JSON.parse(out.Body.toString()):[];
         res.status(200).json({
           account,
           chain,
-          erc20events,
+          ranking,
         });
       } else {
         res.status(500).json({

@@ -1,27 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import AWS from 'aws-sdk';
+import { S3 } from 'aws';
+import { scanAPIKeyMap } from 'scan';
 import { utils } from 'ethers';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
-
-const scanAPIKeyMap = new Map<string, string | undefined>([
-  ['ether', process.env.etherscanAPIKey],
-  ['polygon', process.env.polygonscanAPIKey],
-  ['bsc', process.env.bscscanAPIKey],
-]);
-
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-});
-
-const S3 = new AWS.S3();
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const { account, chain } = req.query;
   if (
