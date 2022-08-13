@@ -1,51 +1,27 @@
-import React, { useEffect, useState, useReducer } from 'react'
-import { Message, ListMessagesQuery, CreateMessageMutation } from "API"
-import GraphQLAPI, { graphqlOperation } from '@aws-amplify/api-graphql'
-import { listMessages } from 'graphql/amplify/queries'
-import { createMessage } from 'graphql/amplify/mutations'
-import { onCreateMessageByConversationId } from 'graphql/amplify/subscriptions'
+import React, { useEffect, useState } from "react";
+import { Message, ListMessagesQuery, CreateMessageMutation } from "API";
+import GraphQLAPI, { graphqlOperation } from "@aws-amplify/api-graphql";
+import { listMessages } from "graphql/amplify/queries";
+import { createMessage } from "graphql/amplify/mutations";
+import { onCreateMessageByConversationId } from "graphql/amplify/subscriptions";
+import { GraphQLSubscription, GraphQLQuery } from "@aws-amplify/api";
 
-import { useAccount } from 'wagmi'
-import { API } from 'aws-amplify'
-import SingleMessage from './SingleMessage'
-import { useRouter } from 'next/router'
-import { time } from 'node:console'
+
+import { useAccount } from "wagmi";
+import { API } from "aws-amplify";
+import SingleMessage from "./SingleMessage";
 
 type Props = {
-    conversationId: string
-    peerAddress: string
-}
+    conversationId: string;
+    peerAddress: string;
+};
 
 const MessageBox = ({ conversationId, peerAddress }: Props) => {
-    const { address } = useAccount()
-    const [stateMessages, setStateMessages] = useState<Message[]>([])
-    const [message, setMessage] = useState("")
+    const { address } = useAccount();
+    const [stateMessages, setStateMessages] = useState<Message[]>([]);
+    const [message, setMessage] = useState("");
     useEffect(() => {
 
-        const subscription = API.graphql({
-            query: onCreateMessageByConversationId,
-            variables: {
-                conversationId: conversationId
-            }
-        });
-        console.log(subscription)
-        if ('subscribe' in subscription) {
-
-            const sb = subscription.subscribe({
-                next: ({ provider, value }: any) => {
-                    setStateMessages(
-                        [...stateMessages,
-                        value.data.onCreateMessageByConversationId
-                        ]
-                    )
-                },
-                error: (error: any) => {
-                    console.log(error)
-                }
-            });
-        }
-    }, [conversationId]);
-    useEffect(() => {
         const fetchMessages = async () => {
             const { data } = await GraphQLAPI.graphql(
                 {
@@ -54,21 +30,64 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
                         filter: { conversationId: { eq: conversationId } }
                     },
                 }) as { data: ListMessagesQuery }
-            const sortedData = (data.listMessages?.items as Message[])
-                .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
-            setStateMessages(sortedData)
+            setStateMessages(data.listMessages?.items as Message[])
         }
         fetchMessages()
-    }, [conversationId])
+
+
+        //     .then(() => {
+        //         console.log("subscription:", subscription)
+        //         if ('subscribe' in subscription) {
+        //             const sb = subscription.subscribe({
+        //                 next: ({ provider, value }: any) => {
+        //                     setStateMessages(
+        //                         [...stateMessages,
+        //                         value.data.onCreateMessageByConversationId as Message
+        //                         ]
+        //                     )
+        //                 },
+        //                 error: (error: any) => {
+        //                     console.log(error)
+        //                 }
+        //             });
+        //         }
+        //     })
+        //     .catch(err => {
+        //         console.log(err)
+        //     })
+    }, []);
+    useEffect(() => {
+        const subscription = API.graphql<GraphQLSubscription<Message>>({
+            query: onCreateMessageByConversationId,
+            variables: {
+                conversationId: conversationId
+            }
+        }).subscribe({
+            next: (event: any) => {
+                setStateMessages(
+                    [...stateMessages,
+                    event.value.data.onCreateMessageByConversationId as Message
+                    ]
+                )
+            },
+            error: (error: any) => {
+                console.log(error)
+            }
+        });
+        return () => {
+            subscription.unsubscribe();
+        }
+    }, [stateMessages])
+
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setMessage(e.target.value)
-    }
+        setMessage(e.target.value);
+    };
     const handleSend = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        if (message.trim() === '') return
-        if (!address) return
+        e.preventDefault();
+        if (message.trim() === '') return;
         try {
-            const { data } = await GraphQLAPI.graphql({
+            const { data } = (await GraphQLAPI.graphql({
                 query: createMessage,
                 variables: {
                     input: {
@@ -76,37 +95,21 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
                         body: message,
                         sender: address,
                         receiver: peerAddress,
-                    }
-                }
-            }) as { data: CreateMessageMutation }
-            const timestamp = (new Date()).toISOString()
-            const newMessage: Message =
-            {
-                __typename: "Message",
-                id: "",
-                conversationId,
-                body: message,
-                createdAt: timestamp,
-                sender: address,
-                receiver: peerAddress,
-                updatedAt: timestamp,
-            }
-            setStateMessages(
-                [...stateMessages,
-                    newMessage
-                ])
+                    },
+                },
+            })) as { data: CreateMessageMutation };
         } catch (e) {
-            console.log(e)
+            console.log(e);
         } finally {
-            setMessage("")
+            setMessage("");
         }
-    }
-
-
+        console.log(stateMessages);
+    };
     return (
-        <div className='h-full py-4 flex flex-col justify-end '>
-            <div className='h-[700px] flex flex-col overflow-y-auto gap-2 py-4'>
+        <div className="h-full py-4 flex flex-col justify-end ">
+            <div className="h-[700px] flex flex-col overflow-y-auto gap-2 py-4">
                 {stateMessages
+                    .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
                     .map((item, index) => (
                         <SingleMessage
                             key={index}
@@ -118,14 +121,20 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
                     ))}
             </div>
             {/* <div className='flex justify-between py-2 px-2 border border-[#2F3336]'> */}
-            <form className='flex justify-between py-2 px-2' onSubmit={handleSend}>
-                <input placeholder='Start a new message' onChange={handleChange} value={message}
-                    className='bg-black focus:outline-none' />
-                <button type='submit' className='text-primary-blue'>SEND</button>
+            <form className="flex justify-between py-2 px-2" onSubmit={handleSend}>
+                <input
+                    placeholder="Start a new message"
+                    onChange={handleChange}
+                    value={message}
+                    className="bg-black focus:outline-none"
+                />
+                <button type="submit" className="text-primary-blue">
+                    SEND
+                </button>
             </form>
             {/* </div> */}
         </div>
-    )
-}
+    );
+};
 
-export default MessageBox
+export default MessageBox;
