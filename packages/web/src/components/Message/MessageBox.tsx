@@ -34,28 +34,7 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
         }
         fetchMessages()
 
-
-        //     .then(() => {
-        //         console.log("subscription:", subscription)
-        //         if ('subscribe' in subscription) {
-        //             const sb = subscription.subscribe({
-        //                 next: ({ provider, value }: any) => {
-        //                     setStateMessages(
-        //                         [...stateMessages,
-        //                         value.data.onCreateMessageByConversationId as Message
-        //                         ]
-        //                     )
-        //                 },
-        //                 error: (error: any) => {
-        //                     console.log(error)
-        //                 }
-        //             });
-        //         }
-        //     })
-        //     .catch(err => {
-        //         console.log(err)
-        //     })
-    }, []);
+    }, [conversationId]);
     useEffect(() => {
         const subscription = API.graphql<GraphQLSubscription<Message>>({
             query: onCreateMessageByConversationId,
@@ -64,6 +43,7 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
             }
         }).subscribe({
             next: (event: any) => {
+                console.log(event.value)
                 setStateMessages(
                     [...stateMessages,
                     event.value.data.onCreateMessageByConversationId as Message
@@ -77,14 +57,14 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
         return () => {
             subscription.unsubscribe();
         }
-    }, [stateMessages])
+    }, [conversationId])
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(e.target.value);
     };
-    const handleSend = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const handleSend = async () => {
+        // e.preventDefault();
         if (message.trim() === '') return;
         try {
             const { data } = (await GraphQLAPI.graphql({
@@ -98,6 +78,7 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
                     },
                 },
             })) as { data: CreateMessageMutation };
+            console.log(data)
         } catch (e) {
             console.log(e);
         } finally {
@@ -105,6 +86,8 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
         }
         console.log(stateMessages);
     };
+    console.log('test');
+
     return (
         <div className="h-full py-4 flex flex-col justify-end ">
             <div className="h-[700px] flex flex-col overflow-y-auto gap-2 py-4">
@@ -121,17 +104,17 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
                     ))}
             </div>
             {/* <div className='flex justify-between py-2 px-2 border border-[#2F3336]'> */}
-            <form className="flex justify-between py-2 px-2" onSubmit={handleSend}>
+            <div className="flex justify-between py-2 px-2" >
                 <input
                     placeholder="Start a new message"
                     onChange={handleChange}
                     value={message}
                     className="bg-black focus:outline-none"
                 />
-                <button type="submit" className="text-primary-blue">
+                <button type="submit" className="text-primary-blue" onClick={handleSend}>
                     SEND
                 </button>
-            </form>
+            </div>
             {/* </div> */}
         </div>
     );
