@@ -6,6 +6,8 @@ import { useAccount } from 'wagmi'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import Link from 'next/link'
+import Image from 'next/image'
+
 dayjs.extend(relativeTime)
 type Props = {
   conversationId: string
@@ -35,7 +37,7 @@ const ConversationCard = ({ conversationId, participants, lastMessage, updateAt 
       <div className='flex gap-2 p-4 '>
         <div>
           {!avatar && <div className="rounded-full loading w-12 h-12" />}
-          {avatar && <img src={avatar} className='rounded-full w-12 h-12' />}
+          {avatar && <Image src={avatar} className='rounded-full w-12 h-12' alt='conversationTo' />}
         </div>
         <div className='flex flex-col'>
           <div>{name} <span className='text-gray-400'>@{handle} · {dayjs(new Date(updateAt)).fromNow()}</span></div>

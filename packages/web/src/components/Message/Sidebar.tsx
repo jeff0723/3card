@@ -45,25 +45,25 @@ const Sidebar: FC<Props> = () => {
         }
         listConversationQuery()
         console.log(conversations)
-        conversations.forEach(conversation => {
-            const subscription = API.graphql<GraphQLSubscription<UpdateConversationMutation>>({
-                query: onUpdateConversation,
-                variables: {
-                    conversationId: conversation.conversationId,
-                    lastMessage: conversation.lastMessage,
-                }
-            }).subscribe({
-                next: (event: any) => {
-                    console.log(event.value)
-                },
-                error: (error: any) => {
-                    console.log(error)
-                }
-            });
-            return () => {
-                subscription.unsubscribe();
-            }
-        })
+        //     conversations.forEach(conversation => {
+        //         const subscription = API.graphql<GraphQLSubscription<UpdateConversationMutation>>({
+        //             query: onUpdateConversation,
+        //             variables: {
+        //                 conversationId: conversation.conversationId,
+        //                 lastMessage: conversation.lastMessage,
+        //             }
+        //         }).subscribe({
+        //             next: (event: any) => {
+        //                 console.log(event.value)
+        //             },
+        //             error: (error: any) => {
+        //                 console.log(error)
+        //             }
+        //         });
+        //         return () => {
+        //             subscription.unsubscribe();
+        //         }
+        //     })
     }, [address])
     return (
         <div>
