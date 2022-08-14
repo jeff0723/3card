@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Message, ListMessagesQuery, CreateMessageMutation } from "API";
+import { Message, ListMessagesQuery, CreateMessageMutation, UpdateConversationMutation } from "API";
 import GraphQLAPI, { graphqlOperation } from "@aws-amplify/api-graphql";
 import { listMessages } from "graphql/amplify/queries";
-import { createMessage } from "graphql/amplify/mutations";
+import { createMessage, updateConversation } from "graphql/amplify/mutations";
 import { onCreateMessageByConversationId } from "graphql/amplify/subscriptions";
 import { GraphQLSubscription, GraphQLQuery } from "@aws-amplify/api";
 
@@ -57,14 +57,14 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
         return () => {
             subscription.unsubscribe();
         }
-    }, [conversationId])
+    }, [conversationId, stateMessages])
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(e.target.value);
     };
-    const handleSend = async () => {
-        // e.preventDefault();
+    const handleSend = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         if (message.trim() === '') return;
         try {
             const { data } = (await GraphQLAPI.graphql({
@@ -78,15 +78,22 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
                     },
                 },
             })) as { data: CreateMessageMutation };
-            console.log(data)
+            const { update } = (await GraphQLAPI.graphql({
+                query: updateConversation,
+                variables: {
+                    input: {
+                        conversationId: conversationId,
+                        lastMessage: message,
+                    },
+                },
+            })) as { update: UpdateConversationMutation }
         } catch (e) {
             console.log(e);
         } finally {
             setMessage("");
+            console.log(stateMessages);
         }
-        console.log(stateMessages);
     };
-    console.log('test');
 
     return (
         <div className="h-full py-4 flex flex-col justify-end ">
@@ -104,19 +111,19 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
                     ))}
             </div>
             {/* <div className='flex justify-between py-2 px-2 border border-[#2F3336]'> */}
-            <div className="flex justify-between py-2 px-2" >
+            <form className="flex justify-between py-2 px-2" onSubmit={handleSend}>
                 <input
                     placeholder="Start a new message"
                     onChange={handleChange}
                     value={message}
                     className="bg-black focus:outline-none"
                 />
-                <button type="submit" className="text-primary-blue" onClick={handleSend}>
+                <button type="submit" className="text-primary-blue">
                     SEND
                 </button>
-            </div>
+            </form>
             {/* </div> */}
-        </div>
+        </div >
     );
 };
 

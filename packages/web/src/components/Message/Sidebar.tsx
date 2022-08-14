@@ -2,12 +2,15 @@ import React, { FC, ReactNode, useEffect, useState } from 'react'
 import { FaPlus } from 'react-icons/fa'
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { setIsNewMessageModalOpen } from 'state/application/reducer';
-import { ListConversationsQuery, Conversation } from 'API';
+import { ListConversationsQuery, Conversation, UpdateConversationMutation } from 'API';
 import GraphQLAPI from '@aws-amplify/api-graphql';
 import { listConversations } from 'graphql/amplify/queries';
 import { useAccount } from 'wagmi';
 import ConversationCard from './ConversationCard';
 import NewMessageModal from './NewMessageModal';
+import { API } from "aws-amplify";
+import { GraphQLSubscription, GraphQLQuery } from "@aws-amplify/api";
+import { onUpdateConversation } from 'graphql/amplify/subscriptions';
 
 
 interface Props {
@@ -28,19 +31,39 @@ const Sidebar: FC<Props> = () => {
         dispatch(setIsNewMessageModalOpen({ isNewMessageModalOpen: true }))
     }
     const [conversations, setConversations] = useState<Conversation[]>([])
-    const listConversationQuery = async () => {
-        const { data } = await GraphQLAPI.graphql({
-            query: listConversations,
-            variables: {
-                filter: { participants: { contains: address } }
-            }
-        }) as { data: ListConversationsQuery }
-
-        setConversations(data.listConversations?.items as Conversation[] || [])
-    }
 
     useEffect(() => {
+        const listConversationQuery = async () => {
+            const { data } = await GraphQLAPI.graphql({
+                query: listConversations,
+                variables: {
+                    filter: { participants: { contains: address } }
+                }
+            }) as { data: ListConversationsQuery }
+
+            setConversations(data.listConversations?.items as Conversation[] || [])
+        }
         listConversationQuery()
+        console.log(conversations)
+        conversations.forEach(conversation => {
+            const subscription = API.graphql<GraphQLSubscription<UpdateConversationMutation>>({
+                query: onUpdateConversation,
+                variables: {
+                    conversationId: conversation.conversationId,
+                    lastMessage: conversation.lastMessage,
+                }
+            }).subscribe({
+                next: (event: any) => {
+                    console.log(event.value)
+                },
+                error: (error: any) => {
+                    console.log(error)
+                }
+            });
+            return () => {
+                subscription.unsubscribe();
+            }
+        })
     }, [address])
     return (
         <div>
