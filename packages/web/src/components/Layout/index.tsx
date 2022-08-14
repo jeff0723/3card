@@ -53,7 +53,7 @@ const toastOptions = {
             secondary: "white",
         },
     },
-    loading: { className: "border border-gray-300" },
+    loading: { className: "border border-yello-300" },
 };
 const Layout: FC<Props> = ({ children }) => {
     const [mounted, setMounted] = useState<boolean>(false);

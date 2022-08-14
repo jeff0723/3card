@@ -152,6 +152,13 @@ function SideBar({ }: Props) {
                                     </Text>
                                 </div>
                             </Link>
+                            <Link href={`/collect`}>
+                                <div className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                                    <Text>
+                                        Collected
+                                    </Text>
+                                </div>
+                            </Link>
                             <Link href={`/user/${currentUser.handle}`}>
                                 <div className='rounded-md hover:bg-white hover:bg-opacity-10'>
                                     <Text>

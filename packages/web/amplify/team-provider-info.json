@@ -17,6 +17,9 @@
           "appId": "d1ii4vecbnpvlp",
           "type": "manual"
         }
+      },
+      "auth": {
+        "undefined": {}
       }
     }
   }

@@ -11,10 +11,12 @@ import { Message, ListMessagesQuery } from "API"
 import { CURRENT_USER_QUERY } from 'graphql/query/user'
 import { useLazyQuery, useQuery } from '@apollo/client'
 
+interface Props {
+    messages: Message[]
+}
 
 
-
-const ChatPage: NextPage = () => {
+const ChatPage: NextPage<Props> = ({ messages }) => {
     const { address } = useAccount()
     const { query: { chatId } } = useRouter()
     const [peerAddress, setPeerAddress] = useState("")
@@ -50,6 +52,8 @@ const ChatPage: NextPage = () => {
             })
 
     console.log("Peer address:", peerAddress)
+    console.log("messages:", messages)
+
     return (
         <div className='grid grid-cols-3 w-full'>
             <div className='col-span-1 flex flex-col overflow-y-auto border border-transparent border-r-[#2F3336]'>
@@ -70,7 +74,7 @@ const ChatPage: NextPage = () => {
 
                         </div>
                     </div>
-                    <MessageBox conversationId={chatId as string} peerAddress={peerAddress} />
+                    <MessageBox messages={messages} conversationId={chatId as string} peerAddress={peerAddress} />
                 </div>
             </div>
         </div>
@@ -78,4 +82,23 @@ const ChatPage: NextPage = () => {
     )
 }
 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const { query: { chatId } } = context
+    const { data } = await GraphQLAPI.graphql({
+        query: listMessages,
+        variables: {
+            filter: {
+                conversationId: {
+                    eq: chatId
+                }
+            }
+        }
+    }) as { data: ListMessagesQuery }
+    const messages = data?.listMessages?.items
+    return {
+        props: {
+            messages
+        }
+    }
+}
 export default ChatPage

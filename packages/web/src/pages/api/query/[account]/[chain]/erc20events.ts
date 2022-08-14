@@ -25,7 +25,7 @@ export default async function handler(
 ) {
   const { account, chain } = req.query;
   if (
-    typeof account !== 'string' || 
+    typeof account !== 'string' ||
     !utils.isAddress(account)
   ) {
     res.status(500).json({
@@ -46,7 +46,7 @@ export default async function handler(
       Key: `onchain/${account.toLowerCase()}/${chain}/erc20events`,
     }, (err, out) => {
       if (err === null) {
-        const erc20events = out.Body? JSON.parse(out.Body.toString()):[];
+        const erc20events = out.Body ? JSON.parse(out.Body.toString()) : [];
         res.status(200).json({
           account,
           chain,
@@ -57,7 +57,8 @@ export default async function handler(
           account,
           chain,
           message: "key not exists",
-      });
-    }});
+        });
+      }
+    });
   }
 }

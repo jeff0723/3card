@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Message, ListMessagesQuery, CreateMessageMutation } from "API";
 import GraphQLAPI, { graphqlOperation } from "@aws-amplify/api-graphql";
+import { GraphQLSubscription } from '@aws-amplify/api';
 import { listMessages } from "graphql/amplify/queries";
 import { createMessage } from "graphql/amplify/mutations";
 import { onCreateMessageByConversationId } from "graphql/amplify/subscriptions";
@@ -12,51 +13,36 @@ import SingleMessage from "./SingleMessage";
 type Props = {
     conversationId: string;
     peerAddress: string;
+    messages: Message[];
 };
 
-const MessageBox = ({ conversationId, peerAddress }: Props) => {
+const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
     const { address } = useAccount();
     const [stateMessages, setStateMessages] = useState<Message[]>([]);
     const [message, setMesaage] = useState("");
     useEffect(() => {
-        const subscription = API.graphql({
+        setStateMessages([...messages])
+        const subscription = API.graphql<GraphQLSubscription<Message>>({
             query: onCreateMessageByConversationId,
             variables: {
                 conversationId: conversationId
             }
-        })
-        const fechtMessages = async () => {
-            const { data } = await GraphQLAPI.graphql(
-                {
-                    query: listMessages,
-                    variables: {
-                        filter: { conversationId: { eq: conversationId } }
-                    },
-                }) as { data: ListMessagesQuery }
-            setStateMessages(data.listMessages?.items as Message[])
+        }).subscribe({
+            next: (event: any) => {
+                setStateMessages(
+                    (prev) =>
+                        [...prev, event.value.data.onCreateMessageByConversationId]
+                )
+
+            },
+            error: (error: any) => {
+                console.log(error)
+            }
+        });
+        return () => {
+            subscription.unsubscribe();
         }
-        fechtMessages()
-            .then(() => {
-                console.log("subscription:", subscription)
-                if ('subscribe' in subscription) {
-                    const sb = subscription.subscribe({
-                        next: ({ provider, value }: any) => {
-                            setStateMessages(
-                                [...stateMessages,
-                                value.data.onCreateMessageByConversationId as Message
-                                ]
-                            )
-                        },
-                        error: (error: any) => {
-                            console.log(error)
-                        }
-                    });
-                }
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    }, []);
+    }, [conversationId, messages]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMesaage(e.target.value);
@@ -76,13 +62,14 @@ const MessageBox = ({ conversationId, peerAddress }: Props) => {
                     },
                 },
             })) as { data: CreateMessageMutation };
+            console.log(data)
         } catch (e) {
             console.log(e);
         } finally {
             setMesaage("");
         }
+        return false
     };
-    console.log(stateMessages);
     return (
         <div className="h-full py-4 flex flex-col justify-end ">
             <div className="h-[700px] flex flex-col overflow-y-auto gap-2 py-4">

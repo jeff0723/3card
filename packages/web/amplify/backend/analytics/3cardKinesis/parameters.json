@@ -1,0 +1,12 @@
+{
+  "kinesisStreamName": "3cardKinesis",
+  "kinesisStreamShardCount": 1,
+  "authRoleName": {
+    "Ref": "AuthRoleName"
+  },
+  "unauthRoleName": {
+    "Ref": "UnauthRoleName"
+  },
+  "authPolicyName": "kinesis_amplify_824dfa05",
+  "unauthPolicyName": "kinesis_amplify_824dfa05"
+}
