@@ -209,7 +209,7 @@ const CreatePost = ({ open, setOpen }: Props) => {
                         <img src={currentUser?.picture?.original.url} alt="" className="w-10 h-10 rounded-full" />
                     </div>
                     <div className='flex flex-col w-full gap-2 '>
-                        <div className='min-h-[90px]  max-h-[600px] overflow-y-scroll h-fit justify-center items-center ' >
+                        <div className='min-h-[90px]  max-h-[600px] overflow-y-auto h-fit justify-center items-center ' >
                             <div
                                 contentEditable='true'
                                 placeholder="What's in your mind"

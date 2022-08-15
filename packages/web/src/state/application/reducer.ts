@@ -1,12 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { Profile } from 'generated/types';
+import { Profile, MediaSet, NftImage } from 'generated/types';
 
 
 export interface ApplicationState {
-    recommendUser?: Profile | null,
-    isApplicationLoading: boolean,
-    recommendedProfiles: Profile[],
-    isNewMessageModalOpen: boolean
+    recommendUser?: Profile & { picture: MediaSet & NftImage } | null;
+    isApplicationLoading: boolean;
+    recommendedProfiles: Profile & { picture: MediaSet & NftImage } | [];
+    isNewMessageModalOpen: boolean;
 }
 export const initialState: ApplicationState = {
     recommendUser: null,
