@@ -30,40 +30,42 @@ const index: NextPage = (props: Props) => {
     console.log(recommendUser)
     return (
         <div className='grid grid-cols-4 w-full'>
-            <div className='text-[20px] p-4 font-bold'>Card of Today </div>
 
-            <div className="col-start-2 col-span-2 flex flex-col items-center justify-center">
-                <div className='mb-4'>Time Left: <Countdown date={new Date().setHours(24, 0, 0, 0)} /></div>
-                <img src={recommendUser?.picture?.original?.url} className="w-40 h-40 rounded-lg" />
-                <div className='w-[200px] flex justify-center flex-wrap gap-[10px] border-b border-[#536471] py-[16px]'>
-                    {tags.map((item, index) => (
-                        <div key={index} className='px-2 py-1 bg-primary-blue bg-opacity-30 rounded-lg'>
-                            {item}
+
+            <div className="col-start-2 col-span-2 flex flex-col gap-20">
+                <div className='flex justify-center text-[20px] p-4 font-bold'>Card of Today </div>
+                <div className='flex flex-col items-center justify-center'>
+                    <div className='mb-4'>Time Left: <Countdown date={new Date().setHours(24, 0, 0, 0)} /></div>
+                    <img src={recommendUser?.picture?.original?.url} className="w-40 h-40 rounded-lg" />
+                    <div className='w-[200px] flex justify-center flex-wrap gap-[10px] border-b border-[#536471] py-[16px]'>
+                        {tags.map((item, index) => (
+                            <div key={index} className='px-2 py-1 bg-primary-blue bg-opacity-30 rounded-lg'>
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                    <div className='flex justify-center gap-4 w-[200px] border-b border-[#536471] py-[16px]'>
+                        <Button outline>Follow</Button>
+                        <Button outline>Message</Button>
+
+                    </div>
+                    <div className='w-[200px] border-b border-[#536471] py-[16px]'>
+                        {recommendUser?.bio}
+                    </div>
+                    <div className='w-[200px] flex justify-between border-b border-[#536471] py-[16px]'>
+                        <div>
+                            Net worth:
                         </div>
-                    ))}
-                </div>
-                <div className='flex justify-center gap-4 w-[200px] border-b border-[#536471] py-[16px]'>
-                    <Button outline>Follow</Button>
-                    <Button outline>Message</Button>
+                        <div>
+                            ${formatNumber(netWorth)}
+                        </div>
+                    </div>
+                    <div className='w-[200px] flex justify-center border-b border-[#536471] py-[16px]'>
+                        <div className='text-primary-blue hover:underline'>More Info</div>
 
-                </div>
-                <div className='w-[200px] border-b border-[#536471] py-[16px]'>
-                    {recommendUser?.bio}
-                </div>
-                <div className='w-[200px] flex justify-between border-b border-[#536471] py-[16px]'>
-                    <div>
-                        Net worth:
                     </div>
                     <div>
-                        ${formatNumber(netWorth)}
                     </div>
-                </div>
-                <div className='w-[200px] flex justify-center border-b border-[#536471] py-[16px]'>
-                    <div className='text-primary-blue hover:underline'>More Info</div>
-
-                </div>
-                <div>
-
                 </div>
             </div>
 
