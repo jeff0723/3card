@@ -1,12 +1,17 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { S3 } from 'aws';
-import { scanAPIKeyMap } from 'scan';
+import {
+  S3,
+  scanAPIKeyMap,
+  ScanERC20Result,
+  ScanError,
+  ERROR_MESSAGE
+} from 'scan-helper';
 import { utils } from 'ethers';
 
-export default async function handler(
+export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse<ScanERC20Result | ScanError>,
 ) {
   const { account, chain } = req.query;
   if (
@@ -15,34 +20,31 @@ export default async function handler(
   ) {
     res.status(500).json({
       account,
-      message: "invalid account",
-    });
+      message: ERROR_MESSAGE.INVALID_ADDRESS,
+    } as ScanError);
   } else if (
     typeof chain !== 'string' ||
     !scanAPIKeyMap.has(chain)
   ) {
     res.status(500).json({
       chain,
-      message: "unsupported chain",
-    });
+      message: ERROR_MESSAGE.UNSPORTTED_CHAIN,
+    } as ScanError);
   } else {
     S3.getObject({
       Bucket: '3card',
-      Key: `onchain/${account.toLowerCase()}/${chain}/erc721events`,
+      Key: `onchain/${account.toLowerCase()}/${chain}/erc20`,
     }, (err, out) => {
       if (err === null) {
-        const erc721events = out.Body? JSON.parse(out.Body.toString()):[];
-        res.status(200).json({
-          account,
-          chain,
-          erc721events,
-        });
+        const scanResult: ScanERC20Result = out.Body? JSON.parse(out.Body.toString()):[];
+        res.status(200).json(scanResult);
       } else {
         res.status(500).json({
           account,
           chain,
-          message: "key not exists",
-      });
+          message: ERROR_MESSAGE.AWS_QUERY_ERROR,
+          details: err.message,
+        } as ScanError);
     }});
   }
 }

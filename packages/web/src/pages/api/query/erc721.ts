@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import {
   S3,
   scanAPIKeyMap,
-  ScanRankingResult,
+  ScanERC721Result,
   ScanError,
   ERROR_MESSAGE
 } from 'scan-helper';
@@ -11,7 +11,7 @@ import { utils } from 'ethers';
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<ScanRankingResult | ScanError>,
+  res: NextApiResponse<ScanERC721Result | ScanError>,
 ) {
   const { account, chain } = req.query;
   if (
@@ -33,10 +33,10 @@ export default function handler(
   } else {
     S3.getObject({
       Bucket: '3card',
-      Key: `onchain/${account.toLowerCase()}/${chain}/ranking`,
+      Key: `onchain/${account.toLowerCase()}/${chain}/erc721`,
     }, (err, out) => {
       if (err === null) {
-        const scanResult: ScanRankingResult = out.Body? JSON.parse(out.Body.toString()):[];
+        const scanResult: ScanERC721Result = out.Body? JSON.parse(out.Body.toString()):[];
         res.status(200).json(scanResult);
       } else {
         res.status(500).json({
