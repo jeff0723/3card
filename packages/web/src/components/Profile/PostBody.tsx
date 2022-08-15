@@ -22,13 +22,14 @@ const PostBody = ({ post, mirror }: Props) => {
             <div>
                 {post?.metadata?.content}
             </div>
-            <div className='flex gap-10 text-[20px]'>
+            {post?.metadata?.attributes[0]?.value !== 'community' && <div className='flex gap-10 text-[20px]'>
                 <div className='flex gap-2 text-primary-blue'><BsChat /> <div className='text-[13px]'>{post?.stats?.totalAmountOfComments}</div></div>
                 <div className='flex gap-2 text-[#F5222D]'><HiOutlineHeart /><div className='text-[13px]'> {post?.stats?.totalUpvotes}</div></div>
                 <div className='flex gap-2 text-yellow'><HiOutlineSwitchHorizontal /><div className='text-[13px]'> {post?.stats?.totalAmountOfMirrors}</div></div>
                 <div className='flex gap-2 text-green'><HiOutlineBookmark /><div className='text-[13px]'> {post?.stats?.totalAmountOfMirrors}</div></div>
 
-            </div>
+            </div>}
+
         </div>
     )
 }

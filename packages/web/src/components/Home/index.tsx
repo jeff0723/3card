@@ -1,5 +1,5 @@
 import { Spinner } from "components/UI/Spinner";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useAppSelector } from "state/hooks";
 import styled from "styled-components";
@@ -9,7 +9,12 @@ import RecommendUser from "./RecommendUser";
 import { HiPlus } from 'react-icons/hi'
 import Modal from "components/UI/Modal";
 import { FiX } from "react-icons/fi";
+import { HiPencilAlt, HiUserGroup } from 'react-icons/hi'
 import CreatePost from "./CreatePost";
+import { Dialog, Transition } from "@headlessui/react";
+import { Domain } from "domain";
+import CreateButton from "./CreateButton";
+
 interface Item {
   [key: string]: string;
   pubDate: string;
@@ -74,6 +79,7 @@ const Home = ({ feeds }: Props) => {
   const [open, setOpen] = useState(false)
   const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
   const currentUser = useAppSelector(state => state.user.currentUser)
+  const [optionShow, setOptionShow] = useState(false)
   useEffect(() => {
     setItems(feeds?.slice(0, BATCHSIZE) || []);
     setFeedLength(feeds?.length || 0);
@@ -97,14 +103,9 @@ const Home = ({ feeds }: Props) => {
       <div style={{ display: "flex", width: "100%", position: 'relative' }}>
         <Content >
           {isAuthenticated && currentUser &&
-            <button
-              className="absolute flex items-center justify-center w-14 h-14 rounded-full bg-primary-blue bg-opacity-30 bottom-5 right-10 text-[20px] text-sky-400 hover:bg-opacity-50 disabled:bg-opacity-50"
-              onClick={() => { setOpen(true) }}>
-              <HiPlus />
-            </button>
+            <CreateButton />
           }
 
-          <CreatePost open={open} setOpen={setOpen} />
           <Header>
             <Title>Feeds</Title>
             <Subtitle>Things keep you ahead in web3</Subtitle>
