@@ -50,15 +50,17 @@ const Sidebar: FC<Props> = () => {
                     <FaPlus className='text-[20px]' />
                 </div>
             </div>
-            {conversations.map((item, index) => (
-                <ConversationCard
-                    key={index}
-                    conversationId={item.conversationId}
-                    participants={item.participants}
-                    lastMessage={item.lastMessage}
-                    updateAt={item.updatedAt}
-                />
-            ))}
+            {conversations
+                .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+                .map((item, index) => (
+                    <ConversationCard
+                        key={index}
+                        conversationId={item.conversationId}
+                        participants={item.participants}
+                        lastMessage={item.lastMessage}
+                        updateAt={item.updatedAt}
+                    />
+                ))}
             <NewMessageModal />
         </div>
     )
