@@ -24,11 +24,6 @@ export enum TabType {
     ACTIVITIES = 'ACTIVITIES',
     RANKING = 'RANKING'
 }
-const tags = [
-    "Uniswap V2 Trader",
-    "Uniswap V3 LP",
-    "Opensea Transaction maker"
-]
 
 const Container = styled.div`
     height: calc(100vh - 60px);
@@ -74,13 +69,13 @@ const Profile: NextPage = (props: Props) => {
     }, [address])
 
     useEffect(() => {
-        const tags: string[] = [];
+        const tagSet = new Set<string>();
         for (const addressFreq of ranking) {
-            const tagName = ADDRESS_TAGS.get(addressFreq.address);
-            if (tagName) tags.push(tagName)
-            if (tags.length >= 5) break
+            const tagName = ADDRESS_TAGS.get(addressFreq.address)
+            if (tagName && !tagSet.has(tagName)) tagSet.add(tagName)
+            if (tagSet.size >= 5) break
         }
-        setTags(tags)
+        setTags([...tagSet])
     }, [ranking])
 
     return (
