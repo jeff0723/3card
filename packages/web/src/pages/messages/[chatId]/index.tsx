@@ -11,6 +11,7 @@ import { Message, ListMessagesQuery } from "API"
 import { CURRENT_USER_QUERY } from 'graphql/query/user'
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { connectorsForWallets } from '@rainbow-me/rainbowkit'
 
 interface Props {
     messages: Message[]
@@ -24,6 +25,7 @@ const ChatPage: NextPage<Props> = ({ messages }) => {
     const [avatar, setAvatar] = useState("")
     const [name, setName] = useState("")
     const [handle, setHandle] = useState("")
+    const router = useRouter()
     const updateProfile = async () => {
         const { data } = await getProfiles()
         setAvatar(data?.profiles?.items[0]?.picture?.original?.url)
@@ -34,11 +36,15 @@ const ChatPage: NextPage<Props> = ({ messages }) => {
         if (address && chatId?.includes('-')) {
             //@ts-ignore
             const list = chatId.split('-')
+            if (!list.includes(address)) {
+                router.push("/message")
+            }
             const peer = list.find((item: string) => item !== address)
             setPeerAddress(peer)
             updateProfile()
         }
     }, [address, chatId])
+
 
     const [getProfiles, { error: errorProfiles, loading: profilesLoading }] =
         useLazyQuery(CURRENT_USER_QUERY,

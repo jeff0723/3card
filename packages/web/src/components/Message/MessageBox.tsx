@@ -32,7 +32,6 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
                 setStateMessages(
                     (prev) =>
                         [...prev, event.value.data.onCreateMessageByConversationId]
-
                 )
             },
             error: (error: any) => {
