@@ -46,6 +46,7 @@ const ConversationCard = ({ conversationId, participants, lastMessage, updateAt 
       subscription.unsubscribe();
     }
   }, [lastMessage]);
+
   const { data, loading, error } =
     useQuery(CURRENT_USER_QUERY, {
       variables: { ownedBy: [user] },
