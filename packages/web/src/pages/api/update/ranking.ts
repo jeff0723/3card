@@ -70,16 +70,19 @@ export default async function handler(
         Key: `onchain/${acc}/${chain}/ranking`,
         Body: JSON.stringify(scanResult),
       };
-      S3.upload(rankingPayload).promise()
-      .then(data => res.status(200).json({
-        ...scanResult,
-        awsinfo: `upload to ${data.Location}`,
-      } as ScanRankingResult))
-      .catch(err => res.status(500).json({
-        account,
-        message: ERROR_MESSAGE.AWS_UPLOAD_ERROR,
-        details: err,
-      } as ScanError));
+      try {
+        const s3info = await S3.upload(rankingPayload).promise();
+        res.status(200).json({
+          ...scanResult,
+          awsinfo: `upload to ${s3info.Location}`,
+        } as ScanRankingResult);
+      } catch (err: any) {
+        res.status(500).json({
+          account,
+          message: ERROR_MESSAGE.AWS_UPLOAD_ERROR,
+          details: err.message,
+        } as ScanError);
+      }
     }
   }
 }

@@ -97,20 +97,19 @@ export default async function handler(
         Key: `onchain/${account.toLowerCase()}/${chain}/erc721`,
         Body: JSON.stringify(scanResult),
       };
-      S3.upload(erc721Payload).promise()
-      .then(data => 
+      try {
+        const s3info = await S3.upload(erc721Payload).promise();
         res.status(200).json({
           ...scanResult,
-          awsinfo: `upload to ${data.Location}`,
-        } as ScanERC721Result)
-      )
-      .catch(err => 
+          awsinfo: `upload to ${s3info.Location}`,
+        } as ScanERC721Result);
+      } catch (err: any) {
         res.status(500).json({
           account,
           message: ERROR_MESSAGE.AWS_UPLOAD_ERROR,
-          details: err,
-        } as ScanError)
-      )
+          details: err.message,
+        } as ScanError);
+      }
     }
   }
 }

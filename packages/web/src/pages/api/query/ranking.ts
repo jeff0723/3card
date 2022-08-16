@@ -9,7 +9,7 @@ import {
 } from 'scan-helper';
 import { utils } from 'ethers';
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ScanRankingResult | ScanError>,
 ) {
@@ -31,20 +31,20 @@ export default function handler(
       message: ERROR_MESSAGE.UNSPORTTED_CHAIN,
     } as ScanError);
   } else {
-    S3.getObject({
-      Bucket: '3card',
-      Key: `onchain/${account.toLowerCase()}/${chain}/ranking`,
-    }, (err, out) => {
-      if (err === null) {
-        const scanResult: ScanRankingResult = out.Body? JSON.parse(out.Body.toString()):[];
-        res.status(200).json(scanResult);
-      } else {
-        res.status(500).json({
-          account,
-          chain,
-          message: ERROR_MESSAGE.AWS_QUERY_ERROR,
-          details: err.message,
-        } as ScanError);
-    }});
+    try {
+      const s3data = await S3.getObject({
+        Bucket: '3card',
+        Key: `onchain/${account.toLowerCase()}/${chain}/ranking`,
+      }).promise();
+      const scanResult: ScanRankingResult = s3data.Body? JSON.parse(s3data.Body.toString()):[]; 
+      res.status(200).json(scanResult);
+    } catch (err: any) {
+      res.status(500).json({
+        account,
+        chain,
+        message: ERROR_MESSAGE.AWS_QUERY_ERROR,
+        details: err.message,
+      } as ScanError);
+    }
   }
 }
