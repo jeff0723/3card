@@ -11,6 +11,7 @@ import ProfileTabs from './ProfileTabs'
 import Content from './Content'
 import { current } from '@reduxjs/toolkit'
 import NFTFeed from './NFTFeed'
+import Activities from './Activities'
 import getIPFSLink from 'utils/getIPFSLink'
 import styled from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -159,12 +160,13 @@ const Profile: NextPage = (props: Props) => {
                 <div className='col-span-2 flex flex-col'>
                     <ProfileTabs setCurrentTab={setCurrentTab} currentTab={currentTab} />
                     <div id='scrollableDiv' className='px-4 py-2 flex flex-col gap-2  h-screen overflow-y-auto'>
-                        {(currentTab === 'POST' ||
-                            currentTab === 'COMMENT' ||
-                            currentTab === 'MIRROR') && (
+                        {(currentTab === TabType.POST ||
+                            currentTab === TabType.COMMENT ||
+                            currentTab === TabType.MIRROR) && (
                                 <Content profile={profile} currentTab={currentTab} />
                             )}
-                        {currentTab === 'NFT' && (<NFTFeed profile={profile} />)}
+                        {currentTab === TabType.NFT && (<NFTFeed profile={profile} />)}
+                        {currentTab === TabType.ACTIVITIES && (<Activities txList={txList}/>)}
                     </div>
 
 
