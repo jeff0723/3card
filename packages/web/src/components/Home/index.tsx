@@ -14,6 +14,7 @@ import CreatePost from "./CreatePost";
 import { Dialog, Transition } from "@headlessui/react";
 import { Domain } from "domain";
 import CreateButton from "./CreateButton";
+import Search from "./Search";
 
 interface Item {
   [key: string]: string;
@@ -126,6 +127,7 @@ const Home = ({ feeds }: Props) => {
           </div>
         </Content>
         <FunctionContainer>
+          <Search />
           <FilterContainer>
             <div>Filter</div>
             {["Today", "Project Update", "Research", "Newsletter"].map(
