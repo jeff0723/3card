@@ -22,4 +22,6 @@ type Conversation @model {
 type Subscription {
   onCreateMessageByConversationId(conversationId: String!): Message
     @aws_subscribe(mutations: ["createMessage"])
+  onUpdateConversationByConversationId(conversationId: String!): Conversation
+    @aws_subscribe(mutations: ["updateConversation"])
 }

@@ -431,6 +431,22 @@ export type OnCreateMessageByConversationIdSubscription = {
   } | null,
 };
 
+export type OnUpdateConversationByConversationIdSubscriptionVariables = {
+  conversationId: string,
+};
+
+export type OnUpdateConversationByConversationIdSubscription = {
+  onUpdateConversationByConversationId?:  {
+    __typename: "Conversation",
+    conversationId: string,
+    participants: Array< string >,
+    lastMessage?: string | null,
+    lastUpdate?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
 export type OnCreateMessageSubscriptionVariables = {
   filter?: ModelSubscriptionMessageFilterInput | null,
 };

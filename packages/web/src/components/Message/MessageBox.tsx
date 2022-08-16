@@ -19,7 +19,7 @@ type Props = {
 const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
     const { address } = useAccount();
     const [stateMessages, setStateMessages] = useState<Message[]>([]);
-    const [message, setMesaage] = useState("");
+    const [message, setMessage] = useState("");
     useEffect(() => {
         setStateMessages([...messages])
         const subscription = API.graphql<GraphQLSubscription<Message>>({
@@ -45,11 +45,11 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
     }, [conversationId, messages]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setMesaage(e.target.value);
+        setMessage(e.target.value);
     };
     const handleSend = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!message) return;
+        if (message.trim() === '') return;
         try {
             const { data } = (await GraphQLAPI.graphql({
                 query: createMessage,
@@ -66,7 +66,7 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
         } catch (e) {
             console.log(e);
         } finally {
-            setMesaage("");
+            setMessage("");
         }
         return false
     };
