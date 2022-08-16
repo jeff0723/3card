@@ -12,6 +12,7 @@ import Content from './Content'
 import { current } from '@reduxjs/toolkit'
 import NFTFeed from './NFTFeed'
 import Activities from './Activities'
+import Ranking from './Ranking'
 import getIPFSLink from 'utils/getIPFSLink'
 import styled from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -167,6 +168,7 @@ const Profile: NextPage = (props: Props) => {
                             )}
                         {currentTab === TabType.NFT && (<NFTFeed profile={profile} />)}
                         {currentTab === TabType.ACTIVITIES && (<Activities txList={txList}/>)}
+                        {currentTab === TabType.RANKING && (<Ranking ranking={ranking}/>)}
                     </div>
 
 
