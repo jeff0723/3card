@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { PROFILE_QUERY } from 'graphql/query/profile'
@@ -13,6 +13,8 @@ import { current } from '@reduxjs/toolkit'
 import NFTFeed from './NFTFeed'
 import getIPFSLink from 'utils/getIPFSLink'
 import styled from 'styled-components'
+import { useAccount } from 'wagmi'
+import { Frequency, NormalTx, ScanRankingResult, ADDRESS_TAGS } from 'scan-helper'
 type Props = {}
 export enum TabType {
     POST = 'POST',
@@ -35,6 +37,10 @@ const Profile: NextPage = (props: Props) => {
     const currentUser = useAppSelector(state => state.user.currentUser)
     const { query: { username } } = useRouter()
     const [currentTab, setCurrentTab] = useState<string>(TabType.POST)
+    const { address } = useAccount()
+    const [txList, setTxList] = useState<NormalTx[]>([])
+    const [ranking, setRanking] = useState<Frequency[]>([])
+    const [tags, setTags] = useState<string[]>([])
     const { data, loading, error } = useQuery(PROFILE_QUERY, {
         variables: { request: { handle: username }, who: currentUser?.id ?? null },
         skip: !username,
@@ -50,6 +56,32 @@ const Profile: NextPage = (props: Props) => {
         }
     })
     const profile = data?.profile
+
+    useEffect(() => {
+        const getRanking = async () => {
+            const query = await fetch(`http://localhost:3000/api/query/ranking?account=${address}&chain=ether`)
+            const res = query.ok? query : await fetch(`http://localhost:3000/api/update/ranking?account=${address}&chain=ether`)
+            if (!res.ok) {
+                console.log('scan error:', await res.json())
+                setTxList([])
+                setRanking([])
+            }
+            const rankingResult = (await res.json()) as ScanRankingResult
+            setTxList(rankingResult.txlist)
+            setRanking(rankingResult.ranking)
+        };
+        getRanking()
+    }, [address])
+
+    useEffect(() => {
+        const tags: string[] = [];
+        for (const addressFreq of ranking) {
+            const tagName = ADDRESS_TAGS.get(addressFreq.address);
+            if (tagName) tags.push(tagName)
+            if (tags.length >= 5) break
+        }
+        setTags(tags)
+    }, [ranking])
 
     return (
         <Container className='w-full overflow-hidden'>
