@@ -1,18 +1,24 @@
-import React, { Fragment, useState, ChangeEvent, MouseEvent } from 'react'
-import Button from 'components/UI/Button'
-import { Dialog, Transition } from '@headlessui/react'
-import { FiX } from "react-icons/fi";
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { setIsNewMessageModalOpen } from 'state/application/reducer';
-import { useAccount } from 'wagmi';
+import { useLazyQuery } from '@apollo/client';
 import GraphQLAPI from '@aws-amplify/api-graphql';
-import { listConversations } from 'graphql/amplify/queries';
-import { createConversation } from 'graphql/amplify/mutations'
-import { Spinner } from 'components/UI/Spinner';
+import { Dialog, Transition } from '@headlessui/react';
 import { CreateConversationMutation, ListConversationsQuery } from 'API';
-import toast from 'react-hot-toast';
+import clsx from 'clsx';
+import Button from 'components/UI/Button';
+import { Spinner } from 'components/UI/Spinner';
+import UserProfile from 'components/UI/UserProfile';
+import { MediaSet, NftImage, Profile } from 'generated/types';
+import { createConversation } from 'graphql/amplify/mutations';
+import { listConversations } from 'graphql/amplify/queries';
+import { SEARCH_USERS_QUERY } from 'graphql/query/search-user';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
-
+import { ChangeEvent, Fragment, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
+import { FiX } from "react-icons/fi";
+import { HiOutlineX, HiSearch } from 'react-icons/hi';
+import { setIsNewMessageModalOpen } from 'state/application/reducer';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { useAccount } from 'wagmi';
 type Props = {}
 
 const NewMessageModal = (props: Props) => {
@@ -22,6 +28,8 @@ const NewMessageModal = (props: Props) => {
     const { address } = useAccount()
     const [loading, setLoading] = useState(false)
     const [searchInput, setSearchInput] = useState("")
+    const dropdownRef = useRef(null)
+
     const handleChanges = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchInput(e.target.value)
     }
@@ -70,6 +78,25 @@ const NewMessageModal = (props: Props) => {
             }
         }
     }
+    const [searchUsers, { data: searchUsersData, loading: searchUsersLoading }] =
+        useLazyQuery(SEARCH_USERS_QUERY, {
+            onCompleted(data) {
+                console.log(
+                    '[Lazy Query]',
+                    `Fetched ${data?.search?.items?.length} search result for ${searchInput}`
+                )
+            }
+        })
+
+    const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+        const keyword = e.target.value
+        setSearchInput(keyword)
+
+        searchUsers({
+            variables: { request: { type: 'PROFILE', query: keyword, limit: 8 } }
+        })
+    }
+
     console.log("loading:", loading)
     console.log(isButtonEnable)
     return (
@@ -125,12 +152,62 @@ const NewMessageModal = (props: Props) => {
                                         Next
                                     </Button>
                                 </div>
-                                <div className='flex flex-col gap-4 mt-4 px-4'>
+                                {/* <div className='flex flex-col gap-4 mt-4 px-4'>
                                     <input
                                         value={searchInput}
                                         onChange={handleChanges}
                                         placeholder='Search...'
                                         className="fborder border-none bg-black focus:outline-none" />
+                                </div> */}
+                                <div className='w-full'>
+                                    <div className='flex items-center justify-between text-lg w-full rounded-lg px-3 py-2 mt-4'>
+                                        <div className='flex gap-2 items-center'>
+                                            <HiSearch />
+                                            <input value={searchInput} className='pl-2 bg-transparent outline-none text-[15px]' placeholder='Search...' onChange={handleSearch} />
+                                        </div>
+                                        <div className={clsx(
+                                            'cursor-pointer',
+                                            searchInput ? 'visible' : 'invisible'
+                                        )} onClick={() => {
+                                            setSearchInput('')
+                                        }}>
+                                            <HiOutlineX />
+
+                                        </div>
+
+                                    </div>
+                                    {searchInput.length > 0 && (<div
+                                        className="flex flex-col mt-2 w-full"
+                                        ref={dropdownRef}
+                                    >
+                                        <div className="bg-black rounded-xl  overflow-y-auto py-2 max-h-[80vh]">
+                                            {searchUsersLoading ? (
+                                                <div className="py-2 px-4 space-y-2 text-sm font-bold text-center">
+                                                    <Spinner size="sm" className="mx-auto" />
+                                                    <div>Searching users</div>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    {searchUsersData?.search?.items?.map((profile: Profile & { picture: MediaSet & NftImage }) => (
+                                                        <div
+                                                            key={profile?.handle}
+                                                            className="py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                                        >
+                                                            <div onClick={() => {
+                                                                setSearchInput(profile?.name ? profile?.name : "")
+                                                            }}>
+
+                                                                <UserProfile profile={profile} />
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    {searchUsersData?.search?.items?.length === 0 && (
+                                                        <div className="py-2 px-4">No matching users</div>
+                                                    )}
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>)}
                                 </div>
 
                                 <div className="mt-4">
