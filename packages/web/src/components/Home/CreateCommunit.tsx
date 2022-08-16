@@ -190,7 +190,8 @@ const CreateCommunity = ({ open, setOpen }: Props) => {
                 }
             ],
             createdAt: new Date(),
-            appId: `${APP_NAME} Community`
+            appId: `${APP_NAME} Community`,
+            tags: ["NFT"]
         }
         const { path } = await uploadIpfs(publicationMetaData).finally(() => setIsUploading(false))
         createPostTypedData({

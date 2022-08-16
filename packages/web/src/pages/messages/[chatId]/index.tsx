@@ -10,6 +10,7 @@ import { listMessages } from 'graphql/amplify/queries'
 import { Message, ListMessagesQuery } from "API"
 import { CURRENT_USER_QUERY } from 'graphql/query/user'
 import { useLazyQuery, useQuery } from '@apollo/client'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 interface Props {
     messages: Message[]
@@ -95,6 +96,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         }
     }) as { data: ListMessagesQuery }
     const messages = data?.listMessages?.items
+
     return {
         props: {
             messages
