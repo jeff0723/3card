@@ -84,7 +84,6 @@ const CreatePost = ({ open, setOpen }: Props) => {
     const [createPostTypedData, { loading: typedDataLoading }] = useMutation(
         CREATE_POST_TYPED_DATA_MUTATION, {
         onCompleted: async ({ createPostTypedData }: { createPostTypedData: CreatePostBroadcastItemResult }) => {
-            // console.log(createPostTypedData)
             const { id, typedData } = createPostTypedData
             const {
                 profileId,
@@ -95,19 +94,7 @@ const CreatePost = ({ open, setOpen }: Props) => {
                 referenceModuleInitData,
                 deadline
             } = typedData?.value
-            // const inputStruct = {
-            //     profileId,
-            //     contentURI,
-            //     collectModule,
-            //     collectModuleInitData,
-            //     referenceModule,
-            //     referenceModuleInitData,
-            // }
-            // console.log("typedData:", typedData)
-            // if (write) {
-            //     console.log("Start to write")
-            //     write({ recklesslySetUnpreparedArgs: inputStruct })
-            // }
+
             try {
                 const signature = await signTypedDataAsync({
                     domain: omit(typedData?.domain, '__typename'),

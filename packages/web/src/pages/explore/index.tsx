@@ -4,8 +4,29 @@ import { useQuery } from '@apollo/client'
 import { EXPLORE_COMMUNITY_QUERY } from 'graphql/query/community-query'
 import { APP_NAME } from 'constants/constants'
 import Link from 'next/link'
+import { Publication } from 'generated/types'
 
 type Props = {}
+type CardProps = {
+    community: Publication
+}
+const CommunityCard: FC<CardProps> = ({ community }) => (
+    <Link href={`/community/${community?.id}`}>
+        <div className='flex max-w-[275px] gap-2 py-2 px-4 rounded-lg border border-border-gray'>
+            <div className='flex items-center'>
+                <img src={community?.metadata?.cover?.original?.url} className='rounded-lg' width={80} height={80} />
+            </div>
+            <div className='flex flex-col'>
+                <div className='font-bold'>{community?.metadata?.name}</div>
+                <div className='text-gray-400'>{community?.metadata?.description}</div>
+                <div className='flex gap-2 text-gray-500'>
+                    <div>{community?.stats?.totalAmountOfComments} posts</div>
+                    <div>{community?.stats?.totalAmountOfCollects} members</div>
+                </div>
+            </div>
+        </div>
+    </Link>
+)
 const BaycDao: FC = () => (
     <div className='flex max-w-[275px] gap-2 py-2 px-4 rounded-lg border border-border-gray'>
         <div className='flex items-center'>
@@ -22,7 +43,12 @@ const BaycDao: FC = () => (
     </div>
 )
 const index: NextPage = (props: Props) => {
-    const [communities, setCommunities] = useState([])
+    const [communities, setCommunities] = useState<{ [key: string]: Publication[] }>({
+        defi: [],
+        nft: [],
+        dao: [],
+        general: [],
+    })
     const { data, loading, error } = useQuery(EXPLORE_COMMUNITY_QUERY, {
         variables: {
             request: {
@@ -32,8 +58,15 @@ const index: NextPage = (props: Props) => {
             },
 
         },
+        errorPolicy: "all",
         onCompleted: (data) => {
             console.log(data)
+            const defi = data?.communities?.items?.filter((publication: Publication) => publication?.metadata?.attributes[1]?.value === 'DEFI')
+            const dao = data?.communities?.items?.filter((publication: Publication) => publication?.metadata?.attributes[1]?.value === 'NFT')
+            const nft = data?.communities?.items?.filter((publication: Publication) => publication?.metadata?.attributes[1]?.value === 'DAO')
+            const general = data?.communities?.items?.filter((publication: Publication) => publication?.metadata?.attributes[1]?.value === 'GENERAL')
+            setCommunities({ defi, dao, nft, general })
+
         },
         onError: (error) => {
             console.error('[Query Error]', error)
@@ -42,41 +75,41 @@ const index: NextPage = (props: Props) => {
     return (
         <div className='flex flex-col px-4 gap-4 overflow-y-auto'>
             <div>
-                <div className='text-[20px] font-bold'>
+                <div className='text-[32px] font-bold'>
                     Explore
                 </div>
-                <div className='text-gray-400'>
+                <div className='text-[20px] text-gray-400'>
                     Explore the best community in web3
                 </div>
             </div>
             <div className='flex flex-col gap-4'>
                 <div className='text-[20px] font-bold'>NFT </div>
                 <div className='flex flex-wrap gap-4'>
-                    <BaycDao />
-                    <BaycDao />
-                    <BaycDao />
-
-                    <BaycDao />
+                    {
+                        communities?.nft?.map((community: Publication, index) => (
+                            <CommunityCard key={`${index} + nft`} community={community} />
+                        ))
+                    }
                 </div>
             </div>
             <div className='flex flex-col gap-4'>
                 <div className='text-[20px] font-bold'>DeFi </div>
                 <div className='flex flex-wrap gap-4'>
-                    <BaycDao />
-                    <BaycDao />
-                    <BaycDao />
-
-                    <BaycDao />
+                    {
+                        communities?.defi?.map((community: Publication, index) => (
+                            <CommunityCard key={`${index} + defi`} community={community} />
+                        ))
+                    }
                 </div>
             </div>
             <div className='flex flex-col gap-4'>
                 <div className='text-[20px] font-bold'>DAO </div>
                 <div className='flex flex-wrap gap-4'>
-                    <BaycDao />
-                    <BaycDao />
-                    <BaycDao />
-
-                    <BaycDao />
+                    {
+                        communities?.dao?.map((community: Publication, index) => (
+                            <CommunityCard key={`${index} + dao`} community={community} />
+                        ))
+                    }
                 </div>
             </div>
         </div>

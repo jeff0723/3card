@@ -9,6 +9,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import ProfileLoading from './ProfileLoading'
 import { HiOutlineHeart, HiOutlineSwitchHorizontal, } from "react-icons/hi";
 import { Spinner } from 'components/UI/Spinner'
+import Link from 'next/link'
 
 interface Props {
     currentTab: string
@@ -55,6 +56,7 @@ const Content = ({ currentTab, profile }: Props) => {
             console.log('[Query Error]', err)
         })
     }
+    console.log(publications)
     return (
         <>
             {loading && <ProfileLoading />}
@@ -74,17 +76,21 @@ const Content = ({ currentTab, profile }: Props) => {
                                     <div> {profile.name} mirrored {post.mirrorOf?.profile?.name}&apos;s post</div>
                                 </div>}
                             {currentTab === "COMMENT" &&
-                                <div className='flex gap-[10px]'>
-                                    <PostHeader profile={post?.commentOn?.profile as Profile & { picture: MediaSet & NftImage }} comment />
-                                    <PostBody post={post?.commentOn as Publication} />
-                                </div>
+                                //@ts-ignore
+                                <Link href={`/post/${post?.commentOn?.pubId}`}>
+                                    <div className='flex gap-[10px]'>
+                                        <PostHeader profile={post?.commentOn?.profile as Profile & { picture: MediaSet & NftImage }} comment />
+                                        <PostBody post={post?.commentOn as Publication} />
+                                    </div>
+                                </Link>
                             }
-
-                            <div className='flex gap-[10px]'>
-                                {currentTab !== "MIRROR" && <PostHeader profile={post?.profile as Profile & { picture: MediaSet & NftImage }} />}
-                                {currentTab === "MIRROR" && <PostHeader profile={post?.mirrorOf.profile as Profile & { picture: MediaSet & NftImage }} />}
-                                <PostBody post={post} mirror={currentTab === "MIRROR"} />
-                            </div>
+                            <Link href={currentTab === "MIRROR" ? `/post/${post?.mirrorOf?.id}` : `/post/${post?.id}`}>
+                                <div className='flex gap-[10px]'>
+                                    {currentTab !== "MIRROR" && <PostHeader profile={post?.profile as Profile & { picture: MediaSet & NftImage }} />}
+                                    {currentTab === "MIRROR" && <PostHeader profile={post?.mirrorOf.profile as Profile & { picture: MediaSet & NftImage }} />}
+                                    <PostBody post={post} mirror={currentTab === "MIRROR"} />
+                                </div>
+                            </Link>
                         </div>
                     ))}
                 </InfiniteScroll>

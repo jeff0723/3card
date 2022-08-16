@@ -21,3 +21,9 @@ export const uploadIpfs = async <T>(data: T) => {
     console.log('upload result ipfs', result);
     return result;
 };
+
+export const uploadAssetToIpfs = async (file: File) => {
+    const result = await client.add(file);
+    return result
+
+}

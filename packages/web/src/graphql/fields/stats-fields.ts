@@ -6,5 +6,6 @@ export const StatsFields = gql`
     totalAmountOfMirrors
     totalAmountOfCollects
     totalAmountOfComments
+    totalDownvotes
   }
 `

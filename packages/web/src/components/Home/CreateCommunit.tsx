@@ -10,11 +10,11 @@ import Button from 'components/UI/Button';
 import styled from 'styled-components';
 import { useForm } from "react-hook-form";
 import toast from 'react-hot-toast';
-import { EnabledModule, CreatePostBroadcastItemResult } from 'generated/types'
+import { EnabledModule, CreatePostBroadcastItemResult, MetadataDisplayType } from 'generated/types'
 import { useSignTypedData } from 'wagmi';
-import { uploadIpfs } from 'utils/uploadToIPFS';
+import { uploadAssetToIpfs, uploadIpfs } from 'utils/uploadToIPFS';
 import { v4 as uuid } from 'uuid'
-import { PublicationMainFocus, PublicationMetadata } from 'types/publication-metadata';
+import { PublicationMainFocus, PublicationMetadata, PublicationMetadataDisplayType } from 'types/publication-metadata';
 import { APP_NAME, LENSHUB_PROXY } from 'constants/constants';
 import { useMutation } from '@apollo/client';
 import { CREATE_POST_TYPED_DATA_MUTATION } from 'graphql/mutation/create-post';
@@ -34,6 +34,7 @@ type Props = {
 type FormValues = {
     name: string;
     description: string;
+    category: string;
 };
 const CreateCommunity = ({ open, setOpen }: Props) => {
     const currentUser = useAppSelector(state => state.user.currentUser)
@@ -59,11 +60,12 @@ const CreateCommunity = ({ open, setOpen }: Props) => {
         if (e.target?.files) {
             try {
                 // this part should be adjusted
+                // const _cid = await uploadAssetToIpfs(e.target.files[0])
                 const client = makeStorageClient()
                 const filename = uuid() + ".png"
                 const file = new File([e.target.files[0]], filename)
                 const cid = await client.put([file])
-                setAvatar(`https://ipfs.io/ipfs/${cid}/${filename}`)
+                setAvatar(`https://${cid}.ipfs.w3s.link/${filename}`)
             } finally {
                 const objectUrl = URL.createObjectURL(e.target.files[0])
                 setPreviewImage(objectUrl)
@@ -186,7 +188,13 @@ const CreateCommunity = ({ open, setOpen }: Props) => {
             attributes: [
                 {
                     traitType: 'string',
+                    key: "type",
                     value: 'community'
+                },
+                {
+                    traitType: 'string',
+                    key: "category",
+                    value: data.category
                 }
             ],
             createdAt: new Date(),
@@ -238,6 +246,16 @@ const CreateCommunity = ({ open, setOpen }: Props) => {
                         </label>
                         <textarea placeholder='What is it for...' className='p-4 rounded-lg focus:outline-none'
                             {...register('description', { required: true })} />
+                    </div>
+                    <div className='flex flex-col'>
+                        <label>Categories</label>
+                        <select className="p-4 rounded-lg focus:outline-none" placeholder='Choose a category' {...register('category', { required: true })}>
+                            <option value="GENERAL">General</option>
+                            <option value="NFT">NFT</option>
+                            <option value="DAO">DAO</option>
+                            <option value="DEFI">DeFi</option>
+
+                        </select>
                     </div>
                     <div className='flex flex-col'>
                         <label>

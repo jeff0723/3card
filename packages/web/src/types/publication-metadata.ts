@@ -30,7 +30,7 @@ enum PublicationMetadataVersions {
     two = '2.0.0'
 }
 
-enum PublicationMetadataDisplayType {
+export enum PublicationMetadataDisplayType {
     number = 'number',
     string = 'string',
     date = 'date',
@@ -39,7 +39,8 @@ enum PublicationMetadataDisplayType {
 interface PublicationMetadataAttribute {
     displayType?: PublicationMetadataDisplayType
     traitType?: string;
-    value: string;
+    key?: string;
+    value: string
 }
 
 enum PublicationContentWarning {
