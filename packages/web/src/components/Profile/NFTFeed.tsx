@@ -72,6 +72,7 @@ const NFTFeed = ({ profile }: Props) => {
                     nfts.length !== pageInfo?.totalCount
                 }
                 endMessage={<h4>Nothing more to show</h4>}
+                scrollableTarget="scrollableDiv"
             >
                 <div className="grid grid-cols-2 gap-4">
                     {nfts.map((nft, index) => (

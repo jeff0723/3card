@@ -12,6 +12,7 @@ import Content from './Content'
 import { current } from '@reduxjs/toolkit'
 import NFTFeed from './NFTFeed'
 import getIPFSLink from 'utils/getIPFSLink'
+import styled from 'styled-components'
 type Props = {}
 export enum TabType {
     POST = 'POST',
@@ -26,6 +27,10 @@ const tags = [
     "Uniswap V3 LP",
     "Opensea Transaction maker"
 ]
+
+const Container = styled.div`
+    height: calc(100vh - 60px);
+`
 const Profile: NextPage = (props: Props) => {
     const currentUser = useAppSelector(state => state.user.currentUser)
     const { query: { username } } = useRouter()
@@ -47,7 +52,7 @@ const Profile: NextPage = (props: Props) => {
     const profile = data?.profile
 
     return (
-        <div className='w-full'>
+        <Container className='w-full overflow-hidden'>
             <div className='h-52 sm:h-80 bg-black bg-opacity-50' style={{
                 backgroundImage: `url(${profile?.coverPicture?.original?.url})`,
                 backgroundSize: 'cover',
@@ -124,9 +129,9 @@ const Profile: NextPage = (props: Props) => {
                         </div>
                     </div>
                 </div>
-                <div className='col-span-2 flex flex-col'>
+                <div className='col-span-2 flex flex-col h-screen'>
                     <ProfileTabs setCurrentTab={setCurrentTab} currentTab={currentTab} />
-                    <div className='px-4 py-2 flex flex-col gap-2'>
+                    <div id='scrollableDiv' className='px-4 py-2 flex flex-col gap-2 overflow-y-scroll'>
                         {(currentTab === 'POST' ||
                             currentTab === 'COMMENT' ||
                             currentTab === 'MIRROR') && (
@@ -139,7 +144,7 @@ const Profile: NextPage = (props: Props) => {
                 </div>
             </div>
 
-        </div>
+        </Container>
     )
 }
 

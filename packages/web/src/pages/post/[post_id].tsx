@@ -49,9 +49,6 @@ const index: NextPage = (props: Props) => {
             <Spinner size='lg' />
         </div>
     )
-    console.log(data)
-    //@ts-ignore
-    console.log(publication?.profile?.picture?.original?.url)
     return (
         <div className='grid grid-cols-3 w-full'>
             <div className='col-span-2 flex flex-col px-4 h-full overflow-auto no-scrollbar border-r border-border-gray'>

@@ -56,7 +56,6 @@ const Content = ({ currentTab, profile }: Props) => {
             console.log('[Query Error]', err)
         })
     }
-    console.log(publications)
     return (
         <>
             {loading && <ProfileLoading />}
@@ -67,6 +66,8 @@ const Content = ({ currentTab, profile }: Props) => {
                     loader={<div className='flex justify-center'><Spinner size='md' /></div>}
                     hasMore={pageInfo?.next && pageInfo?.totalCount && publications.length !== pageInfo?.totalCount}
                     endMessage={<h4>Nothing more to show</h4>}
+                    scrollableTarget="scrollableDiv"
+                    className='no-scrollbar'
                 >
                     {publications.map((post, index) => (
                         <div className='flex flex-col border-b border-border-gray pt-4' key={index}>
