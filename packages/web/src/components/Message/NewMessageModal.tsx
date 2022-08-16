@@ -28,6 +28,7 @@ const NewMessageModal = (props: Props) => {
     const { address } = useAccount()
     const [loading, setLoading] = useState(false)
     const [searchInput, setSearchInput] = useState("")
+    const [profile, setProfile] = useState<Profile>()
     const dropdownRef = useRef(null)
 
     const handleChanges = (e: ChangeEvent<HTMLInputElement>) => {
@@ -163,7 +164,7 @@ const NewMessageModal = (props: Props) => {
                                     <div className='flex items-center justify-between text-lg w-full rounded-lg px-3 py-2 mt-4'>
                                         <div className='flex gap-2 items-center'>
                                             <HiSearch />
-                                            <input value={searchInput} className='pl-2 bg-transparent outline-none text-[15px]' placeholder='Search...' onChange={handleSearch} />
+                                            <input value={profile ? profile?.handle : searchInput} className='pl-2 bg-transparent outline-none text-[15px]' placeholder='Search...' onChange={handleSearch} />
                                         </div>
                                         <div className={clsx(
                                             'cursor-pointer',
@@ -194,7 +195,7 @@ const NewMessageModal = (props: Props) => {
                                                             className="py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-800"
                                                         >
                                                             <div onClick={() => {
-                                                                setSearchInput(profile?.name ? profile?.name : "")
+                                                                setProfile(profile)
                                                             }}>
 
                                                                 <UserProfile profile={profile} />
