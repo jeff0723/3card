@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Message, ListMessagesQuery, CreateMessageMutation } from "API";
+import { Message, ListMessagesQuery, CreateMessageMutation, UpdateConversationMutation } from "API";
 import GraphQLAPI, { graphqlOperation } from "@aws-amplify/api-graphql";
 import { GraphQLSubscription } from '@aws-amplify/api';
 import { listMessages } from "graphql/amplify/queries";
-import { createMessage } from "graphql/amplify/mutations";
+import { createMessage, updateConversation } from "graphql/amplify/mutations";
 import { onCreateMessageByConversationId } from "graphql/amplify/subscriptions";
 
 import { useAccount } from "wagmi";
@@ -32,8 +32,8 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
                 setStateMessages(
                     (prev) =>
                         [...prev, event.value.data.onCreateMessageByConversationId]
-                )
 
+                )
             },
             error: (error: any) => {
                 console.log(error)
@@ -62,6 +62,15 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
                     },
                 },
             })) as { data: CreateMessageMutation };
+            const { update } = (await GraphQLAPI.graphql({
+                query: updateConversation,
+                variables: {
+                    input: {
+                        conversationId: conversationId,
+                        lastMessage: message,
+                    },
+                },
+            })) as { update: UpdateConversationMutation }
             console.log(data)
         } catch (e) {
             console.log(e);
