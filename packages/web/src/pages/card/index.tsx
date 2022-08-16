@@ -3,13 +3,15 @@ import type { NextPage } from 'next'
 import { useAppSelector } from 'state/hooks'
 import Button from 'components/UI/Button'
 import Countdown from 'react-countdown';
+import { Frequency, ScanRankingResult, ADDRESS_TAGS } from 'scan-helper';
+
 
 type Props = {}
-const tags = [
-    "Uniswap V2 Trader",
-    "Uniswap V3 LP",
-    "Opensea Transaction maker"
-]
+// const tags = [
+//     "Uniswap V2 Trader",
+//     "Uniswap V3 LP",
+//     "Opensea Transaction maker"
+// ]
 
 const formatNumber = (num: number) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -20,13 +22,55 @@ const hourToUnix = (hour: number) => {
 const index: NextPage = (props: Props) => {
     const recommendUser = useAppSelector(state => state.application.recommendUser)
     const [netWorth, setNetworth] = useState(0)
+    const [ranking, setRanking] = useState<Frequency[]>([])
+    const [tags, setTags] = useState<string[]>([])
+    const getRanking = async (address: string) => {
+        const query = await fetch(`http://localhost:3000/api/query/ranking?account=${address}&chain=ether`)
+        const res = query.ok? query : await fetch(`http://localhost:3000/api/update/ranking?account=${address}&chain=ether`)
+        if (!res.ok) {
+            console.log('scan error:', await res.json())
+            setRanking([])
+        }
+        const rankingResult = (await res.json()) as ScanRankingResult
+        setRanking(rankingResult.ranking)
+    };
     useEffect(() => {
         if (recommendUser) {
             const address = recommendUser?.ownedBy
-            // fetch()
+            console.log(address)
+            getRanking(address)
             setNetworth(100000)
         }
     }, [recommendUser])
+
+    useEffect(() => {
+        if (recommendUser) {
+            const address = recommendUser?.ownedBy
+            const getRanking = async (address: string) => {
+                const query = await fetch(`http://localhost:3000/api/query/ranking?account=${address}&chain=ether`)
+                const res = query.ok? query : await fetch(`http://localhost:3000/api/update/ranking?account=${address}&chain=ether`)
+                if (!res.ok) {
+                    console.log('scan error:', await res.json())
+                    setRanking([])
+                }
+                const rankingResult = (await res.json()) as ScanRankingResult
+                setRanking(rankingResult.ranking)
+            };
+            getRanking(address)
+            setNetworth(100000)
+        }
+    }, [recommendUser])
+
+    useEffect(() => {
+        const tagSet = new Set<string>();
+        for (const addressFreq of ranking) {
+            const tagName = ADDRESS_TAGS.get(addressFreq.address)
+            if (tagName && !tagSet.has(tagName)) tagSet.add(tagName)
+            if (tagSet.size >= 5) break
+        }
+        setTags([...tagSet])
+    }, [ranking])
+
     console.log(recommendUser)
     return (
         <div className='grid grid-cols-4 w-full'>
