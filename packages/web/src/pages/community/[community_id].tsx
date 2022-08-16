@@ -31,13 +31,13 @@ const Community: NextPage = (props: Props) => {
                 <div className='flex flex-col gap-4 col-start-3 col-span-5 h-full'>
                     <div className='flex justify-between py-4 border-b border-border-gray'>
                         <div className='flex gap-2'>
-                            <img src={data.publication?.metadata?.cover?.original?.url} className='w-20 h-20 rounded-full' />
+                            <img src={data?.publication?.metadata?.cover?.original?.url} className='w-20 h-20 rounded-full' />
                             <div className='flex flex-col justify-end'>
-                                <div className='text-[20px]'>{data.publication?.metadata?.name}</div>
-                                <div className='text-[15px]'>{data.publication?.metadata?.description}</div>
+                                <div className='text-[20px]'>{data?.publication?.metadata?.name}</div>
+                                <div className='text-[15px]'>{data?.publication?.metadata?.description}</div>
                                 <div className='flex gap-2 text-gray-400'>
-                                    <div>{data.publication?.stats?.totalAmountOfCollects} posts</div>
-                                    <div>{data.publication?.stats?.totalAmountOfComments} members</div>
+                                    <div>{data?.publication?.stats?.totalAmountOfCollects} posts</div>
+                                    <div>{data?.publication?.stats?.totalAmountOfComments} members</div>
                                 </div>
                             </div>
                         </div>
