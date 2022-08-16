@@ -42,6 +42,11 @@ const NewMessageModal = (props: Props) => {
     const creaeteNewConversation = async () => {
         if (searchInput && address) {
             try {
+                let opponentAddress;
+                if (profile) opponentAddress = profile?.ownedBy
+                else {
+                    //add address validating
+                }
                 setLoading(true)
                 const { data: query } = await GraphQLAPI.graphql({
                     query: listConversations,
