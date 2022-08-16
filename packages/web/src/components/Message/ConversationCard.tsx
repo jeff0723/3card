@@ -66,7 +66,7 @@ const ConversationCard = ({ conversationId, participants, lastMessage, updateAt 
         </div>
         <div className='flex flex-col'>
           <div>{name} <span className='text-gray-400'>@{handle} · {dayjs(new Date(updateAt)).fromNow()}</span></div>
-          <div>{conversationLastMessage}</div>
+          <div className='text-gray-500'>{conversationLastMessage}</div>
         </div>
       </div>
     </Link>
