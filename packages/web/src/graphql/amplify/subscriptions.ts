@@ -15,6 +15,18 @@ export const onCreateMessageByConversationId = /* GraphQL */ `
     }
   }
 `;
+export const onUpdateConversationByConversationId = /* GraphQL */ `
+  subscription OnUpdateConversationByConversationId($conversationId: String!) {
+    onUpdateConversationByConversationId(conversationId: $conversationId) {
+      conversationId
+      participants
+      lastMessage
+      lastUpdate
+      createdAt
+      updatedAt
+    }
+  }
+`;
 export const onCreateMessage = /* GraphQL */ `
   subscription OnCreateMessage($filter: ModelSubscriptionMessageFilterInput) {
     onCreateMessage(filter: $filter) {
