@@ -51,7 +51,7 @@ const Activities = ({ txList }: Props) => {
                                             </a>
                                         </div>
 
-                                        <div>From:
+                                        <div>To:
                                             <a href={`https://etherscan.io/address/${tx.to}`} target='_blank' rel='noopener noreferrer'>
                                                 <span className='text-primary-blue hover:underline ml-2'>{formatAddress(to as string)}</span>
                                             </a>

@@ -24,5 +24,20 @@ export const MinimalProfileFields = gql`
     followModule {
       __typename
     }
+    coverPicture {
+      ... on NftImage {
+        contractAddress
+        tokenId
+        uri
+        chainId
+        verified
+      }
+      ... on MediaSet {
+        original {
+          url
+          mimeType
+        }
+      }
+    }
   }
 `

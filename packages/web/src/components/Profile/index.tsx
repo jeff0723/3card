@@ -21,6 +21,9 @@ import EditProfileModal from './EditProfileModal'
 import getAttribute from 'utils/getAttribute'
 import { BsTwitter } from 'react-icons/bs'
 import { AiOutlineGlobal } from 'react-icons/ai'
+import FollowButton from './FollowButton'
+import UnfollowButton from './UnfollowButton'
+import toast from 'react-hot-toast'
 type Props = {}
 export enum TabType {
     POST = 'POST',
@@ -36,7 +39,9 @@ const Container = styled.div`
 `
 const Profile: NextPage = (props: Props) => {
     const currentUser = useAppSelector(state => state.user.currentUser)
-    const { query: { username } } = useRouter()
+    const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
+    const router = useRouter()
+    const { username } = router.query
     const [currentTab, setCurrentTab] = useState<string>(TabType.POST)
     const { address } = useAccount()
     const [txList, setTxList] = useState<NormalTx[]>([])
@@ -58,7 +63,13 @@ const Profile: NextPage = (props: Props) => {
         }
     })
     const profile = data?.profile
-    const isMe = currentUser?.ownedBy === address
+    const isMe = profile?.ownedBy === address
+    const [followed, setFollowed] = useState<boolean>(profile?.isFollowedByMe)
+    const [followerCount, setFollowerCount] = useState(profile?.stats?.totalFollowers)
+    useEffect(() => {
+        setFollowed(profile?.isFollowedByMe)
+        setFollowerCount(profile?.stats?.totalFollowers)
+    }, [profile])
     useEffect(() => {
         const getRanking = async () => {
             if (profile) {
@@ -86,6 +97,14 @@ const Profile: NextPage = (props: Props) => {
         }
         setTags([...tagSet])
     }, [ranking])
+    const handleSendMessage = () => {
+        if (!isAuthenticated || !address) {
+            toast.error("Please log in first!")
+            return
+        }
+        const conversationId = profile?.ownedBy > address ? `${profile?.ownedBy}-${address}` : `${address}-${profile?.ownedBy}`
+        router.push(`/messages/${conversationId}`)
+    }
     console.log("IS ME: ", isMe)
     console.log(profile)
     return (
@@ -98,16 +117,19 @@ const Profile: NextPage = (props: Props) => {
             }} />
 
             <div className='grid grid-cols-3 '>
-                <div className='col-span-1 h-full flex flex-col items-center -mt-24 gap-[10px] object-cover overflow-auto'>
-                    <div className='h-[196px] w-[196px] '>
-                        {
-                            profile?.picture?.original?.url || profile?.picture?.uri ? (<img
-                                className='ring-8 ring-black rounded-full bg-black object-center w-[196px] h-[196px] object-cover'
-                                src={getIPFSLink(profile?.picture?.original?.url || profile?.picture?.uri)}
-                            />) : <div className='ring-8 ring-black rounded-full bg-black object-center w-[196px] h-[196px] object-cover' />
-                        }
+                <div className='col-span-1 h-full flex flex-col items-center -mt-24 gap-[10px] overflow-auto'>
+                    {
+                        profile?.picture?.original?.url || profile?.picture?.uri ? (<div
+                            className='ring-8 ring-black rounded-full bg-black w-48 h-48 object-cover'
+                            style={{
+                                backgroundImage: `url(${getIPFSLink(profile?.picture?.original?.url || profile?.picture?.uri)})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center center',
+                                backgroundRepeat: 'no-repeat',
+                            }}
+                        />) : <div className='ring-8 ring-black rounded-full bg-black object-center h-48 w-48 object-cover' />
+                    }
 
-                    </div>
                     <div className='flex flex-col justify-center items-start gap-[12px]'>
                         <div>
                             <div className='text-[20px]'>
@@ -128,7 +150,7 @@ const Profile: NextPage = (props: Props) => {
                             </div>
                             <div className='flex gap-[4px]'>
                                 <div className='font-semibold'>
-                                    {profile?.stats.totalFollowers}
+                                    {followerCount}
                                 </div>
                                 <div className='text-gray-400'>
                                     Followers
@@ -146,12 +168,13 @@ const Profile: NextPage = (props: Props) => {
                                 </button>
                             </div> :
                             <div className='flex gap-[10px] items-center justify-start'>
-                                <button
-                                    className='flex justify-center items-center rounded-full px-4 py-2 text-black bg-[#eff3f4] font-semibold h-10 hover:bg-opacity-80'>
-                                    Follow
-                                </button>
+                                {
+                                    followed ? <UnfollowButton profile={profile} setFollowed={setFollowed} setFollowerCount={setFollowerCount} followerCount={followerCount}></UnfollowButton> : <FollowButton profile={profile} setFollowed={setFollowed} setFollowerCount={setFollowerCount} followerCount={followerCount} />
+                                }
+
                                 <button
                                     className='flex justify-center items-center rounded-full border border-[#536471] w-10 h-10'
+                                    onClick={handleSendMessage}
                                 >
                                     <FiMail className='text-[20px]' />
                                 </button>

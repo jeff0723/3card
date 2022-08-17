@@ -1,15 +1,14 @@
 import { useMutation } from '@apollo/client';
 import Tippy from '@tippyjs/react';
-import { LensHubProxy } from 'abis/LensHubProxy';
 import { LensPeriphery } from 'abis/LensPeriphery';
 import Button from 'components/UI/Button';
 import Modal from 'components/UI/Modal';
 import { Spinner } from 'components/UI/Spinner';
-import { APP_NAME, LENSHUB_PROXY, LENS_PERIPHERY } from 'constants/constants';
+import { APP_NAME, LENS_PERIPHERY } from 'constants/constants';
 import { CreateSetProfileMetadataUriBroadcastItemResult } from 'generated/types';
 import { BROADCAST_MUTATION } from 'graphql/mutation/broadcast-mutation';
 import { CREATE_SET_PROFILE_METADATA_TYPED_DATA_MUTATION } from 'graphql/mutation/set-profile-metadata-url-mutation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { FiX } from 'react-icons/fi';
@@ -51,6 +50,14 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
             toast.error(error?.message)
         }
     })
+    useEffect(() => {
+        //@ts-ignore
+        setCoverPreviewUrl(currentUser?.coverPicture?.original?.url)
+        setPhotoPreviewUrl(currentUser?.picture?.original?.url)
+        //@ts-ignore
+        setCoverUrl(currentUser?.coverPicture?.original?.url)
+        setPhotoUrl(currentUser?.picture?.original?.url)
+    }, [currentUser])
     const { data,
         isLoading: writeLoading,
         write,
@@ -242,7 +249,7 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
             }
         })
     }
-
+    console.log("currentUser: ", currentUser)
     return (
         <Modal open={open} onClose={() => { setOpen(false) }} size='lg'>
 
