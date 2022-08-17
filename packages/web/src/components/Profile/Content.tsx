@@ -68,7 +68,6 @@ const Content = ({ currentTab, profile }: Props) => {
                     next={fetchMoreData}
                     loader={<div className='flex justify-center'><Spinner size='md' /></div>}
                     hasMore={pageInfo?.next && pageInfo?.totalCount && publications.length !== pageInfo?.totalCount}
-                    endMessage={<h4>Nothing more to show</h4>}
                     scrollableTarget="scrollableDiv"
                     className='no-scrollbar'
                 >

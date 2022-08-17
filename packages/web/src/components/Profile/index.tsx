@@ -17,6 +17,10 @@ import getIPFSLink from 'utils/getIPFSLink'
 import styled from 'styled-components'
 import { useAccount } from 'wagmi'
 import { Frequency, NormalTx, ScanRankingResult, ADDRESS_TAGS } from 'scan-helper'
+import EditProfileModal from './EditProfileModal'
+import getAttribute from 'utils/getAttribute'
+import { BsTwitter } from 'react-icons/bs'
+import { AiOutlineGlobal } from 'react-icons/ai'
 type Props = {}
 export enum TabType {
     POST = 'POST',
@@ -38,6 +42,7 @@ const Profile: NextPage = (props: Props) => {
     const [txList, setTxList] = useState<NormalTx[]>([])
     const [ranking, setRanking] = useState<Frequency[]>([])
     const [tags, setTags] = useState<string[]>([])
+    const [editModalOpen, setEditModalOpen] = useState(false)
     const { data, loading, error } = useQuery(PROFILE_QUERY, {
         variables: { request: { handle: username }, who: currentUser?.id ?? null },
         skip: !username,
@@ -53,7 +58,7 @@ const Profile: NextPage = (props: Props) => {
         }
     })
     const profile = data?.profile
-
+    const isMe = currentUser?.ownedBy === address
     useEffect(() => {
         const getRanking = async () => {
             if (profile) {
@@ -81,7 +86,8 @@ const Profile: NextPage = (props: Props) => {
         }
         setTags([...tagSet])
     }, [ranking])
-
+    console.log("IS ME: ", isMe)
+    console.log(profile)
     return (
         <Container className='w-full overflow-hidden'>
             <div className='h-52 sm:h-80 bg-black bg-opacity-50' style={{
@@ -92,7 +98,7 @@ const Profile: NextPage = (props: Props) => {
             }} />
 
             <div className='grid grid-cols-3 '>
-                <div className='col-span-1 h-full flex flex-col items-center -mt-24 gap-[10px] object-cover'>
+                <div className='col-span-1 h-full flex flex-col items-center -mt-24 gap-[10px] object-cover overflow-auto'>
                     <div className='h-[196px] w-[196px] '>
                         {
                             profile?.picture?.original?.url || profile?.picture?.uri ? (<img
@@ -129,18 +135,29 @@ const Profile: NextPage = (props: Props) => {
                                 </div>
                             </div>
                         </div>
-                        <div className='flex gap-[10px] items-center justify-start'>
-                            <button
-                                className='flex justify-center items-center rounded-full px-4 py-2 text-black bg-[#eff3f4] font-semibold h-10 hover:bg-opacity-80'>
-                                Follow
-                            </button>
-                            <button
-                                className='flex justify-center items-center rounded-full border border-[#536471] w-10 h-10'
-                            >
-                                <FiMail className='text-[20px]' />
-                            </button>
+                        {isMe ?
+                            <div className='flex justify-start items-center'>
+                                <EditProfileModal open={editModalOpen} setOpen={setEditModalOpen} />
+                                <button
+                                    className='px-4 py-2 rounded-full font-bold border border-[#536471] hover:bg-white hover:bg-opacity-10'
+                                    onClick={() => { setEditModalOpen(true) }}
+                                >
+                                    Edit Profile
+                                </button>
+                            </div> :
+                            <div className='flex gap-[10px] items-center justify-start'>
+                                <button
+                                    className='flex justify-center items-center rounded-full px-4 py-2 text-black bg-[#eff3f4] font-semibold h-10 hover:bg-opacity-80'>
+                                    Follow
+                                </button>
+                                <button
+                                    className='flex justify-center items-center rounded-full border border-[#536471] w-10 h-10'
+                                >
+                                    <FiMail className='text-[20px]' />
+                                </button>
 
-                        </div>
+                            </div>}
+
                         <div className='w-[200px] border-b border-[#536471] pb-[16px]'>
                             {profile?.bio}
                         </div>
@@ -154,9 +171,33 @@ const Profile: NextPage = (props: Props) => {
                         </div>
                         <div className='flex flex-col items-start'>
                             <div># {profile?.id}</div>
-                            <div>ens</div>
-                            {profile?.onChainIdentity?.ens?.name && <div>{profile?.onChainIdentity?.ens?.name}</div>}
-                            <div>twitter</div>
+                            <div className='flex gap-2 items-center'>
+                                <div>
+                                    <img src='/ens.png' className='w-4 h-4' />
+                                </div>
+                                {profile?.onChainIdentity?.ens?.name && <div>{profile?.onChainIdentity?.ens?.name}</div>}
+                            </div>
+
+                            {
+                                profile?.attributes &&
+                                getAttribute(profile?.attributes, 'twitter') &&
+                                <a href={`https://twitter.com/${getAttribute(profile?.attributes, 'twitter')}`} target='_blank' rel='noopener noreferrer'>
+                                    <div className='flex gap-2 items-center'>
+                                        <div><BsTwitter className='text-primary-blue' /></div>
+                                        <div>@{getAttribute(profile?.attributes, 'twitter')}</div>
+                                    </div>
+                                </a>
+                            }
+                            {
+                                profile?.attributes &&
+                                getAttribute(profile?.attributes, 'website') &&
+                                <a href={`${getAttribute(profile?.attributes, 'website')}`} target='_blank' rel='noopener noreferrer'>
+                                    <div className='flex gap-2 items-center'>
+                                        <div><AiOutlineGlobal /></div>
+                                        <div>{getAttribute(profile?.attributes, 'website')}</div>
+                                    </div>
+                                </a>
+                            }
 
                         </div>
                     </div>
