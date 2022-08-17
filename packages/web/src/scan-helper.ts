@@ -176,4 +176,5 @@ export const ADDRESS_TAGS = new Map<string, string>([
     ['0xa7efae728d2936e78bda97dc267687568dd593f3', 'OKEx 3'],
     ['0x737901bea3eeb88459df9ef1be8ff3ae1b42a2ba', 'Aztec Rollup'],
     ['0x9696f59e4d72e237be84ffd425dcad154bf96976', 'Binance'],
+    ['0xba17eeb3f0413b76184ba8ed73067063fba6e2eb', "ETH Global"]
 ]);
