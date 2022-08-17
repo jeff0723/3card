@@ -22,7 +22,7 @@ const Ranking = ({ ranking }: Props) => {
                     return <div className='flex flex-col border-b border-border-gray pb-2'>
                         <div className='flex justify-between items-center'>
                             <div className='flex items-center gap-2'>
-                                <Blockies seed={address} size={8} scale={4} className='rounded-full' />
+                                <Blockies seed={address as string} size={8} scale={4} className='rounded-full' />
                                 {address}
                             </div>
                             <div>{fre.frequency}</div>

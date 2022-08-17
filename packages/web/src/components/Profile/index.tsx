@@ -56,19 +56,21 @@ const Profile: NextPage = (props: Props) => {
 
     useEffect(() => {
         const getRanking = async () => {
-            const query = await fetch(`http://localhost:3000/api/query/ranking?account=${address}&chain=ether`)
-            const res = query.ok? query : await fetch(`http://localhost:3000/api/update/ranking?account=${address}&chain=ether`)
-            if (!res.ok) {
-                console.log('scan error:', await res.json())
-                setTxList([])
-                setRanking([])
+            if (profile) {
+                const query = await fetch(`http://localhost:3000/api/query/ranking?account=${profile?.ownedBy}&chain=ether`)
+                const res = query.ok ? query : await fetch(`http://localhost:3000/api/update/ranking?account=${profile?.ownedBy}&chain=ether`)
+                if (!res.ok) {
+                    console.log('scan error:', await res.json())
+                    setTxList([])
+                    setRanking([])
+                }
+                const rankingResult = (await res.json()) as ScanRankingResult
+                setTxList(rankingResult.txlist)
+                setRanking(rankingResult.ranking)
             }
-            const rankingResult = (await res.json()) as ScanRankingResult
-            setTxList(rankingResult.txlist)
-            setRanking(rankingResult.ranking)
         };
         getRanking()
-    }, [address])
+    }, [profile])
 
     useEffect(() => {
         const tagSet = new Set<string>();
@@ -148,6 +150,7 @@ const Profile: NextPage = (props: Props) => {
                                     {item}
                                 </div>
                             ))}
+                            {tags.length === 0 && "No tags"}
                         </div>
                         <div className='flex flex-col items-start'>
                             <div># {profile?.id}</div>
@@ -158,17 +161,17 @@ const Profile: NextPage = (props: Props) => {
                         </div>
                     </div>
                 </div>
-                <div className='col-span-2 flex flex-col'>
+                <div className='col-span-2 flex flex-col  h-screen'>
                     <ProfileTabs setCurrentTab={setCurrentTab} currentTab={currentTab} />
-                    <div id='scrollableDiv' className='px-4 py-2 flex flex-col gap-2  h-screen overflow-y-auto'>
+                    <div id='scrollableDiv' className='px-4 py-2 flex flex-col gap-2 overflow-y-scroll '>
                         {(currentTab === TabType.POST ||
                             currentTab === TabType.COMMENT ||
                             currentTab === TabType.MIRROR) && (
                                 <Content profile={profile} currentTab={currentTab} />
                             )}
                         {currentTab === TabType.NFT && (<NFTFeed profile={profile} />)}
-                        {currentTab === TabType.ACTIVITIES && (<Activities txList={txList}/>)}
-                        {currentTab === TabType.RANKING && (<Ranking ranking={ranking}/>)}
+                        {currentTab === TabType.ACTIVITIES && (<Activities txList={txList} />)}
+                        {currentTab === TabType.RANKING && (<Ranking ranking={ranking} />)}
                     </div>
 
 

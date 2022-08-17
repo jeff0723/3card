@@ -29,6 +29,7 @@ const Content = ({ currentTab, profile }: Props) => {
         },
         skip: !profile?.id,
         fetchPolicy: 'no-cache',
+        errorPolicy: "all",
         onCompleted(data) {
             setPageInfo(data?.publications?.pageInfo)
             setPublications(data?.publications?.items)
@@ -56,10 +57,12 @@ const Content = ({ currentTab, profile }: Props) => {
             console.log('[Query Error]', err)
         })
     }
+    console.log(publications)
+    console.log(error)
     return (
         <>
             {loading && <ProfileLoading />}
-            {!error && !loading && data?.publications?.items?.length !== 0 && (
+            {!loading && data?.publications?.items?.length !== 0 && (
                 <InfiniteScroll
                     dataLength={publications.length}
                     next={fetchMoreData}
@@ -96,6 +99,10 @@ const Content = ({ currentTab, profile }: Props) => {
                     ))}
                 </InfiniteScroll>
             )}
+            {!error && !loading && data?.publications?.items?.length == 0 &&
+                <div>
+                    No {currentTab.charAt(0) + currentTab.slice(1).toLowerCase()} yet
+                </div>}
         </>
 
     )
