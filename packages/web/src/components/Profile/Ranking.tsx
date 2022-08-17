@@ -1,6 +1,7 @@
 import { Card } from 'components/UI/Card'
 import React from 'react'
 import { Frequency, ADDRESS_TAGS } from 'scan-helper'
+import Blockies from 'react-blockies';
 
 interface Props {
     ranking: Frequency[]
@@ -12,17 +13,22 @@ const Ranking = ({ ranking }: Props) => {
         <>
             {
                 ranking.map(fre => {
-                    const address = fre.address? (
-                        ADDRESS_TAGS.has(fre.address)?
+                    const address = fre.address ? (
+                        ADDRESS_TAGS.has(fre.address) ?
                             ADDRESS_TAGS.get(fre.address) : fre.address)
-                            :
+                        :
                         'Contract Creation';
-                    
-                    return <>
-                        <p>{address}:{fre.frequency}</p>
-                        <Card children={null}/>
-                    </>
-                    }
+
+                    return <div className='flex flex-col border-b border-border-gray pb-2'>
+                        <div className='flex justify-between items-center'>
+                            <div className='flex items-center gap-2'>
+                                <Blockies seed={address} size={8} scale={4} className='rounded-full' />
+                                {address}
+                            </div>
+                            <div>{fre.frequency}</div>
+                        </div>
+                    </div>
+                }
                 )
             }
         </>
