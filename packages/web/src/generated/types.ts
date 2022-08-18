@@ -1929,7 +1929,7 @@ export type ProfileStatsPublicationsTotalArgs = {
   forSources: Array<Scalars['Sources']>;
 };
 
-export type Publication = Comment | Mirror | Post;
+export type Publication = Post & Comment & Mirror;
 
 export type PublicationForSale = Comment | Post;
 

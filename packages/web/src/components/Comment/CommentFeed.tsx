@@ -13,11 +13,10 @@ const CommentFeed = ({ comment }: Props) => {
     return (
         <Link href={`/post/${comment?.id}`}>
             <div className='flex gap-2 py-4 border-b border-border-gray'>
-                <div className='w-12 h-12 flex justify-center items-start'>
-                    <img
-                        //@ts-ignore
-                        src={getIPFSLink(comment?.profile?.picture?.original?.url)} className='w-12 h-12 rounded-full' />
-                </div>
+
+                <img
+                    //@ts-ignore
+                    src={getIPFSLink(comment?.profile?.picture?.original?.url)} className='w-12 h-12 rounded-full' />
                 <div className='flex flex-col gap-2 w-full'>
                     <div className='flex justify-between items-center'>
 

@@ -35,11 +35,12 @@ const Search = (props: Props) => {
     }
     return (
         <div className='w-full relative'>
-            <div className='flex items-center text-lg w-full bg-white bg-opacity-5 rounded-lg px-3 py-2'>
+            <div className='flex justify-between items-center text-lg w-full bg-white bg-opacity-5 rounded-lg px-3 py-2'>
 
-                <HiSearch />
-                <input value={searchText} className='pl-2 bg-transparent outline-none text-[15px]' placeholder='Search...' onChange={handleSearch} />
-
+                <div className='flex items-center'>
+                    <HiSearch />
+                    <input value={searchText} className='pl-2 bg-transparent outline-none text-[15px]' placeholder='Search...' onChange={handleSearch} />
+                </div>
                 <div className={clsx(
                     'cursor-pointer',
                     searchText ? 'visible' : 'invisible'

@@ -225,7 +225,7 @@ const Profile: NextPage = (props: Props) => {
                         </div>
                     </div>
                 </div>
-                <div className='col-span-2 flex flex-col  h-screen'>
+                <div className='col-span-2 flex flex-col h-screen'>
                     <ProfileTabs setCurrentTab={setCurrentTab} currentTab={currentTab} />
                     <div id='scrollableDiv' className='px-4 py-2 flex flex-col gap-2 overflow-y-scroll '>
                         {(currentTab === TabType.POST ||

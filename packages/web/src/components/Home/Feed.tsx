@@ -9,6 +9,7 @@ interface Item {
   link: string
   thumbnail: string
   creator: string
+  favIcon: string
 }
 interface Props {
   item: Item
@@ -26,10 +27,8 @@ const FeedContainer = styled.div`
   }
 `
 const FeedImage = styled.div<{ image: string }>`
-  min-width: 130px;
-  height: 78px;
+
   background: url(${({ image }) => image});
-  border-radius: 4px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -39,7 +38,7 @@ const FeedContent = styled.div`
   flex-direction: column;
   align-items: flex-start;
   width: 463px;
-  height: 99px;
+  height: 70px;
 `
 const FeedSubtitle = styled.div`
   display: flex;
@@ -48,7 +47,9 @@ const FeedSubtitle = styled.div`
 const FeedTitle = styled.div`
   font-weight: 700;
   font-size: 16px;
-  line-height: 19px;
+  line-height: 17px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 const FeedDate = styled.div`
   font-weight: 400;
@@ -75,12 +76,18 @@ const Feed = ({ item }: Props) => {
     <a href={item.link} target="_blank" rel="noopener noreferrer" >
 
       <FeedContainer>
-        <FeedImage image={item.thumbnail} />
+        {!item.thumbnail && !item.favIcon ?
+          <div className='w-10 h-10 flex justify-center items-center'>
+            news
+          </div> : (
+            <img src={item.thumbnail || item.favIcon} className='w-10 h-10 rounded-full' alt='thumbnail' />
+          )}
+
         <FeedContent>
           <FeedTitle>{item.title}</FeedTitle>
           <FeedSubtitle>  <BlueText>{item.creator} </BlueText> <FeedDate>{new Date(item.pubDate).toDateString()}</FeedDate></FeedSubtitle>
 
-          <FeedText>{item['content:encodedSnippet']}</FeedText>
+          {/* <FeedText>{item['content:encodedSnippet']}</FeedText> */}
         </FeedContent>
       </FeedContainer>
     </a>

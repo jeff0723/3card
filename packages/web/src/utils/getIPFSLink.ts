@@ -1,4 +1,5 @@
 const getIPFSLink = (hash: string): string => {
+    if (!hash) return ""
     const infuraIPFS = 'https://ipfs.io/ipfs/'
 
     return hash

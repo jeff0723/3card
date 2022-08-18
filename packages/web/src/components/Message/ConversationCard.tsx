@@ -59,13 +59,13 @@ const ConversationCard = ({ conversationId, participants, lastMessage, updateAt 
   return (
     <Link href={`/messages/${conversationId}`}>
       <div className='flex gap-2 p-4 '>
-        <div className='flex w-12 h-12'>
-          {!avatar && <div className="rounded-full loading w-full h-full" />}
-          {avatar && <img src={avatar} className='rounded-full w-full h-full' />}
-        </div>
-        <div className='flex flex-col w-full '>
-          <div>
-            <span className='w-1/3 overflow-ellipsis'>{name}</span> <span className='text-gray-400'>@{handle} · {dayjs(new Date(updateAt)).fromNow()}</span></div>
+
+        {avatar ? <img src={avatar} className='rounded-full w-12 h-12' /> : <div className="rounded-full loading w-12 h-12" />}
+        <div className='flex flex-col'>
+          <div className='flex gap-1'>
+            <div>{name}</div>
+            <div className='h-4 text-gray-400 overflow-hidden overflow-ellipsis'>@{handle} · {dayjs(new Date(updateAt)).fromNow()}</div>
+          </div>
           <div>{lastMessage}</div>
         </div>
       </div>

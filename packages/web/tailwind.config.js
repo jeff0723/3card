@@ -9,7 +9,10 @@ module.exports = {
       colors: {
         "primary-blue": "rgba(0,148,255)",
         "yellow": "#FADB14",
-        "border-gray": "#2F3336"
+        "border-gray": "#2F3336",
+        "comment-red": "#F5222D",
+        "comment-yellow": "#FADB14",
+        "comment-blue": "rgba(29,155,240)",
       }
     },
   },

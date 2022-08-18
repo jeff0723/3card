@@ -7,6 +7,10 @@ import { HiOutlineHeart, HiOutlineSwitchHorizontal, HiOutlineBookmark } from "re
 import { BsChat } from "react-icons/bs";
 import Link from 'next/link'
 import CommunityCard from 'components/UI/CommunityCard'
+import Comment from 'components/Actions/Comment'
+import Like from 'components/Actions/Like'
+import Mirror from 'components/Actions/Mirror'
+import Collect from 'components/Actions/Collect'
 
 interface Props {
     post: Publication
@@ -31,12 +35,11 @@ const PostBody = ({ post, mirror }: Props) => {
                         </div>
                     )}
             </div>
-            {post?.metadata?.attributes[0]?.value !== 'community' && <div className='flex gap-10 text-[20px]'>
-                <div className='flex gap-2 text-primary-blue'><BsChat /> <div className='text-[13px]'>{post?.stats?.totalAmountOfComments}</div></div>
-                <div className='flex gap-2 text-[#F5222D]'><HiOutlineHeart /><div className='text-[13px]'> {post?.stats?.totalUpvotes}</div></div>
-                <div className='flex gap-2 text-yellow'><HiOutlineSwitchHorizontal /><div className='text-[13px]'> {post?.stats?.totalAmountOfMirrors}</div></div>
-                <div className='flex gap-2 text-green'><HiOutlineBookmark /><div className='text-[13px]'> {post?.stats?.totalAmountOfMirrors}</div></div>
-
+            {post?.metadata?.attributes[0]?.value !== 'community' && <div className='flex gap-10 '>
+                <Comment post={post} />
+                <Like post={post} />
+                <Mirror post={post} />
+                <Collect post={post} />
             </div>}
 
         </div>
