@@ -77,9 +77,10 @@ const NewsContainer = styled.div`
 const BATCHSIZE = 30;
 
 const Home: NextPage<Props> = (props: Props) => {
+  const feeds = useAppSelector((state) => state.application.news);
+  const loadingNews = useAppSelector((state) => state.application.loadingNews);
   const [items, setItems] = useState<Item[]>([]);
   const [hasMore, setHasMore] = useState(true);
-  const [feeds, setFeeds] = useState<Item[]>([]);
   const [feedLength, setFeedLength] = useState(0);
   const [itemLength, setItemLength] = useState(0);
   // const [loading, setLoading] = useState(false)
@@ -89,7 +90,6 @@ const Home: NextPage<Props> = (props: Props) => {
   const [optionShow, setOptionShow] = useState(false)
   const [publications, setPublications] = useState<Publication[]>()
   const [pageInfo, setPageInfo] = useState<PaginatedResultInfo>()
-  const [newsLoading, setNewsLoading] = useState(false)
   const { data, loading: feedLoading, error, fetchMore } = useQuery(HOME_FEED_QUERY, {
     variables: {
       request: { profileId: currentUser?.id },
@@ -115,14 +115,6 @@ const Home: NextPage<Props> = (props: Props) => {
     }
 
   }, [feeds]);
-  const fetchFeed = async () => {
-    setNewsLoading(true)
-    const res = await fetch('http://localhost:3000/api/get-today-news').finally(() => setNewsLoading(false))
-    setFeeds(await res.json() as Item[])
-  }
-  useEffect(() => {
-    fetchFeed()
-  }, [])
   const fetchMoreNews = () => {
     if (!feeds.length) return
     if (itemLength + BATCHSIZE >= feedLength) {
@@ -158,12 +150,7 @@ const Home: NextPage<Props> = (props: Props) => {
       console.log('[Query Error]', err)
     })
   }
-  if (feedLoading || newsLoading) {
-    return <div className="mx-auto">
-      <Spinner size="lg" />
-    </div>
-  }
-  console.log("publications:", publications)
+
   return (
     <>
       <div className='grid grid-cols-12 w-full relative h-full'>
@@ -174,7 +161,12 @@ const Home: NextPage<Props> = (props: Props) => {
           <Header>
             <Title>Home</Title>
           </Header>
-
+          {
+            feedLoading &&
+            <div className="mx-auto">
+              <Spinner size="lg" />
+            </div>
+          }
           {
             publications && publications.length > 0 &&
             <div className="overflow-y-auto no-scrollbar w-full h-screen" id='scrollableDiv'>
@@ -216,6 +208,7 @@ const Home: NextPage<Props> = (props: Props) => {
           <Header>
             <Title>News</Title>
           </Header>
+
           <NewsContainer className="overflow-y-auto h-screen no-scrollbar" id='scrollableDiv2'>
             <InfiniteScroll
               dataLength={items.length}

@@ -8,7 +8,7 @@ import { CURRENT_USER_QUERY } from "graphql/query/user";
 import Cookies from "js-cookie";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
-import { updateLoadingStatus } from "state/application/reducer";
+import { setLoadingNews, updateLoadingStatus, updateNews } from "state/application/reducer";
 import { useAppDispatch, useAppSelector } from "state/hooks";
 import {
   setCurrentUser,
@@ -42,7 +42,14 @@ const ApplicationUpdater = (props: Props) => {
       console.error("[Query Error]", error);
     },
   });
-
+  const fetchFeed = async () => {
+    dispatch(setLoadingNews({ loadingNews: true }))
+    const res = await fetch('http://localhost:3000/api/get-today-news').finally(() => dispatch(setLoadingNews({ loadingNews: false })))
+    dispatch(updateNews({ news: await res.json() }))
+  }
+  useEffect(() => {
+    fetchFeed()
+  }, [])
   return null;
 };
 
