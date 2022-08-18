@@ -43,7 +43,7 @@ const Profile: NextPage = (props: Props) => {
     const router = useRouter()
     const { username } = router.query
     const [currentTab, setCurrentTab] = useState<string>(TabType.POST)
-    const { address } = useAccount()
+    const { address, isConnected } = useAccount()
     const [txList, setTxList] = useState<NormalTx[]>([])
     const [ranking, setRanking] = useState<Frequency[]>([])
     const [tags, setTags] = useState<string[]>([])
@@ -63,7 +63,7 @@ const Profile: NextPage = (props: Props) => {
         }
     })
     const profile = data?.profile
-    const isMe = profile?.ownedBy === address
+    const isMe = profile?.ownedBy === currentUser?.ownedBy && isConnected
     const [followed, setFollowed] = useState<boolean>(profile?.isFollowedByMe)
     const [followerCount, setFollowerCount] = useState(profile?.stats?.totalFollowers)
     useEffect(() => {

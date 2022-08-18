@@ -13,6 +13,7 @@
     "@3card-monorepo/scan": "1.0.0",
     "@apollo/client": "^3.6.9",
     "@headlessui/react": "^1.6.6",
+    "@opensea/seaport-js": "^1.0.5",
     "@rainbow-me/rainbowkit": "^0.4.5",
     "@reduxjs/toolkit": "^1.8.3",
     "@tippyjs/react": "^4.2.6",

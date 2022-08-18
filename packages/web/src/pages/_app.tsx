@@ -17,6 +17,8 @@ import { publicProvider } from 'wagmi/providers/public';
 import '../styles/globals.css';
 import { awsconfig } from "../settings";
 import { Amplify } from "aws-amplify";
+import SeaportProvider from 'providers/SeaportProvider';
+
 Amplify.configure({ ...awsconfig, ssr: true });
 
 
@@ -60,7 +62,9 @@ function MyApp({ Component, pageProps }: AppProps) {
           <ApolloProvider client={client}>
             <Updaters />
             <Layout>
-              <Component {...pageProps} />
+              <SeaportProvider>
+                <Component {...pageProps} />
+              </SeaportProvider>
             </Layout>
           </ApolloProvider>
         </RainbowKitProvider>
