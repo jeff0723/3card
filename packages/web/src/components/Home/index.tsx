@@ -29,6 +29,7 @@ interface Item {
   link: string
   thumbnail: string
   creator: string
+  favIcon: string
 }
 
 interface Props {
@@ -72,7 +73,7 @@ const FilterContainer = styled.div`
   gap: 10px;
 `;
 const NewsContainer = styled.div`
-  height:55vh
+  height:55vh;
 `
 const BATCHSIZE = 30;
 
@@ -169,7 +170,7 @@ const Home: NextPage<Props> = (props: Props) => {
           }
           {
             publications && publications.length > 0 &&
-            <div className="overflow-y-auto no-scrollbar w-full h-screen" id='scrollableDiv'>
+            <div className="overflow-y-auto no-scrollbar h-screen w-full" style={{ height: '85vh' }} id='scrollableDiv'>
 
               <InfiniteScroll
                 dataLength={publications?.length}
@@ -209,7 +210,7 @@ const Home: NextPage<Props> = (props: Props) => {
             <Title>News</Title>
           </Header>
 
-          <NewsContainer className="overflow-y-auto h-screen no-scrollbar" id='scrollableDiv2'>
+          <NewsContainer className="overflow-y-auto no-scrollbar" id='scrollableDiv2'>
             <InfiniteScroll
               dataLength={items.length}
               next={fetchMoreNews}

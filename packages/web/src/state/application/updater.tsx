@@ -1,21 +1,8 @@
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
-import {
-  AUTHENTICATE_MUTATION,
-  CHALLENGE_QUERY,
-} from "graphql/query/authentication";
+import { useQuery } from "@apollo/client";
 import { RECOMMENDED_PROFILES_QUERY } from "graphql/query/recommended-profiles";
-import { CURRENT_USER_QUERY } from "graphql/query/user";
-import Cookies from "js-cookie";
 import { useEffect } from "react";
-import toast from "react-hot-toast";
-import { setLoadingNews, updateLoadingStatus, updateNews } from "state/application/reducer";
-import { useAppDispatch, useAppSelector } from "state/hooks";
-import {
-  setCurrentUser,
-  setIsAuthenticated,
-  setIsConnected,
-} from "state/user/reducer";
-import { useAccount, useDisconnect, useSignMessage } from "wagmi";
+import { setLoadingNews, updateNews } from "state/application/reducer";
+import { useAppDispatch } from "state/hooks";
 import { updateRecommedUser, updateRecommendedProfiles } from "./reducer";
 type Props = {};
 

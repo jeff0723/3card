@@ -9,6 +9,7 @@ interface Item {
     link: string
     thumbnail: string
     creator: string
+    favIcon: string
 }
 export interface ApplicationState {
     recommendUser?: Profile & { picture: MediaSet & NftImage } | null;
