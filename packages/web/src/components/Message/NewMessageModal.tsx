@@ -39,14 +39,22 @@ const NewMessageModal = (props: Props) => {
     }
     const isButtonEnable = address !== undefined && searchInput.length > 0
 
-    const creaeteNewConversation = async () => {
+    const createNewConversation = async () => {
+        if (!searchInput) return
+        if (!profile) {
+            //to do: if user didn't click on the searchUsersData Card
+            //       search user here
+        }
+        let opponentAddress = profile?.ownedBy
+        if (opponentAddress && address) {
+            let converstaionId = (address > opponentAddress) ? ${ address }-${ opponentAddress } : ${ opponentAddress } -${ address }
+
+        }
         if (searchInput && address) {
             try {
                 let opponentAddress;
                 if (profile) opponentAddress = profile?.ownedBy
-                else {
-                    //add address validating
-                }
+
                 setLoading(true)
                 const { data: query } = await GraphQLAPI.graphql({
                     query: listConversations,
@@ -56,10 +64,13 @@ const NewMessageModal = (props: Props) => {
                         }
                     }
                 }) as { data: ListConversationsQuery }
+                if (query.listConversations?.items.length !== 0) {
+
+                }
                 let converstaionId;
 
                 if (query.listConversations?.items.length === 0) {
-                    let converstaionId = (BigInt(address) > BigInt(searchInput)) ? `${address}-${searchInput}` : `${searchInput}-${address}`
+                    converstaionId = `${address}-${searchInput}`
                     const { data: mutation } = await GraphQLAPI.graphql({
                         query: createConversation,
                         variables: {
@@ -87,6 +98,7 @@ const NewMessageModal = (props: Props) => {
     const [searchUsers, { data: searchUsersData, loading: searchUsersLoading }] =
         useLazyQuery(SEARCH_USERS_QUERY, {
             onCompleted(data) {
+                console.log(data)
                 console.log(
                     '[Lazy Query]',
                     `Fetched ${data?.search?.items?.length} search result for ${searchInput}`
@@ -152,7 +164,7 @@ const NewMessageModal = (props: Props) => {
                                     </div>
                                     <Button
                                         disabled={!isButtonEnable}
-                                        onClick={creaeteNewConversation}
+                                        onClick={createNewConversation}
                                         icon={loading && <Spinner size='xs' />}
                                     >
                                         Next
