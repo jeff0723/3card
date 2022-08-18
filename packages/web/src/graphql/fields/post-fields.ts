@@ -29,6 +29,7 @@ export const PostFields = gql`
       ...MetadataFields
     }
     hidden
+    hasCollectedByMe
     createdAt
     appId
   }
