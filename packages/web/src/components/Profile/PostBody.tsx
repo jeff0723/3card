@@ -36,16 +36,10 @@ const PostBody = ({ post, mirror }: Props) => {
                     )}
             </div>
             {post?.metadata?.attributes[0]?.value !== 'community' && <div className='flex gap-10 '>
-                {/* <div className='flex gap-2 text-primary-blue'><BsChat /> <div className='text-[13px]'>{post?.stats?.totalAmountOfComments}</div></div>
-                 */}
                 <Comment post={post} />
                 <Like post={post} />
                 <Mirror post={post} />
                 <Collect post={post} />
-                {/* <div className='flex gap-2 text-[#F5222D]'><HiOutlineHeart /><div className='text-[13px]'> {post?.stats?.totalUpvotes}</div></div> */}
-                {/* <div className='flex gap-2 text-yellow'><HiOutlineSwitchHorizontal /><div className='text-[13px]'> {post?.stats?.totalAmountOfMirrors}</div></div> */}
-                {/* <div className='flex gap-2 text-green'><HiOutlineBookmark /><div className='text-[13px]'> {post?.stats?.totalAmountOfMirrors}</div></div> */}
-
             </div>}
 
         </div>

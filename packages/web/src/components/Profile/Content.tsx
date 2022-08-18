@@ -10,6 +10,7 @@ import ProfileLoading from './ProfileLoading'
 import { HiOutlineHeart, HiOutlineSwitchHorizontal, } from "react-icons/hi";
 import { Spinner } from 'components/UI/Spinner'
 import Link from 'next/link'
+import SingleThread from 'components/Publication/SingleThread'
 
 interface Props {
     currentTab: string
@@ -57,8 +58,7 @@ const Content = ({ currentTab, profile }: Props) => {
             console.log('[Query Error]', err)
         })
     }
-    console.log(publications)
-    console.log(error)
+
     return (
         <>
             {loading && <ProfileLoading />}
@@ -72,29 +72,7 @@ const Content = ({ currentTab, profile }: Props) => {
                     className='no-scrollbar'
                 >
                     {publications.map((post, index) => (
-                        <div className='flex flex-col border-b border-border-gray pt-4' key={index}>
-                            {currentTab === "MIRROR" &&
-                                <div className='flex items-center pb-4 gap-2 text-gray-400 font-bold'>
-                                    <HiOutlineSwitchHorizontal />
-                                    <div> {profile.name} mirrored {post.mirrorOf?.profile?.name}&apos;s post</div>
-                                </div>}
-                            {currentTab === "COMMENT" &&
-                                //@ts-ignore
-                                <Link href={`/post/${post?.commentOn?.pubId}`}>
-                                    <div className='flex gap-[10px]'>
-                                        <PostHeader profile={post?.commentOn?.profile as Profile & { picture: MediaSet & NftImage }} comment />
-                                        <PostBody post={post?.commentOn as Publication} />
-                                    </div>
-                                </Link>
-                            }
-                            <Link href={currentTab === "MIRROR" ? `/post/${post?.mirrorOf?.id}` : `/post/${post?.id}`}>
-                                <div className='flex gap-[10px]'>
-                                    {currentTab !== "MIRROR" && <PostHeader profile={post?.profile as Profile & { picture: MediaSet & NftImage }} />}
-                                    {currentTab === "MIRROR" && <PostHeader profile={post?.mirrorOf.profile as Profile & { picture: MediaSet & NftImage }} />}
-                                    <PostBody post={post} mirror={currentTab === "MIRROR"} />
-                                </div>
-                            </Link>
-                        </div>
+                        <SingleThread post={post} key={index} />
                     ))}
                 </InfiniteScroll>
             )}
