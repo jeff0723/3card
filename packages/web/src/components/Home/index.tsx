@@ -15,15 +15,15 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Domain } from "domain";
 import CreateButton from "./CreateButton";
 import Search from "./Search";
-
+import type { GetServerSideProps, NextPage } from 'next'
 interface Item {
-  [key: string]: string;
-  pubDate: string;
-  title: string;
-  isoDate: string;
-  link: string;
-  thumbnail: string;
-  creator: string;
+  [key: string]: string
+  pubDate: string
+  title: string
+  isoDate: string
+  link: string
+  thumbnail: string
+  creator: string
 }
 
 interface Props {
@@ -72,21 +72,35 @@ const FilterContainer = styled.div`
 
 const BATCHSIZE = 30;
 
-const Home = ({ feeds }: Props) => {
+const Home: NextPage<Props> = (props: Props) => {
   const [items, setItems] = useState<Item[]>([]);
   const [hasMore, setHasMore] = useState(true);
+  const [feeds, setFeeds] = useState<Item[]>([]);
   const [feedLength, setFeedLength] = useState(0);
   const [itemLength, setItemLength] = useState(0);
+  const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
   const currentUser = useAppSelector(state => state.user.currentUser)
   const [optionShow, setOptionShow] = useState(false)
   useEffect(() => {
-    setItems(feeds?.slice(0, BATCHSIZE) || []);
-    setFeedLength(feeds?.length || 0);
-    setItemLength(BATCHSIZE || 0);
-  }, []);
+    if (feeds.length) {
+      setItems(feeds?.slice(0, BATCHSIZE) || []);
+      setFeedLength(feeds?.length || 0);
+      setItemLength(BATCHSIZE || 0);
+    }
+
+  }, [feeds]);
+  const fetchFeed = async () => {
+    setLoading(true)
+    const res = await fetch('http://localhost:3000/api/get-today-news').finally(() => setLoading(false))
+    setFeeds(await res.json() as Item[])
+  }
+  useEffect(() => {
+    fetchFeed()
+  }, [])
   const fetchMoreData = () => {
+    if (!feeds.length) return
     if (itemLength + BATCHSIZE >= feedLength) {
       setHasMore(false);
     }
@@ -98,7 +112,11 @@ const Home = ({ feeds }: Props) => {
     ]);
 
   };
-
+  if (loading) {
+    return <div className="mx-auto">
+      <Spinner size="lg" />
+    </div>
+  }
   return (
     <>
       <div style={{ display: "flex", width: "100%", position: 'relative' }}>
