@@ -41,36 +41,33 @@ const NewMessageModal = (props: Props) => {
 
     const createNewConversation = async () => {
         if (!searchInput) return
-        if (!profile) {
-            //to do: if user didn't click on the searchUsersData Card
-            //       search user here
+        if (!profile) { //if user didn't click on searchUsersData card to set profile
+            // if (searchInput !== anAddress){
+            //     search for this handle's address
+            //     const opponentAddress = this handle's address
+            // }else{
+            //     const opponentAddress = searchInput
+            // }
+        } else {
+            let opponentAddress = profile?.ownedBy // if profile was set
         }
-        let opponentAddress = profile?.ownedBy
+        let opponentAddress //delete line54 after finished line 44-50
         if (opponentAddress && address) {
-            let converstaionId = (address > opponentAddress) ? ${ address }-${ opponentAddress } : ${ opponentAddress } -${ address }
-
-        }
-        if (searchInput && address) {
+            let converstaionId = (address > opponentAddress) ? `${address}-${opponentAddress}` : `${opponentAddress} -${address}`
             try {
-                let opponentAddress;
-                if (profile) opponentAddress = profile?.ownedBy
-
                 setLoading(true)
                 const { data: query } = await GraphQLAPI.graphql({
                     query: listConversations,
                     variables: {
                         filter: {
-                            or: { conversationId: { eq: `${address}-${searchInput}` } }, conversationId: { eq: `${searchInput}-${address}` }
+                            conversationId: converstaionId
                         }
                     }
                 }) as { data: ListConversationsQuery }
                 if (query.listConversations?.items.length !== 0) {
-
+                    router.push(`/messages/${converstaionId}`)
                 }
-                let converstaionId;
-
                 if (query.listConversations?.items.length === 0) {
-                    converstaionId = `${address}-${searchInput}`
                     const { data: mutation } = await GraphQLAPI.graphql({
                         query: createConversation,
                         variables: {
@@ -83,10 +80,6 @@ const NewMessageModal = (props: Props) => {
                     if (mutation.createConversation?.conversationId) {
                         router.push(`/messages/${converstaionId}`)
                     }
-                }
-                else {
-                    converstaionId = query.listConversations?.items[0]?.conversationId
-                    router.push(`/messages/${converstaionId}`)
                 }
             } catch (e) {
                 toast.error("Something went wrong")
