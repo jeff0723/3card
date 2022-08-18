@@ -59,7 +59,7 @@ const NewMessageModal = (props: Props) => {
                 let converstaionId;
 
                 if (query.listConversations?.items.length === 0) {
-                    converstaionId = `${address}-${searchInput}`
+                    let converstaionId = (BigInt(address) > BigInt(searchInput)) ? `${address}-${searchInput}` : `${searchInput}-${address}`
                     const { data: mutation } = await GraphQLAPI.graphql({
                         query: createConversation,
                         variables: {
