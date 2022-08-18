@@ -4,7 +4,7 @@ type Props = {}
 
 const FeedLoading = (props: Props) => {
     return (
-        <div className='flex gap-[10px] border-b border-border-gray pb-4 pt-4 '>
+        <div className='flex gap-[10px] border-b border-border-gray pb-4 pt-4 w-full'>
             <div className='flex flex-col min-w-fit'>
                 <div
                     className="rounded-full w-10 h-10 loading" />

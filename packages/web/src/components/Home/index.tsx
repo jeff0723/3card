@@ -20,6 +20,7 @@ import { HOME_FEED_QUERY } from "graphql/query/home-feed-query";
 import { useQuery } from "@apollo/client";
 import { Publication, PaginatedResultInfo } from "generated/types";
 import SingleThread from "components/Publication/SingleThread";
+import ProfileLoading from "components/Profile/ProfileLoading";
 
 interface Item {
   [key: string]: string
@@ -163,13 +164,14 @@ const Home: NextPage<Props> = (props: Props) => {
             <Title>Home</Title>
           </Header>
           {
-            feedLoading &&
-            <div className="mx-auto">
-              <Spinner size="lg" />
+            feedLoading && !publications &&
+            <div className="w-full">
+              <ProfileLoading />
             </div>
           }
           {
             publications && publications.length > 0 &&
+
             <div className="overflow-y-auto no-scrollbar h-screen w-full" style={{ height: '85vh' }} id='scrollableDiv'>
 
               <InfiniteScroll
