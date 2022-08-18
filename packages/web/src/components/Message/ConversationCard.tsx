@@ -6,6 +6,12 @@ import { useAccount } from 'wagmi'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import Link from 'next/link'
+import { API } from "aws-amplify";
+import { GraphQLSubscription } from '@aws-amplify/api';
+import { Conversation } from 'API'
+import { onUpdateConversationByConversationId } from 'graphql/amplify/subscriptions'
+
+
 dayjs.extend(relativeTime)
 type Props = {
   conversationId: string
@@ -20,6 +26,26 @@ const ConversationCard = ({ conversationId, participants, lastMessage, updateAt 
   const [avatar, setAvatar] = useState("")
   const [name, setName] = useState("")
   const [handle, setHandle] = useState("")
+  const [conversationLastMessage, setConversationLastMessage] = useState("")
+  useEffect(() => {
+    if (lastMessage) setConversationLastMessage(lastMessage)
+    const subscription = API.graphql<GraphQLSubscription<Conversation>>({
+      query: onUpdateConversationByConversationId,
+      variables: {
+        conversationId: conversationId
+      }
+    }).subscribe({
+      next: (event: any) => {
+        setConversationLastMessage(event.value.data.onUpdateConversationByConversationId.lastMessage)
+      },
+      error: (error: any) => {
+        console.log(error)
+      }
+    });
+    return () => {
+      subscription.unsubscribe();
+    }
+  }, [lastMessage]);
   const { data, loading, error } =
     useQuery(CURRENT_USER_QUERY, {
       variables: { ownedBy: [user] },
