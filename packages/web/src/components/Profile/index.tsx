@@ -35,7 +35,6 @@ export enum TabType {
 }
 
 const Container = styled.div`
-    height: calc(100vh - 60px);
 `
 const Profile: NextPage = (props: Props) => {
     const currentUser = useAppSelector(state => state.user.currentUser)
@@ -106,7 +105,7 @@ const Profile: NextPage = (props: Props) => {
     }
 
     return (
-        <Container className='w-full overflow-hidden'>
+        <div className='w-full overflow-y-auto'>
             <div className='h-52 sm:h-80 bg-black bg-opacity-50' style={{
                 backgroundImage: `url(${getIPFSLink(profile?.coverPicture?.original?.url)})`,
                 backgroundSize: 'cover',
@@ -115,7 +114,7 @@ const Profile: NextPage = (props: Props) => {
             }} />
 
             <div className='grid grid-cols-3 '>
-                <div className='col-span-1 h-full flex flex-col items-center -mt-24 gap-[10px] overflow-auto'>
+                <div className='col-span-1 flex flex-col items-center -mt-24 gap-[10px] overflow-y-scroll'>
                     {
                         profile?.picture?.original?.url || profile?.picture?.uri ? (<div
                             className='ring-8 ring-black rounded-full bg-black w-48 h-48 object-cover'
@@ -240,7 +239,7 @@ const Profile: NextPage = (props: Props) => {
                 </div>
             </div>
 
-        </Container>
+        </div>
     )
 }
 

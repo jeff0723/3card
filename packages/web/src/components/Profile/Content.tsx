@@ -73,7 +73,7 @@ const Content = ({ currentTab, profile }: Props) => {
                 >
                     {publications.map((post, index) => (
                         (
-                            post?.metadata?.attributes[0].value === 'NFTPost' ?
+                            post?.metadata?.attributes[0]?.value === 'NFTPost' ?
                                 <NFTPost post={post} key={index} />
                                 :
                                 <SingleThread post={post} key={index} />
