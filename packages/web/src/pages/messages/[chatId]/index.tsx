@@ -14,6 +14,7 @@ import { SEARCH_USERS_QUERY } from 'graphql/query/search-user';
 import Image from 'next/image'
 import { GET_PROFILE_BY_ADDRESS } from 'graphql/query/user'
 
+import getIPFSLink from 'utils/getIPFSLink'
 
 interface Props {
     messages: Message[]

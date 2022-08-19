@@ -110,7 +110,7 @@ const Profile: NextPage = (props: Props) => {
     return (
         <Container className='w-full overflow-hidden'>
             <div className='h-52 sm:h-80 bg-black bg-opacity-50' style={{
-                backgroundImage: `url(${profile?.coverPicture?.original?.url})`,
+                backgroundImage: `url(${getIPFSLink(profile?.coverPicture?.original?.url)})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center center',
                 backgroundRepeat: 'no-repeat',

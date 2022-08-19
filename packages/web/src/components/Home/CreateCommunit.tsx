@@ -65,7 +65,7 @@ const CreateCommunity = ({ open, setOpen }: Props) => {
                 const filename = uuid() + ".png"
                 const file = new File([e.target.files[0]], filename)
                 const cid = await client.put([file])
-                setAvatar(`https://${cid}.ipfs.w3s.link/${filename}`)
+                setAvatar(`https://ipfs.infura.io/${cid}/${filename}`)
             } finally {
                 const objectUrl = URL.createObjectURL(e.target.files[0])
                 setPreviewImage(objectUrl)
