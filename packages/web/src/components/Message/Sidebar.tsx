@@ -38,7 +38,6 @@ const Sidebar: FC<Props> = () => {
 
         setConversations(data.listConversations?.items as Conversation[] || [])
     }
-
     useEffect(() => {
         listConversationQuery()
     }, [address])
