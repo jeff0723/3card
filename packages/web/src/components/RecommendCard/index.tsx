@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 import Countdown from 'react-countdown'
 import { Frequency, ADDRESS_TAGS } from 'scan-helper'
-import { PersonalRanking } from 'rec-helper'
+import { CheckResult, RecResult } from 'rec-helper'
 import { useAccount } from 'wagmi'
 // import { useAppSelector } from 'state/hooks'
 import { MediaSet, NftImage, Profile } from 'generated/types'
 import InfoCard from './InfoCard'
+import Button from 'components/UI/Button'
 
 
 type Props = {}
@@ -24,30 +25,32 @@ const RecommendCard: NextPage = (props: Props) => {
     const { address } = useAccount()
     const [netWorth, setNetworth] = useState(0)
     const [ranking, setRanking] = useState<Frequency[]>([])
-    const [ifDrawable, setIfDrawable] = useState<boolean>(false)
     const [ifRegistered, setIfRegistered] = useState<boolean>(false)
+    const [ifDrawable, setIfDrawable] = useState<boolean>(false)
     const [recommendAddress, setRecommendAddress] = useState<string>('')
     const [tags, setTags] = useState<string[]>(_tags)
+    const [isDrew, setIsDrew] = useState<boolean>(false)
 
     const checkRegister = async (address: string) => {
-        const query = await fetch(`http://localhost:3000/api/recommend/query?account=${address}`)
-        const res = query.ok ? query : await fetch(`http://localhost:3000/api/recommend/register?account=${address}`)
+        // const check = await fetch(`http://localhost:3000/api/recommend/check?account=${address}`)
+        const check = await fetch(`http://localhost:3000/api/recommend/check?account=${address}&test=true`)
+        const res = check.ok ? check : await fetch(`http://localhost:3000/api/recommend/register?account=${address}`)
         setIfRegistered(res.ok);
+        setIfDrawable((await res.json() as CheckResult).ifDrawable);
     }
 
-    const recommend = async (address: string) => {
-        const recResponse = await fetch(`http://localhost:3000/api/recommend?account=${address}&test=true`)
+    const recommend = async (address: string): Promise<boolean> => {
         // const recResponse = await fetch(`http://localhost:3000/api/recommend?account=${address}`)
+        const recResponse = await fetch(`http://localhost:3000/api/recommend?account=${address}&test=true`)
         if (!recResponse.ok) {
             console.log('rec error')
-            setIfDrawable(false)
             setRecommendAddress('')
-            setRanking([])
+            return false;
         } else {
-            const recResult = (await recResponse.json()) as PersonalRanking
-            setIfDrawable(true)
+            const recResult = (await recResponse.json()) as RecResult
             setRecommendAddress(recResult.account)
             setRanking(recResult.ranking??[])
+            return true;
         }
     };
 
@@ -55,9 +58,12 @@ const RecommendCard: NextPage = (props: Props) => {
         if (address) checkRegister(address)
     }, [address])
 
-    useEffect(() => {
-        if (address && ifRegistered) recommend(address)
-    }, [address, ifRegistered])
+    const handleClick: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
+        e.preventDefault();
+        if (address && ifRegistered && ifDrawable) {
+            setIsDrew(await recommend(address))
+        }
+    }
 
     useEffect(() => {
         const tagSet = new Set<string>();
@@ -74,6 +80,7 @@ const RecommendCard: NextPage = (props: Props) => {
     }, [ranking])
 
     console.log("recommend address:", recommendAddress)
+    console.log("drawable:", ifDrawable)
 
     return (
         <div className='grid grid-cols-4 w-full'>
@@ -81,14 +88,17 @@ const RecommendCard: NextPage = (props: Props) => {
             <div className="col-start-2 col-span-2 flex flex-col gap-10">
                 <div className='flex justify-between items-center gap-2 p-4' >
                     <div className='font-bold text-[20px]'>Card of Today </div>
-                    <div >Time Left: <Countdown date={new Date().setHours(24, 0, 0, 0)} /></div>
+                    {!ifDrawable?
+                        <div >Time Left: <Countdown date={new Date().setHours(24, 0, 0, 0)} /></div>
+                        :<></>
+                    }
                 </div>
-                {ifDrawable? <InfoCard
+                {isDrew? <InfoCard
                     recommendAddress={recommendAddress}
                     tags={tags}
                     netWorth={netWorth} />
                     :
-                    <div></div>
+                    <Button outline onClick={handleClick} disabled={!ifDrawable}>Draw</Button>
                 }
             </div>
 

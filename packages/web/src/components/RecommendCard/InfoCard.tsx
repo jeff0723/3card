@@ -4,6 +4,7 @@ import { MediaSet, NftImage, Profile } from 'generated/types'
 import { useQuery } from "@apollo/client";
 import { CURRENT_USER_QUERY } from "graphql/query/user";
 import { useAccount } from "wagmi";
+import Link from "next/link";
 
 type Props = {
     recommendAddress: string,
@@ -54,7 +55,6 @@ const InfoCard = ({ recommendAddress, tags, netWorth }: Props) => {
         <div className='flex justify-center gap-4 w-full'>
             <Button outline>Follow</Button>
             <Button outline>Message</Button>
-
         </div>
 
 
@@ -81,7 +81,7 @@ const InfoCard = ({ recommendAddress, tags, netWorth }: Props) => {
                 ))}
             </div>}
         <div className='w-full flex justify-center  py-[16px]'>
-            <div className='text-primary-blue hover:underline'>More Info</div>
+            <Link href={`/user/${recommendUser?.handle}`} className='text-primary-blue hover:underline'>More Info</Link>
         </div>
 
         <div>

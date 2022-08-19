@@ -11,10 +11,11 @@ import {
   ERROR_MESSAGE,
   BUCKET_NAME
 } from 'scan-helper';
+import { CheckResult, RecMetadata } from 'rec-helper';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Frequency[] | ScanError>
+  res: NextApiResponse<CheckResult | ScanError>
 ) {
   const { account } = req.query;
   if (
@@ -39,12 +40,6 @@ export default async function handler(
         const queryURL = `https://api.etherscan.io/api?module=account&action=txlist&page=1&offset=10000&sort=asc&apikey=${scanAPIKeyMap.get('ether')}&address=${account}&startblock=0`;
         const scanResponse = await fetch(queryURL);
         if (!scanResponse.ok) {
-          res.status(500).json({
-            account,
-            chain: 'ether',
-            message: ERROR_MESSAGE.SCAN_QUERY_ERROR,
-            details: (await scanResponse.json()).message,
-          } as ScanError);
           return undefined;
         } else {
           const rawTxlist: NormalTx[] = (await scanResponse.json()).result;
@@ -66,12 +61,26 @@ export default async function handler(
       }});
       if (ranking) {
         try {
-          await S3.upload({
+          const rankingInfo = await S3.upload({
             Bucket: BUCKET_NAME,
             Key: `rec/${acc}`,
             Body: JSON.stringify(ranking),
           }).promise();
-          res.status(200).json(ranking);
+          const metadata: RecMetadata = {
+            nextDrawDate: new Date().toLocaleDateString(),
+            alreadyRecTo: [],
+          };
+          const metadataInfo = await S3.upload({
+            Bucket: BUCKET_NAME,
+            Key: `rec/${acc}-metadata`,
+            Body: JSON.stringify(metadata),
+          }).promise();
+          res.status(200).json({
+            account,
+            ifDrawable: true,
+            rankingLoc: rankingInfo.Location,
+            metadataLoc: metadataInfo.Location,
+          } as CheckResult);
         } catch (err: any) {
           res.status(500).json({
             account,
@@ -79,6 +88,12 @@ export default async function handler(
             details: err.message,
           } as ScanError);
         }
+      } else {
+        res.status(500).json({
+          account,
+          chain: 'ether',
+          message: ERROR_MESSAGE.SCAN_QUERY_ERROR,
+        } as ScanError);
       }
   }
 }

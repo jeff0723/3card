@@ -8,13 +8,13 @@ import {
   ERROR_MESSAGE,
   BUCKET_NAME
 } from 'scan-helper';
-import { RecMetadata, PersonalRanking, getCorrelation } from 'rec-helper';
+import { RecMetadata, RecResult, getCorrelation } from 'rec-helper';
 
 const INTERVAL = 86400000;
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<PersonalRanking | ScanError>
+  res: NextApiResponse<RecResult | ScanError>
 ) {
   const { account, test } = req.query;
   if (
@@ -77,7 +77,7 @@ export default async function handler(
           .catch(() => {
             res.status(500).json({
                 account,
-                message: "fetch others' data error",
+                message: "fetch others data error",
               } as ScanError);
             return undefined;
           });
@@ -109,11 +109,11 @@ export default async function handler(
             res.status(200).json({
                 account: maxAccount,
                 ranking: maxRanking,
-            } as PersonalRanking);
+            } as RecResult);
           } else {
             res.status(500).json({
                 account,
-                message: "no others' data",
+                message: "no others data",
               } as ScanError);
           }
       }
