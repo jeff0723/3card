@@ -3,6 +3,7 @@ import { Frequency } from "scan-helper";
 export type RecMetadata = {
     nextDrawDate: string,
     alreadyRecTo: string[],
+    lastRec?: RecResult,
 };
 
 export type RecResult = {
@@ -13,6 +14,7 @@ export type RecResult = {
 export type CheckResult = {
     account: string,
     ifDrawable: boolean,
+    lastRec?: RecResult,
     metadataLoc?: string,
     rankingLoc?: string,
 };
