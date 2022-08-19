@@ -5,7 +5,8 @@ import {
   scanAPIKeyMap,
   ScanERC721Result,
   ScanError,
-  ERROR_MESSAGE
+  ERROR_MESSAGE,
+  BUCKET_NAME
 } from 'scan-helper';
 import { utils } from 'ethers';
 
@@ -33,7 +34,7 @@ export default async function handler(
   } else {
     try {
       const s3data = await S3.getObject({
-        Bucket: '3card',
+        Bucket: BUCKET_NAME,
         Key: `onchain/${account.toLowerCase()}/${chain}/erc721`,
       }).promise();
       const scanResult: ScanERC721Result = s3data.Body? JSON.parse(s3data.Body.toString()):[]; 

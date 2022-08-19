@@ -7,7 +7,8 @@ import {
   ERC20Asset,
   ScanERC20Result,
   ScanError,
-  ERROR_MESSAGE
+  ERROR_MESSAGE,
+  BUCKET_NAME
 } from 'scan-helper';
 import { utils, BigNumber } from 'ethers';
 
@@ -86,7 +87,7 @@ export default async function handler(
         endblock: 0,
       };
       const erc20Payload = {
-        Bucket: '3card',
+        Bucket: BUCKET_NAME,
         Key: `onchain/${account.toLowerCase()}/${chain}/erc20`,
         Body: JSON.stringify(scanResult),
       };

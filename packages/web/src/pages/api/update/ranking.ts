@@ -9,6 +9,7 @@ import {
   ScanRankingResult,
   ScanError,
   ERROR_MESSAGE,
+  BUCKET_NAME,
 } from 'scan-helper';
 import { utils } from 'ethers';
 
@@ -76,7 +77,7 @@ export default async function handler(
         endblock: 0,
       };
       const rankingPayload = {
-        Bucket: '3card',
+        Bucket: BUCKET_NAME,
         Key: `onchain/${accLower}/${chain}/ranking`,
         Body: JSON.stringify(scanResult),
       };
