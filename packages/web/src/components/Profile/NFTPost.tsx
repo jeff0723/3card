@@ -9,7 +9,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import Button from 'components/UI/Button'
 import getIPFSLink from 'utils/getIPFSLink'
-import { OrderWithCounter, ConsiderationItem } from '@opensea/seaport-js/lib/types';
+import { OrderWithCounter, ConsiderationItem, Order } from '@opensea/seaport-js/lib/types';
 import { ItemType } from '@opensea/seaport-js/lib/constants';
 
 import { auth } from 'utils/uploadToIPFS'
@@ -18,6 +18,8 @@ import { Spinner } from 'components/UI/Spinner'
 import SeaportContext from 'contexts/seaport'
 import { useAppSelector } from 'state/hooks'
 import toast from 'react-hot-toast'
+import omit from 'utils/omit'
+import { HiCheck } from 'react-icons/hi'
 
 dayjs.extend(relativeTime)
 type Props = {
@@ -39,6 +41,7 @@ const NFTPost = ({ post }: Props) => {
     const [order, setOrder] = useState<OrderWithCounter>()
     const [loading, setLoading] = useState(false)
     const [fulfillLoading, setFulfillLoading] = useState(false)
+    const [fulfilled, setFulfilled] = useState(false)
     const fetchInfo = async () => {
         if (post?.metadata?.attributes[1]?.value) {
             const url = getIPFSLink(post?.metadata?.attributes[1]?.value).replace('https://ipfs.infura.io', 'https://ipfs.io')
@@ -51,10 +54,26 @@ const NFTPost = ({ post }: Props) => {
 
         }
     }
+    const fetchStatus = async () => {
+        if (seaport && order) {
+            const _order = omit(order, 'counter') as Order
+            try {
+                const { callStatic } = await seaport.validate([_order])
+                const status = await callStatic()
+                setFulfilled(!status)
+            } catch {
+                setFulfilled(true)
+            }
+
+        }
+    }
     useEffect(() => {
 
         fetchInfo()
     }, [post])
+    useEffect(() => {
+        fetchStatus()
+    }, [order])
     const fullfillOrder = async () => {
         if (!currentUser) {
             toast.error("Please login first!")
@@ -100,7 +119,6 @@ const NFTPost = ({ post }: Props) => {
 
         }
     }
-    console.log(order)
     return (
         <div className='flex flex-col border-b border-border-gray py-4'>
 
@@ -113,11 +131,17 @@ const NFTPost = ({ post }: Props) => {
                             <div className='text-gray-400'>@{post?.profile?.handle} · {dayjs(new Date(post?.createdAt)).fromNow()}</div>
                         </div>
                         <div>
-                            <Button onClick={fullfillOrder}
-                                disabled={!order || !seaport || fulfillLoading}
-                                icon={
-                                    fulfillLoading && <Spinner size='xs' />
-                                }>Fullfill</Button>
+                            {order && !fulfilled &&
+                                <Button onClick={fullfillOrder}
+                                    disabled={!order || !seaport || fulfillLoading}
+                                    icon={
+                                        fulfillLoading && <Spinner size='xs' />
+                                    }>Fulfill
+                                </Button>
+                            }
+                            {fulfilled && <div className='flex gap-2 items-center rounded-2xl bg-white bg-opacity-10 py-2 px-3'>
+                                <HiCheck className='text-green-400 text-[20px]' />
+                                <div>Fulfilled</div></div>}
                         </div>
                     </div>
                     <div>

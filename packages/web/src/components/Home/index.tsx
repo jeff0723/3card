@@ -21,6 +21,7 @@ import { useQuery } from "@apollo/client";
 import { Publication, PaginatedResultInfo } from "generated/types";
 import SingleThread from "components/Publication/SingleThread";
 import ProfileLoading from "components/Profile/ProfileLoading";
+import NFTPost from "components/Profile/NFTPost";
 
 interface Item {
   [key: string]: string
@@ -183,7 +184,13 @@ const Home: NextPage<Props> = (props: Props) => {
                 className='no-scrollbar'
               >
                 {publications.map((post, index) => (
-                  <SingleThread post={post} key={index} />
+                  (
+                    post?.metadata?.attributes[0].value === 'NFTPost' ?
+                      <NFTPost post={post} />
+                      :
+                      <SingleThread post={post} key={index} />
+
+                  )
                 ))}
               </InfiniteScroll>
             </div>

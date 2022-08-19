@@ -20,7 +20,6 @@ const Community: NextPage = (props: Props) => {
         variables: { request: { publicationId: community_id } },
         skip: !community_id,
         onCompleted: (data) => {
-            console.log(data)
             console.log('[Query]', `Fetched community details Community:${community_id}`)
         },
         onError: (error) => {
@@ -42,7 +41,6 @@ const Community: NextPage = (props: Props) => {
             console.error('[Query Error]', error)
         }
     })
-    console.log(feedData)
     return (
         <div className='w-full'>
             <div className='grid grid-cols-9 w-full'>

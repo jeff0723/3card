@@ -52,7 +52,6 @@ const Profile: NextPage = (props: Props) => {
         variables: { request: { handle: username }, who: currentUser?.id ?? null },
         skip: !username,
         onCompleted(data) {
-            console.log(data)
             console.log(
                 '[Query]',
                 `Fetched profile details Profile:${data?.profile?.id}`
@@ -105,8 +104,7 @@ const Profile: NextPage = (props: Props) => {
         const conversationId = profile?.ownedBy > address ? `${profile?.ownedBy}-${address}` : `${address}-${profile?.ownedBy}`
         router.push(`/messages/${conversationId}`)
     }
-    console.log("IS ME: ", isMe)
-    console.log(profile)
+
     return (
         <Container className='w-full overflow-hidden'>
             <div className='h-52 sm:h-80 bg-black bg-opacity-50' style={{

@@ -66,8 +66,6 @@ const ChatPage: NextPage<Props> = ({ messages }) => {
         checkIfInConversation()
     }, [chatId, address, getProfileByAddress])
 
-    console.log("Peer address:", peerAddress)
-    console.log("messages:", messages)
 
     return (
         <div className='grid grid-cols-3 w-full'>

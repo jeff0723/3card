@@ -71,10 +71,6 @@ const RecommendCard: NextPage = (props: Props) => {
         setTags([...tagSet])
     }, [ranking])
 
-    console.log(recommendUser)
-    //@ts-ignore
-    console.log(recommendUser?.coverPicture?.original?.url)
-    console.log(tags)
     return (
         <div className='grid grid-cols-4 w-full'>
 

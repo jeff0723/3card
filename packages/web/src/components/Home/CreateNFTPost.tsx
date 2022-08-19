@@ -351,7 +351,7 @@ const CreateNFTPost = ({ open, setOpen }: Props) => {
                         </div>
                     </div>
                     {considerations.map((consideration, index) => (
-                        <div className='flex gap-2 items-center'>
+                        <div className='flex gap-2 items-center' key={index}>
                             <ConsiderationCard consideration={consideration} key={index} />
                             <div
                                 className='inline-flex justify-center items-center w-8 h-8 rounded-full hover:bg-primary-blue hover:bg-opacity-30 hover:text-sky-400'

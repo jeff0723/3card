@@ -95,7 +95,7 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
     const [createSetProfileMetadataTypedData, { loading: typedDataLoading }] = useMutation(
         CREATE_SET_PROFILE_METADATA_TYPED_DATA_MUTATION, {
         onCompleted: async ({ createSetProfileMetadataTypedData }: { createSetProfileMetadataTypedData: CreateSetProfileMetadataUriBroadcastItemResult }) => {
-            console.log(createSetProfileMetadataTypedData)
+
             const { id, typedData } = createSetProfileMetadataTypedData
             const { deadline, profileId, metadata } = typedData?.value
 
@@ -204,8 +204,6 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
         const location = getValues('location')
         const website = getValues('website')
         const twitter = getValues('twitter')
-        console.log(coverUrl)
-        console.log(photoUrl)
         setIsUploading(true)
         const { path } = await uploadIpfs({
             name,
@@ -249,7 +247,6 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
             }
         })
     }
-    console.log("currentUser: ", currentUser)
     return (
         <Modal open={open} onClose={() => { setOpen(false) }} size='lg'>
 

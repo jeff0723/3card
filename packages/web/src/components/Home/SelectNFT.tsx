@@ -87,7 +87,7 @@ const SelectNFT = ({ open, setOpen, setSelectedNFT }: Props) => {
                 <div className='flex flex-wrap gap-4'>
 
                     {nfts.map((nft, index) => (
-                        <Tippy content={
+                        <Tippy key={index} content={
                             <div className="flex flex-col">
                                 <div>
                                     Contract address: {trimAddress(nft?.contractAddress)}

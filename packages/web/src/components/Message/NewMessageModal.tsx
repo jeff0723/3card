@@ -46,7 +46,6 @@ const NewMessageModal = (props: Props) => {
         if (searchInput && address) {
             if (!profile) { alert("Please select a user below!") }
             let opponentAddress = profile?.ownedBy
-            console.log(opponentAddress)
             if (opponentAddress && address) {
                 let converstaionId = (BigInt(address) > BigInt(opponentAddress)) ? `${address}-${opponentAddress}` : `${opponentAddress}-${address}`
                 console.log(converstaionId)
@@ -60,7 +59,6 @@ const NewMessageModal = (props: Props) => {
                             }
                         }
                     }) as { data: ListConversationsQuery }
-                    console.log(query.listConversations?.items.length)
                     if (query.listConversations?.items.length !== 0) {
                         closeModal()
                         router.push(`/messages/${converstaionId}`)
@@ -94,7 +92,6 @@ const NewMessageModal = (props: Props) => {
         useLazyQuery(SEARCH_USERS_QUERY, {
             onCompleted(data) {
                 if (data?.search?.items?.length > 0) setSearchByHandle(true)
-                console.log(data)
                 console.log(
                     '[Lazy Query]',
                     `Fetched ${data?.search?.items?.length} search result for ${searchInput}`
@@ -106,7 +103,6 @@ const NewMessageModal = (props: Props) => {
             {
                 onCompleted(data) {
                     console.log("[Lazy query completed]", data)
-                    console.log(data.profiles.items.length)
                 }
             })
 
@@ -124,8 +120,7 @@ const NewMessageModal = (props: Props) => {
 
     }
 
-    console.log("loading:", loading)
-    console.log(isButtonEnable)
+
     return (
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={closeModal}>

@@ -17,8 +17,6 @@ const client = create({
 
 export const uploadIpfs = async <T>(data: T) => {
     const result = await client.add(JSON.stringify(data));
-
-    console.log('upload result ipfs', result);
     return result;
 };
 

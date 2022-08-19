@@ -59,7 +59,6 @@ const Content = ({ currentTab, profile }: Props) => {
             console.log('[Query Error]', err)
         })
     }
-    console.log(publications)
     return (
         <>
             {loading && <ProfileLoading />}
@@ -75,7 +74,7 @@ const Content = ({ currentTab, profile }: Props) => {
                     {publications.map((post, index) => (
                         (
                             post?.metadata?.attributes[0].value === 'NFTPost' ?
-                                <NFTPost post={post} />
+                                <NFTPost post={post} key={index} />
                                 :
                                 <SingleThread post={post} key={index} />
 

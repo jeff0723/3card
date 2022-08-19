@@ -74,7 +74,7 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
                     },
                 },
             })) as { update: UpdateConversationMutation }
-            console.log(data)
+
         } catch (e) {
             console.log(e);
         } finally {

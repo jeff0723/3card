@@ -13,7 +13,6 @@ const SeaportPage: NextPage = (props: Props) => {
     const { seaport } = useContext(SeaportContext)
     const [order, setOrder] = useState<OrderWithCounter>()
     const { address } = useAccount()
-    console.log(seaport)
     const createOrder = async () => {
         //@ts-ignore
         const { executeAllActions } = await seaport?.createOrder({

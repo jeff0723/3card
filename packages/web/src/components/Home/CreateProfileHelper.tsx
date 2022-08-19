@@ -79,7 +79,6 @@ const CreateProfileHelper = (props: Props) => {
 
     }
     const onSubmit = handleSubmit((data) => {
-        console.log('start to create profile: ', data)
         createProfile({
             variables: {
                 request: {
