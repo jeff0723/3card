@@ -46,7 +46,7 @@ const NewMessageModal = (props: Props) => {
             let opponentAddress = profile?.ownedBy
             console.log(opponentAddress)
             if (opponentAddress && address) {
-                let converstaionId = (address > opponentAddress) ? `${address}-${opponentAddress}` : `${opponentAddress}-${address}`
+                let converstaionId = (BigInt(address) > BigInt(opponentAddress)) ? `${address}-${opponentAddress}` : `${opponentAddress}-${address}`
                 console.log(converstaionId)
                 try {
                     setLoading(true)
