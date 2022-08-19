@@ -18,6 +18,8 @@ import '../styles/globals.css';
 import { awsconfig } from "../settings";
 import { Amplify } from "aws-amplify";
 import SeaportProvider from 'providers/SeaportProvider';
+import ErrorBoundary from 'components/Errorboundary';
+
 
 Amplify.configure({ ...awsconfig, ssr: true });
 
@@ -56,20 +58,22 @@ function Updaters() {
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Provider store={store}>
-      <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider appInfo={appInfo} chains={chains} theme={midnightTheme()} showRecentTransactions={true}>
-          <ApolloProvider client={client}>
-            <Updaters />
-            <Layout>
-              <SeaportProvider>
-                <Component {...pageProps} />
-              </SeaportProvider>
-            </Layout>
-          </ApolloProvider>
-        </RainbowKitProvider>
-      </WagmiConfig>
-    </Provider>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <WagmiConfig client={wagmiClient}>
+          <RainbowKitProvider appInfo={appInfo} chains={chains} theme={midnightTheme()} showRecentTransactions={true}>
+            <ApolloProvider client={client}>
+              <Updaters />
+              <Layout>
+                <SeaportProvider>
+                  <Component {...pageProps} />
+                </SeaportProvider>
+              </Layout>
+            </ApolloProvider>
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </Provider>
+    </ErrorBoundary>
   )
 }
 
