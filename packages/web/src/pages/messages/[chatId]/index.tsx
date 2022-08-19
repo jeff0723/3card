@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import type { NextPage, GetServerSideProps } from 'next'
 import Sidebar from 'components/Message/Sidebar'
 import Button from 'components/UI/Button'
-import { useRouter } from 'next/router'
+import Router, { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
 import MessageBox from 'components/Message/MessageBox'
 import GraphQLAPI from '@aws-amplify/api-graphql'
@@ -11,6 +11,8 @@ import { Message, ListMessagesQuery } from "API"
 import { CURRENT_USER_QUERY } from 'graphql/query/user'
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { SEARCH_USERS_QUERY } from 'graphql/query/search-user';
+
 
 interface Props {
     messages: Message[]
@@ -31,14 +33,27 @@ const ChatPage: NextPage<Props> = ({ messages }) => {
         setHandle(data?.profiles?.items[0]?.handle)
     }
     useEffect(() => {
-        if (address && chatId?.includes('-')) {
-            //@ts-ignore
-            const list = chatId.split('-')
-            const peer = list.find((item: string) => item !== address)
-            setPeerAddress(peer)
-            updateProfile()
+        const checkIfInConversation = async () => {
+            if (address && chatId?.includes('-')) {
+                //@ts-ignore
+                const list = chatId.split('-')
+                if (!list.includes(address)) Router.push("/message")
+                const peer = list.find((item: string) => item !== address)
+                const { data: profilesData } = await getProfiles({
+                    variables: { ownedBy: peer },
+                });
+                if (profilesData?.profiles?.items?.length == 0) {
+                    Router.push("/message")
+                } else {
+                    setPeerAddress(peer)
+                    updateProfile()
+                }
+            }
         }
+        checkIfInConversation()
+
     }, [address, chatId])
+
 
     const [getProfiles, { error: errorProfiles, loading: profilesLoading }] =
         useLazyQuery(CURRENT_USER_QUERY,
