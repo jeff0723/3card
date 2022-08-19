@@ -75,7 +75,7 @@ const FilterContainer = styled.div`
   gap: 10px;
 `;
 const NewsContainer = styled.div`
-  height:55vh;
+  height:65vh;
 `
 const BATCHSIZE = 30;
 
@@ -199,7 +199,7 @@ const Home: NextPage<Props> = (props: Props) => {
         </Content>
         <FunctionContainer className="col-span-5">
           <Search />
-          <FilterContainer>
+          {/* <FilterContainer>
             <div>Filter</div>
             {["Project Update", "Research", "Newsletter"].map(
               (item, index) => (
@@ -214,7 +214,7 @@ const Home: NextPage<Props> = (props: Props) => {
                 </div>
               )
             )}
-          </FilterContainer>
+          </FilterContainer> */}
           <Header>
             <Title>News</Title>
           </Header>
