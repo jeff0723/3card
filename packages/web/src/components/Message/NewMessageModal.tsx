@@ -41,52 +41,49 @@ const NewMessageModal = (props: Props) => {
 
     const createNewConversation = async () => {
         if (!searchInput) return
-        if (!profile) { //if user didn't click on searchUsersData card to set profile
-            // if (searchInput !== anAddress){
-            //     search for this handle's address
-            //     const opponentAddress = this handle's address
-            // }else{
-            //     const opponentAddress = searchInput
-            // }
-        } else {
-            let opponentAddress = profile?.ownedBy // if profile was set
-        }
-        let opponentAddress //delete line54 after finished line 44-50
-        if (opponentAddress && address) {
-            let converstaionId = (address > opponentAddress) ? `${address}-${opponentAddress}` : `${opponentAddress} -${address}`
-            try {
-                setLoading(true)
-                const { data: query } = await GraphQLAPI.graphql({
-                    query: listConversations,
-                    variables: {
-                        filter: {
-                            conversationId: converstaionId
-                        }
-                    }
-                }) as { data: ListConversationsQuery }
-                if (query.listConversations?.items.length !== 0) {
-                    router.push(`/messages/${converstaionId}`)
-                }
-                if (query.listConversations?.items.length === 0) {
-                    const { data: mutation } = await GraphQLAPI.graphql({
-                        query: createConversation,
+        if (searchInput && address) {
+            if (!profile) { alert("Please select a user below!") }
+            let opponentAddress = profile?.ownedBy
+            console.log(opponentAddress)
+            if (opponentAddress && address) {
+                let converstaionId = (address > opponentAddress) ? `${address}-${opponentAddress}` : `${opponentAddress} -${address}`
+                console.log(converstaionId)
+                try {
+                    setLoading(true)
+                    const { data: query } = await GraphQLAPI.graphql({
+                        query: listConversations,
                         variables: {
-                            input: {
-                                conversationId: converstaionId,
-                                participants: [address, searchInput]
+                            filter: {
+                                conversationId: converstaionId
                             }
                         }
-                    }) as { data: CreateConversationMutation }
-                    if (mutation.createConversation?.conversationId) {
+                    }) as { data: ListConversationsQuery }
+                    console.log(query.listConversations?.items.length)
+                    if (query.listConversations?.items.length !== 0) {
                         router.push(`/messages/${converstaionId}`)
                     }
+                    if (query.listConversations?.items.length === 0) {
+                        const { data: mutation } = await GraphQLAPI.graphql({
+                            query: createConversation,
+                            variables: {
+                                input: {
+                                    conversationId: converstaionId,
+                                    participants: [address, searchInput]
+                                }
+                            }
+                        }) as { data: CreateConversationMutation }
+                        if (mutation.createConversation?.conversationId) {
+                            router.push(`/messages/${converstaionId}`)
+                        }
+                    }
+                } catch (e) {
+                    toast.error("Something went wrong")
+                } finally {
+                    setLoading(false)
                 }
-            } catch (e) {
-                toast.error("Something went wrong")
-            } finally {
-                setLoading(false)
             }
         }
+
     }
     const [searchUsers, { data: searchUsersData, loading: searchUsersLoading }] =
         useLazyQuery(SEARCH_USERS_QUERY, {

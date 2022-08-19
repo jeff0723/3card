@@ -36,6 +36,7 @@ const ConversationCard = ({ conversationId, participants, lastMessage, updateAt 
       }
     }).subscribe({
       next: (event: any) => {
+        console.log(event.value.data.onUpdateConversationByConversationId.lastMessage)
         setConversationLastMessage(event.value.data.onUpdateConversationByConversationId.lastMessage)
       },
       error: (error: any) => {
@@ -66,7 +67,7 @@ const ConversationCard = ({ conversationId, participants, lastMessage, updateAt 
             <div>{name}</div>
             <div className='h-4 text-gray-400 overflow-hidden overflow-ellipsis'>@{handle} · {dayjs(new Date(updateAt)).fromNow()}</div>
           </div>
-          <div>{lastMessage}</div>
+          <div>{conversationLastMessage}</div>
         </div>
       </div>
     </Link>
