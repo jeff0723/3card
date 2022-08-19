@@ -78,6 +78,7 @@ const NewMessageModal = (props: Props) => {
                     }
                 } catch (e) {
                     toast.error("Something went wrong")
+                    console.log(e)
                 } finally {
                     setLoading(false)
                 }
