@@ -2,7 +2,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import {
   S3,
-  EnsFetcher,
   scanAPIKeyMap,
   NormalTx,
   Frequency,
@@ -49,9 +48,7 @@ export default async function handler(
     } else {
       const rawTxlist: NormalTx[] = (await scanResponse.json()).result;
       const frequencyMap = new Map<string, number>();
-      const ensMap = new EnsFetcher();
       const accLower = account.toLowerCase();
-      const accEns = await ensMap.getEnsName(accLower);
 
       const txlist: NormalTx[] = await Promise.all(rawTxlist.map(async tx => {
           const peerAddress = accLower === tx.from ? tx.to : tx.from;
@@ -59,18 +56,15 @@ export default async function handler(
           frequencyMap.set(peerAddress, currFreq?currFreq+1:1);
           return {
             ...tx,
-            fromEnsName: await ensMap.getEnsName(tx.from),
-            toEnsName: await ensMap.getEnsName(tx.to),
           };
       }));
       const frequencyPairs = [...frequencyMap.entries()].sort((a,b) => b[1] - a[1]);
       const ranking: Frequency[] = await Promise.all(frequencyPairs.map(async pair => ({
         address: pair[0],
-        addressEnsName: await ensMap.getEnsName(pair[0]),
         frequency: pair[1],
       })));
       const scanResult: ScanRankingResult = {
-        account: accEns,
+        account,
         chain,
         txlist,
         ranking,

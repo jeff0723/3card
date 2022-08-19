@@ -5,7 +5,6 @@ import {
   S3,
   scanAPIKeyMap,
   NormalTx,
-  EnsFetcher,
   Frequency,
   ScanRankingResult,
   ScanError,
@@ -50,7 +49,6 @@ export default async function handler(
         } else {
           const rawTxlist: NormalTx[] = (await scanResponse.json()).result;
           const frequencyMap = new Map<string, number>();
-          const ensMap = new EnsFetcher();
           const accLower = account.toLowerCase();
     
           await Promise.all(rawTxlist.map(async tx => {
@@ -61,7 +59,6 @@ export default async function handler(
           const frequencyPairs = [...frequencyMap.entries()].sort((a,b) => b[1] - a[1]);
           const ranking: Frequency[] = await Promise.all(frequencyPairs.map(async pair => ({
             address: pair[0],
-            addressEnsName: await ensMap.getEnsName(pair[0]),
             frequency: pair[1],
           })));
 

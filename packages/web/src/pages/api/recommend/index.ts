@@ -16,7 +16,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<PersonalRanking | ScanError>
 ) {
-  const { account } = req.query;
+  const { account, test } = req.query;
   if (
     typeof account !== 'string' || 
     !utils.isAddress(account)
@@ -39,14 +39,16 @@ export default async function handler(
     .catch(() => initMetadata);
 
     const currentTimestamp = Date.now();
-    if (Date.now() <= new Date(metadata.nextDrawDate).valueOf()) {
-        res.status(500).json({
-            account,
-            message: "not yet draw time",
-          } as ScanError);
-        return;
-    } else {
-        metadata.nextDrawDate = new Date(currentTimestamp + INTERVAL).toLocaleDateString()
+    if (!test) {
+      if (Date.now() <= new Date(metadata.nextDrawDate).valueOf()) {
+          res.status(500).json({
+              account,
+              message: "not yet draw time",
+            } as ScanError);
+          return;
+      } else {
+          metadata.nextDrawDate = new Date(currentTimestamp + INTERVAL).toLocaleDateString()
+      }
     }
 
     const alreadyRecSet = new Set(metadata.alreadyRecTo); 
@@ -86,7 +88,7 @@ export default async function handler(
             for (const c of otherObjects.Contents) {
                 if (!c.Key) continue;
                 const other = c.Key.split('/')[1];
-                if (acc === other || alreadyRecSet.has(other)) continue;
+                if (acc === other || (alreadyRecSet.has(other) && !test )) continue;
                 const data = await S3.getObject({
                     Bucket: BUCKET_NAME,
                     Key: c.Key

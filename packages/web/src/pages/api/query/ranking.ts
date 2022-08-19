@@ -37,7 +37,12 @@ export default async function handler(
         Bucket: BUCKET_NAME,
         Key: `onchain/${account.toLowerCase()}/${chain}/ranking`,
       }).promise();
-      const scanResult: ScanRankingResult = s3data.Body? JSON.parse(s3data.Body.toString()):[]; 
+      const scanResult: ScanRankingResult = s3data.Body? JSON.parse(s3data.Body.toString()):{
+        account,
+        chain,
+        txlist: [],
+        ranking: [],
+      }; 
       res.status(200).json(scanResult);
     } catch (err: any) {
       res.status(500).json({

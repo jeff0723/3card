@@ -37,7 +37,12 @@ export default async function handler(
         Bucket: BUCKET_NAME,
         Key: `onchain/${account.toLowerCase()}/${chain}/erc721`,
       }).promise();
-      const scanResult: ScanERC721Result = s3data.Body? JSON.parse(s3data.Body.toString()):[]; 
+      const scanResult: ScanERC721Result = s3data.Body? JSON.parse(s3data.Body.toString()):{
+        account,
+        chain,
+        erc721events: [],
+        erc721assets: [],
+      }; 
       res.status(200).json(scanResult);
     } catch (err: any) {
       res.status(500).json({
