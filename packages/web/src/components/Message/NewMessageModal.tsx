@@ -48,37 +48,26 @@ const NewMessageModal = (props: Props) => {
             let opponentAddress = profile?.ownedBy
             console.log(opponentAddress)
             if (opponentAddress && address) {
-                let converstaionId = (BigInt(address) > BigInt(opponentAddress)) ? `${address}-${opponentAddress}` : `${opponentAddress}-${address}`
-                console.log(converstaionId)
+                let conversationId = (BigInt(address) > BigInt(opponentAddress)) ? `${address}-${opponentAddress}` : `${opponentAddress}-${address}`
+                console.log(conversationId)
                 try {
                     setLoading(true)
                     const { data: query } = await GraphQLAPI.graphql({
                         query: listConversations,
                         variables: {
                             filter: {
-                                conversationId: { eq: converstaionId }
+                                conversationId: { eq: conversationId }
                             }
                         }
                     }) as { data: ListConversationsQuery }
                     console.log(query.listConversations?.items.length)
                     if (query.listConversations?.items.length !== 0) {
                         closeModal()
-                        router.push(`/messages/${converstaionId}`)
+                        router.push(`/messages/${conversationId}`)
                     }
                     if (query.listConversations?.items.length === 0) {
-                        const { data: mutation } = await GraphQLAPI.graphql({
-                            query: createConversation,
-                            variables: {
-                                input: {
-                                    conversationId: converstaionId,
-                                    participants: [address, opponentAddress]
-                                }
-                            }
-                        }) as { data: CreateConversationMutation }
-                        if (mutation.createConversation?.conversationId) {
-                            closeModal()
-                            router.push(`/messages/${converstaionId}`)
-                        }
+                        closeModal()
+                        router.push(`/messages/${conversationId}`)
                     }
                 } catch (e) {
                     toast.error("Something went wrong")
