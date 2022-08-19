@@ -1,6 +1,6 @@
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { GET_PROFILES } from 'graphql/query/profile'
-import { CURRENT_USER_QUERY } from 'graphql/query/user'
+import { GET_PROFILE_BY_ADDRESS } from 'graphql/query/user'
 import React, { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 import dayjs from 'dayjs'
@@ -48,7 +48,7 @@ const ConversationCard = ({ conversationId, participants, lastMessage, updateAt 
     }
   }, [lastMessage]);
   const { data, loading, error } =
-    useQuery(CURRENT_USER_QUERY, {
+    useQuery(GET_PROFILE_BY_ADDRESS, {
       variables: { ownedBy: [user] },
       onCompleted(data) {
         console.log("[Query complete]", data)

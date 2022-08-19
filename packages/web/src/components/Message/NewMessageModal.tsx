@@ -10,6 +10,7 @@ import { MediaSet, NftImage, Profile } from 'generated/types';
 import { createConversation } from 'graphql/amplify/mutations';
 import { listConversations } from 'graphql/amplify/queries';
 import { SEARCH_USERS_QUERY } from 'graphql/query/search-user';
+import { GET_PROFILE_BY_ADDRESS } from 'graphql/query/user';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ChangeEvent, Fragment, useRef, useState } from 'react';
@@ -28,6 +29,7 @@ const NewMessageModal = (props: Props) => {
     const { address } = useAccount()
     const [loading, setLoading] = useState(false)
     const [searchInput, setSearchInput] = useState("")
+    const [searchByHandle, setSearchByHandle] = useState(false)
     const [profile, setProfile] = useState<Profile>()
     const dropdownRef = useRef(null)
 
@@ -91,6 +93,7 @@ const NewMessageModal = (props: Props) => {
     const [searchUsers, { data: searchUsersData, loading: searchUsersLoading }] =
         useLazyQuery(SEARCH_USERS_QUERY, {
             onCompleted(data) {
+                if (data?.search?.items?.length > 0) setSearchByHandle(true)
                 console.log(data)
                 console.log(
                     '[Lazy Query]',
@@ -98,14 +101,27 @@ const NewMessageModal = (props: Props) => {
                 )
             }
         })
+    const [getProfileByAddress, { data: userData, loading: profilesLoading }] =
+        useLazyQuery(GET_PROFILE_BY_ADDRESS,
+            {
+                onCompleted(data) {
+                    console.log("[Lazy query completed]", data)
+                    console.log(data.profiles.items.length)
+                }
+            })
 
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
         const keyword = e.target.value
         setSearchInput(keyword)
-
         searchUsers({
             variables: { request: { type: 'PROFILE', query: keyword, limit: 8 } }
         })
+        if (searchByHandle == false) {
+            getProfileByAddress({
+                variables: { ownedBy: keyword }
+            })
+        }
+
     }
 
     console.log("loading:", loading)
@@ -212,7 +228,20 @@ const NewMessageModal = (props: Props) => {
                                                             </div>
                                                         </div>
                                                     ))}
-                                                    {searchUsersData?.search?.items?.length === 0 && (
+                                                    {userData?.profiles.items?.map((profile: Profile & { picture: MediaSet & NftImage }) => (
+                                                        <div
+                                                            key={profile?.handle}
+                                                            className="py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                                        >
+                                                            <div onClick={() => {
+                                                                setProfile(profile)
+                                                            }}>
+
+                                                                <UserProfile profile={profile} />
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    {searchUsersData?.search?.items?.length === 0 && userData?.profiles.items.length === 0 && (
                                                         <div className="py-2 px-4">No matching users</div>
                                                     )}
                                                 </>

@@ -28,17 +28,18 @@ const Sidebar: FC<Props> = () => {
         dispatch(setIsNewMessageModalOpen({ isNewMessageModalOpen: true }))
     }
     const [conversations, setConversations] = useState<Conversation[]>([])
-    const listConversationQuery = async () => {
-        const { data } = await GraphQLAPI.graphql({
-            query: listConversations,
-            variables: {
-                filter: { participants: { contains: address } }
-            }
-        }) as { data: ListConversationsQuery }
 
-        setConversations(data.listConversations?.items as Conversation[] || [])
-    }
     useEffect(() => {
+        const listConversationQuery = async () => {
+            const { data } = await GraphQLAPI.graphql({
+                query: listConversations,
+                variables: {
+                    filter: { participants: { contains: address } }
+                }
+            }) as { data: ListConversationsQuery }
+
+            setConversations(data.listConversations?.items as Conversation[] || [])
+        }
         listConversationQuery()
     }, [address])
     return (
