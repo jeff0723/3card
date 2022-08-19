@@ -86,12 +86,12 @@ const CreateNFTPost = ({ open, setOpen }: Props) => {
                 toast.promise(
                     wait(),
                     {
-                        loading: 'Community creating...',
+                        loading: 'NFT Post creating...',
                         success: (data) => {
                             if (data.status) {
-                                return `Community created successfully`
+                                return `NFT Post created successfully`
                             } else {
-                                return `Community creation failed`
+                                return `NFT Post creation failed`
                             }
                         },
                         error: (err) => `This just happened: ${err.toString()}`,
@@ -174,6 +174,16 @@ const CreateNFTPost = ({ open, setOpen }: Props) => {
             toast.error("Please login first")
             return
         }
+        if (!selectedNFT) {
+            toast.error("Please select NFT")
+            return
+        }
+        if (!considerations.length) {
+            toast.error('Please add at least one condition')
+        }
+        if (!postInput) {
+            toast.error('Please fill in the post content')
+        }
 
         const offer = {
             itemType: ItemType.ERC721,
@@ -197,10 +207,12 @@ const CreateNFTPost = ({ open, setOpen }: Props) => {
                 order: response,
                 offer: [{
                     ...offer,
+                    contentUri: getIPFSLink(selectedNFT?.originalContent?.uri),
+                    name: selectedNFT?.name
+
                 }],
                 considerations: considerations,
             })
-            console.log(metaDataPath)
 
             const publicationMetaData: PublicationMetadata = {
                 version: '1.0.0',
@@ -219,7 +231,7 @@ const CreateNFTPost = ({ open, setOpen }: Props) => {
                     {
                         traitType: 'string',
                         key: "metadata",
-                        value: `ipfs://${metaDataPath}`
+                        value: `https://ipfs.infura.io/ipfs/${metaDataPath}`
                     }
                 ],
                 createdAt: new Date(),
@@ -249,18 +261,17 @@ const CreateNFTPost = ({ open, setOpen }: Props) => {
             toast.error(error.message)
         } finally {
             setCreateOrdering(false)
+            setIsUploading(false)
+
         }
 
 
 
 
     }
-    const onSubmit = handleSubmit(async (data) => {
 
-
-    })
     const canSumbit = () => {
-        if (!selectedNFT || !considerations.length) return false
+        if (!selectedNFT || !considerations.length || !postInput) return false
         return true
     }
     const ButtonText = () => {
@@ -270,7 +281,6 @@ const CreateNFTPost = ({ open, setOpen }: Props) => {
         if (isUploading) return "Uploading"
         return "Create"
     }
-    console.log(selectedNFT)
     return (
         <Modal open={open} onClose={() => { setOpen(false) }} size='md'>
             <div className='flex flex-col gap-2'>
