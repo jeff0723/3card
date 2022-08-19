@@ -228,7 +228,7 @@ const NewMessageModal = (props: Props) => {
                                                             </div>
                                                         </div>
                                                     ))}
-                                                    {userData?.profiles.items?.map((profile: Profile & { picture: MediaSet & NftImage }) => (
+                                                    {userData?.profiles?.items?.map((profile: Profile & { picture: MediaSet & NftImage }) => (
                                                         <div
                                                             key={profile?.handle}
                                                             className="py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -241,7 +241,7 @@ const NewMessageModal = (props: Props) => {
                                                             </div>
                                                         </div>
                                                     ))}
-                                                    {searchUsersData?.search?.items?.length === 0 && userData?.profiles.items.length === 0 && (
+                                                    {searchUsersData?.search?.items?.length === 0 && userData?.profiles?.items?.length === 0 && (
                                                         <div className="py-2 px-4">No matching users</div>
                                                     )}
                                                 </>

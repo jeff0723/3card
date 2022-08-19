@@ -11,7 +11,6 @@ import { Message, ListMessagesQuery } from "API"
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { SEARCH_USERS_QUERY } from 'graphql/query/search-user';
-import Image from 'next/image'
 import { GET_PROFILE_BY_ADDRESS } from 'graphql/query/user'
 
 import getIPFSLink from 'utils/getIPFSLink'
@@ -79,13 +78,7 @@ const ChatPage: NextPage<Props> = ({ messages }) => {
                 <div className='w-full flex flex-col px-4'>
                     <div className='flex gap-2 items-center h-[53px]'>
                         <div>
-                            {avatar && <Image
-                                src={avatar}
-                                className="rounded-full"
-                                height={40}
-                                width={40}
-                                alt={name}
-                            />}
+                            {avatar && <img src={avatar} className="rounded-full w-8 h-8" alt={name} />}
                             {!avatar && <div className="rounded-full loading w-8 h-8" />}
 
                         </div>

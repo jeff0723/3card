@@ -8,6 +8,9 @@ import { listConversations } from 'graphql/amplify/queries';
 import { useAccount } from 'wagmi';
 import ConversationCard from './ConversationCard';
 import NewMessageModal from './NewMessageModal';
+import { API } from 'aws-amplify';
+import { GraphQLSubscription } from '@aws-amplify/api';
+import { onUpdateConversationByConversationId } from 'graphql/amplify/subscriptions';
 
 
 interface Props {
@@ -42,6 +45,7 @@ const Sidebar: FC<Props> = () => {
         }
         listConversationQuery()
     }, [address])
+
     return (
         <div>
             <div className='flex justify-between items-center px-4 bg-black'>
