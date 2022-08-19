@@ -54,12 +54,13 @@ const NewMessageModal = (props: Props) => {
                         query: listConversations,
                         variables: {
                             filter: {
-                                conversationId: converstaionId
+                                conversationId: { eq: converstaionId }
                             }
                         }
                     }) as { data: ListConversationsQuery }
                     console.log(query.listConversations?.items.length)
                     if (query.listConversations?.items.length !== 0) {
+                        closeModal()
                         router.push(`/messages/${converstaionId}`)
                     }
                     if (query.listConversations?.items.length === 0) {
@@ -73,6 +74,7 @@ const NewMessageModal = (props: Props) => {
                             }
                         }) as { data: CreateConversationMutation }
                         if (mutation.createConversation?.conversationId) {
+                            closeModal()
                             router.push(`/messages/${converstaionId}`)
                         }
                     }
