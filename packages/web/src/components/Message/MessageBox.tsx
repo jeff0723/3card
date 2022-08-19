@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Message, ListMessagesQuery, CreateMessageMutation, UpdateConversationMutation } from "API";
+import { Message, ListMessagesQuery, CreateMessageMutation, UpdateConversationMutation, ListConversationsQuery, CreateConversationMutation } from "API";
 import GraphQLAPI, { graphqlOperation } from "@aws-amplify/api-graphql";
 import { GraphQLSubscription } from '@aws-amplify/api';
-import { listMessages } from "graphql/amplify/queries";
-import { createMessage, updateConversation } from "graphql/amplify/mutations";
+import { listConversations, listMessages } from "graphql/amplify/queries";
+import { createConversation, createMessage, updateConversation } from "graphql/amplify/mutations";
 import { onCreateMessageByConversationId } from "graphql/amplify/subscriptions";
 
 import { useAccount } from "wagmi";
@@ -45,7 +45,7 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
     }, [conversationId, messages]);
     useEffect(() => {
         setStateMessages([...messages])
-    }, [conversationId])
+    }, [conversationId, messages])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(e.target.value);
@@ -53,35 +53,59 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
     const handleSend = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (message.trim() === '') return;
-        try {
-            const { data } = (await GraphQLAPI.graphql({
-                query: createMessage,
+        const { data: query } = await GraphQLAPI.graphql({
+            query: listConversations,
+            variables: {
+                filter: {
+                    conversationId: { eq: conversationId }
+                }
+            }
+        }) as { data: ListConversationsQuery }
+        if (query.listConversations?.items.length === 0) {
+            const list = conversationId.split('-')
+            const opponentAddress = list.find((item: string) => item !== address)
+            const { data: mutation } = await GraphQLAPI.graphql({
+                query: createConversation,
                 variables: {
                     input: {
                         conversationId: conversationId,
-                        body: message,
-                        sender: address,
-                        receiver: peerAddress,
-                    },
-                },
-            })) as { data: CreateMessageMutation };
-            const { update } = (await GraphQLAPI.graphql({
-                query: updateConversation,
-                variables: {
-                    input: {
-                        conversationId: conversationId,
-                        lastMessage: message,
-                    },
-                },
-            })) as { update: UpdateConversationMutation }
-            console.log(data)
-        } catch (e) {
-            console.log(e);
-        } finally {
-            setMessage("");
+                        participants: [address, opponentAddress]
+                    }
+                }
+            }) as { data: CreateConversationMutation }
+            if (mutation.createConversation?.conversationId) {
+                try {
+                    const { data } = (await GraphQLAPI.graphql({
+                        query: createMessage,
+                        variables: {
+                            input: {
+                                conversationId: conversationId,
+                                body: message,
+                                sender: address,
+                                receiver: peerAddress,
+                            },
+                        },
+                    })) as { data: CreateMessageMutation };
+                    const { update } = (await GraphQLAPI.graphql({
+                        query: updateConversation,
+                        variables: {
+                            input: {
+                                conversationId: conversationId,
+                                lastMessage: message,
+                            },
+                        },
+                    })) as { update: UpdateConversationMutation }
+                    console.log(data)
+                } catch (e) {
+                    console.log(e);
+                } finally {
+                    setMessage("");
+                }
+                return false
+            };
         }
-        return false
-    };
+    }
+
     return (
         <div className="h-full py-4 flex flex-col justify-end ">
             <div className="h-[700px] flex flex-col overflow-y-auto gap-2 py-4">
