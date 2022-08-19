@@ -28,6 +28,7 @@ import ConsiderationCard from './ConsiderationCard';
 import SelectNFT, { trimAddress } from './SelectNFT';
 import { ItemType } from '@opensea/seaport-js/lib/constants';
 import { CreateOrderInput } from '@opensea/seaport-js/lib/types';
+import { create } from 'domain';
 type Props = {
     open: boolean;
     setOpen: (open: boolean) => void;
@@ -47,8 +48,9 @@ const CreateNFTPost = ({ open, setOpen }: Props) => {
     const [selectedNFT, setSelectedNFT] = useState<Nft>()
     const [addConditionOpen, setAddConditionOpen] = useState<boolean>(false)
     const [currencySelected, setCurrenySelected] = useState<boolean>(false)
-    const [postInput, setPostInput] = useState<string | null>("")
+    const [postInput, setPostInput] = useState<string>("")
     const [considerations, setConsiderations] = useState<ConsiderationInputItem[]>([])
+    const [createOrdering, setCreateOrdering] = useState(false)
     const { register, handleSubmit, getValues } = useForm<FormValues>();
     const [selectedModule, setSelectedModule] =
         useState<EnabledModule>()
@@ -173,26 +175,81 @@ const CreateNFTPost = ({ open, setOpen }: Props) => {
             return
         }
 
+        const offer = {
+            itemType: ItemType.ERC721,
+            token: selectedNFT?.contractAddress,
+            identifier: selectedNFT?.tokenId,
+        }
         const orderParams: CreateOrderInput = {
-            offer: [
-                {
-                    //@ts-ignore
-                    itemType: ItemType.ERC721,
-                    token: selectedNFT?.contractAddress,
-                    //@ts-ignore
-                    identifier: selectedNFT?.tokenId,
-                }
-            ],
+            //@ts-ignore
+            offer: [offer],
 
             consideration: considerations,
         }
-
+        setCreateOrdering(true)
         const { executeAllActions } = await seaport?.createOrder(
             orderParams,
             address
         );
+        try {
+            const response = await executeAllActions();
+            const { path: metaDataPath } = await uploadIpfs({
+                order: response,
+                offer: [{
+                    ...offer,
+                }],
+                considerations: considerations,
+            })
+            console.log(metaDataPath)
 
-        const res = await executeAllActions();
+            const publicationMetaData: PublicationMetadata = {
+                version: '1.0.0',
+                metadata_id: uuid(),
+                description: postInput,//TODO: add trimify (figure out why)
+                content: postInput,
+                external_url: "",
+                name: `[3card] NFT Post by @${currentUser?.handle}`,
+                mainContentFocus: PublicationMainFocus.ARTICLE,
+                attributes: [
+                    {
+                        traitType: 'string',
+                        key: "type",
+                        value: 'NFTPost'
+                    },
+                    {
+                        traitType: 'string',
+                        key: "metadata",
+                        value: `ipfs://${metaDataPath}`
+                    }
+                ],
+                createdAt: new Date(),
+                appId: `${APP_NAME}`,
+            }
+            setIsUploading(true)
+            const { path } = await uploadIpfs(publicationMetaData).finally(() => setIsUploading(false))
+            createPostTypedData({
+                variables: {
+                    request: {
+                        profileId: currentUser?.id,
+                        contentURI: `https://ipfs.infura.io/ipfs/${path}`,
+                        collectModule: {
+                            freeCollectModule: {
+                                followerOnly: false
+                            }
+                        },
+                        referenceModule: {
+                            followerOnlyReferenceModule: false
+                        }
+                    }
+                }
+            })
+        }
+        catch (error) {
+            //@ts-ignore
+            toast.error(error.message)
+        } finally {
+            setCreateOrdering(false)
+        }
 
 
 
@@ -200,51 +257,20 @@ const CreateNFTPost = ({ open, setOpen }: Props) => {
     }
     const onSubmit = handleSubmit(async (data) => {
 
-        const publicationMetaData: PublicationMetadata = {
-            version: '1.0.0',
-            metadata_id: uuid(),
-            description: data.description,//TODO: add trimify (figure out why)
-            content: data.description,
-            external_url: "",
-            name: data.name,
-            mainContentFocus: PublicationMainFocus.ARTICLE,
-            attributes: [
-                {
-                    traitType: 'string',
-                    key: "type",
-                    value: 'community'
-                },
-                {
-                    traitType: 'string',
-                    key: "category",
-                    value: data.category
-                }
-            ],
-            createdAt: new Date(),
-            appId: `${APP_NAME} Community`,
-        }
-        const { path } = await uploadIpfs(publicationMetaData).finally(() => setIsUploading(false))
-        createPostTypedData({
-            variables: {
-                request: {
-                    profileId: currentUser?.id,
-                    contentURI: `https://ipfs.infura.io/ipfs/${path}`,
-                    collectModule: {
-                        freeCollectModule: {
-                            followerOnly: false
-                        }
-                    },
-                    referenceModule: {
-                        followerOnlyReferenceModule: false
-                    }
-                }
-            }
-        })
+
     })
     const canSumbit = () => {
         if (!selectedNFT || !considerations.length) return false
         return true
     }
+    const ButtonText = () => {
+        if (createOrdering) return 'Creating Order'
+        if (signLoading) return 'Signing'
+        if (writeLoading) return "Confirming"
+        if (isUploading) return "Uploading"
+        return "Create"
+    }
+    console.log(selectedNFT)
     return (
         <Modal open={open} onClose={() => { setOpen(false) }} size='md'>
             <div className='flex flex-col gap-2'>
@@ -331,25 +357,20 @@ const CreateNFTPost = ({ open, setOpen }: Props) => {
                 <Button className='mt-4' type='submit'
                     disabled={
                         !canSumbit() ||
+                        createOrdering ||
                         signLoading ||
                         typedDataLoading ||
                         broadcastLoading ||
                         isUploading}
                     icon={
-                        (
-                            isUploading
+                        (createOrdering
+                            || isUploading
                             || writeLoading
                             || typedDataLoading
                             || signLoading)
                         && <Spinner size='sm' />}
                     onClick={handleCreate}>
-                    {isUploading || writeLoading || signLoading ?
-                        (writeLoading ?
-                            "Confirming" :
-                            (signLoading ?
-                                "Signing" :
-                                "Uploading")) :
-                        "Create"
+                    {ButtonText()
                     }
                 </Button>
             </div>
