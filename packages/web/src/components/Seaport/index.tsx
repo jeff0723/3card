@@ -28,7 +28,7 @@ const SeaportPage: NextPage = (props: Props) => {
                 {
                     amount: ethers.utils.parseEther("0.01").toString(),
                     recipient: address
-                }
+                },
             ],
         })
         const order = await executeAllActions();

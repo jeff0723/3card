@@ -6,6 +6,7 @@ import { useAccount } from 'wagmi'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import Link from 'next/link'
+import getIPFSLink from 'utils/getIPFSLink'
 dayjs.extend(relativeTime)
 type Props = {
   conversationId: string
@@ -25,7 +26,7 @@ const ConversationCard = ({ conversationId, participants, lastMessage, updateAt 
       variables: { ownedBy: [user] },
       onCompleted(data) {
         console.log("[Query complete]", data)
-        setAvatar(data?.profiles?.items[0]?.picture?.original?.url)
+        setAvatar(getIPFSLink(data?.profiles?.items[0]?.picture?.original?.url))
         setName(data?.profiles?.items[0]?.name)
         setHandle(data?.profiles?.items[0]?.handle)
       }

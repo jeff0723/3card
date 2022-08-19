@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-
+import { GoGlobe } from 'react-icons/go'
 interface Item {
   [key: string]: string
   pubDate: string
@@ -38,21 +38,26 @@ const FeedContent = styled.div`
   flex-direction: column;
   align-items: flex-start;
   width: 463px;
-  height: 70px;
+
 `
 const FeedSubtitle = styled.div`
   display: flex;
+  width: 100%;
+  justify-content: space-between;
   gap:10px
 `
 const FeedTitle = styled.div`
   font-weight: 700;
   font-size: 16px;
   line-height: 17px;
-  overflow: hidden;
+  width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
   text-overflow: ellipsis;
+  overflow: hidden;
 `
 const FeedDate = styled.div`
-  font-weight: 400;
   font-size: 13px;
   line-height: 16px;
   color: rgba(255, 255, 255, 0.5);
@@ -60,10 +65,13 @@ const FeedDate = styled.div`
 const FeedText = styled.p`
   font-weight: 400;
   font-size: 13px;
+  line-height: 16px;
   text-overflow: ellipsis;
   width: 100%;
-  height: 64px;
   overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 `
 
 const BlueText = styled.span`
@@ -77,17 +85,21 @@ const Feed = ({ item }: Props) => {
 
       <FeedContainer>
         {!item.thumbnail && !item.favIcon ?
-          <div className='w-10 h-10 flex justify-center items-center'>
-            news
-          </div> : (
-            <img src={item.thumbnail || item.favIcon} className='w-10 h-10 rounded-full' alt='thumbnail' />
+          <GoGlobe className='text-[40px] text-primary-blue' /> : (
+
+            <img src={item.thumbnail || item.favIcon} className='w-10 h-10 rounded-full' alt='thumbnail'
+              onError={({ currentTarget }) => {
+                currentTarget.onerror = null; // prevents looping
+                currentTarget.src = "/logo.png";
+              }} />
           )}
 
         <FeedContent>
           <FeedTitle>{item.title}</FeedTitle>
-          <FeedSubtitle>  <BlueText>{item.creator} </BlueText> <FeedDate>{new Date(item.pubDate).toDateString()}</FeedDate></FeedSubtitle>
+          <FeedText className='text-gray-400'>{item['content:encodedSnippet']}</FeedText>
 
-          {/* <FeedText>{item['content:encodedSnippet']}</FeedText> */}
+          <FeedSubtitle className='font-semi-bold'>  <BlueText>{item.creator} </BlueText> <FeedDate>{new Date(item.pubDate).toDateString()}</FeedDate></FeedSubtitle>
+
         </FeedContent>
       </FeedContainer>
     </a>

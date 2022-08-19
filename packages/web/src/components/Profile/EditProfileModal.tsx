@@ -158,7 +158,7 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
                 const filename = uuid() + ".png"
                 const file = new File([e.target.files[0]], filename)
                 const cid = await client.put([file])
-                setCoverUrl(`https://${cid}.ipfs.w3s.link/${filename}`)
+                setCoverUrl(`https://ipfs.infura.io/${cid}/${filename}`)
             } finally {
                 const objectUrl = URL.createObjectURL(e.target.files[0])
                 setCoverPreviewUrl(objectUrl)
@@ -178,7 +178,7 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
                 const filename = uuid() + ".png"
                 const file = new File([e.target.files[0]], filename)
                 const cid = await client.put([file])
-                setPhotoUrl(`https://${cid}.ipfs.w3s.link/${filename}`)
+                setPhotoUrl(`https://ipfs.infura.io/${cid}/${filename}`)
             } finally {
                 const objectUrl = URL.createObjectURL(e.target.files[0])
                 setPhotoPreviewUrl(objectUrl)

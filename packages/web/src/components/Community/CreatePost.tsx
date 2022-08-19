@@ -11,6 +11,7 @@ import toast from 'react-hot-toast';
 import { RiImage2Line } from 'react-icons/ri';
 import { useAppSelector } from 'state/hooks';
 import { PublicationMainFocus, PublicationMetadata } from 'types/publication-metadata';
+import getIPFSLink from 'utils/getIPFSLink';
 import omit from 'utils/omit';
 import splitSignature from 'utils/splitSignature';
 import { uploadIpfs } from 'utils/uploadToIPFS';
@@ -177,7 +178,7 @@ const CreatePost = ({ communityId }: Props) => {
     }
     return (
         <div className='flex gap-2 items-center p-2 border border-border-gray'>
-            <img src={currentUser?.picture?.original?.url} className='w-10 h-10 rounded-full' />
+            <img src={getIPFSLink(currentUser?.picture?.original?.url)} className='w-10 h-10 rounded-full' />
             <div contentEditable placeholder='Create a post...' className='w-full p-4 outline-none' onInput={(e) => setPostInput(e?.currentTarget?.innerText)} />
             <div className='flex items-center gap-2'>
                 <RiImage2Line className='text-[20px] text-primary-blue' />

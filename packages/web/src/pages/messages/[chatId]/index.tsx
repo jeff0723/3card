@@ -11,6 +11,7 @@ import { Message, ListMessagesQuery } from "API"
 import { CURRENT_USER_QUERY } from 'graphql/query/user'
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
+import getIPFSLink from 'utils/getIPFSLink'
 
 interface Props {
     messages: Message[]
@@ -46,7 +47,7 @@ const ChatPage: NextPage<Props> = ({ messages }) => {
                 variables: { ownedBy: [peerAddress] },
                 onCompleted(data) {
                     console.log("[Lazy query completed]", data)
-                    setAvatar(data?.profiles?.items[0]?.picture?.original?.url)
+                    setAvatar(getIPFSLink(data?.profiles?.items[0]?.picture?.original?.url))
                     setName(data?.profiles?.items[0]?.name)
                     setHandle(data?.profiles?.items[0]?.handle)
                 }

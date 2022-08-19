@@ -88,7 +88,7 @@ const index: NextPage = (props: Props) => {
                 </div>
                 {currentUser && <div className='flex justify-between items-center py-4 border-b border-border-gray'>
                     <div className='flex items-start gap-2'>
-                        <img src={currentUser?.picture?.original?.url} className='w-12 h-12 rounded-full' />
+                        <img src={getIPFSLink(currentUser?.picture?.original?.url)} className='w-12 h-12 rounded-full' />
                         <div contentEditable className='text-[20px] outline-none py-3' placeholder='Write your reply' />
                     </div>
                     <div>

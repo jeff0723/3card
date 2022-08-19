@@ -4,6 +4,7 @@ import { useAppSelector } from 'state/hooks'
 import Button from 'components/UI/Button'
 import Countdown from 'react-countdown';
 import { Frequency, ScanRankingResult, ADDRESS_TAGS } from 'scan-helper';
+import getIPFSLink from 'utils/getIPFSLink';
 
 
 type Props = {}
@@ -87,9 +88,9 @@ const RecommendCard: NextPage = (props: Props) => {
 
                     <img
                         //@ts-ignore
-                        src={recommendUser?.coverPicture?.original?.url} className='h-40 w-full' />
+                        src={getIPFSLink(recommendUser?.coverPicture?.original?.url)} className='h-40 w-full' />
                     <div className='-mt-20'>
-                        <img src={recommendUser?.picture?.original?.url} className="w-40 h-40 rounded-full ring-8 ring-black" />
+                        <img src={getIPFSLink(recommendUser?.picture?.original?.url)} className="w-40 h-40 rounded-full ring-8 ring-black" />
                     </div>
                     <div className='flex flex-col py-[16px]'>
                         <div>{recommendUser?.name}</div>

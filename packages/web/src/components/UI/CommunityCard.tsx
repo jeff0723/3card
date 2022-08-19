@@ -1,6 +1,7 @@
 import { Publication } from 'generated/types'
 import Link from 'next/link'
 import { FC } from 'react'
+import getIPFSLink from 'utils/getIPFSLink'
 
 type CardProps = {
     community: Publication
@@ -9,7 +10,7 @@ const CommunityCard: FC<CardProps> = ({ community }) => (
     <Link href={`/community/${community?.id}`}>
         <div className='flex max-w-[275px] gap-2 py-2 px-4 rounded-lg border border-border-gray'>
             <div className='flex items-center'>
-                <img src={community?.metadata?.cover?.original?.url} className='rounded-lg' width={80} height={80} />
+                <img src={getIPFSLink(community?.metadata?.cover?.original?.url)} className='rounded-lg' width={80} height={80} />
             </div>
             <div className='flex flex-col'>
                 <div className='font-bold'>{community?.metadata?.name}</div>
