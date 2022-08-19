@@ -8,7 +8,7 @@
     "packages/scan",
     "packages/expo-app",
     "packages/web",
-    "packages/subgraph"
+    "packages/dynamodb"
   ],
   "scripts": {
     "hardhat": "yarn workspace @3card-monorepo/hardhat hardhat"
