@@ -117,8 +117,8 @@ function SideBar({ }: Props) {
             dispatch(updateLoadingStatus({ isApplicationLoading: false }));
         }
     };
-    console.log('sidebar currentuser:', currentUser)
 
+    console.log('authenticated', isAuthenticated)
     return (
         <div className='border border-transparent border-r-[#2F3336] flex flex-col justify-between px-4 pb-4'>
             <Column>

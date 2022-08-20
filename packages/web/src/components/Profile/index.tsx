@@ -88,11 +88,14 @@ const Profile: NextPage = (props: Props) => {
 
     useEffect(() => {
         const tagSet = new Set<string>();
-        for (const addressFreq of ranking) {
-            const tagName = ADDRESS_TAGS.get(addressFreq.address)
-            if (tagName && !tagSet.has(tagName)) tagSet.add(tagName)
-            if (tagSet.size >= 5) break
+        if (ranking) {
+            for (const addressFreq of ranking) {
+                const tagName = ADDRESS_TAGS.get(addressFreq.address)
+                if (tagName && !tagSet.has(tagName)) tagSet.add(tagName)
+                if (tagSet.size >= 5) break
+            }
         }
+
         setTags([...tagSet])
     }, [ranking])
     const handleSendMessage = () => {

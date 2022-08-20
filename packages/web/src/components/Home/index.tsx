@@ -108,6 +108,7 @@ const Home: NextPage<Props> = (props: Props) => {
       console.log('[Query]', `Fetched first 10 timeline publications`)
     },
     onError(error) {
+
       console.error('[Query Home Feed Error] ', error)
     }
   })

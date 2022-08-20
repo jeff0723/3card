@@ -25,7 +25,8 @@ export const initialState: ApplicationState = {
     recommendedProfiles: [],
     isNewMessageModalOpen: false,
     loadingNews: false,
-    news: []
+    news: [],
+
 }
 
 const applicationSlice = createSlice({

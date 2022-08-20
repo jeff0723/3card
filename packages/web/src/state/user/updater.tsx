@@ -44,6 +44,7 @@ const UserUpdater = (props: Props) => {
                     setCurrentUser({ currentUser: profilesData?.profiles?.items[0] })
                 );
             }
+            console.log('finish fetch user')
         }
         dispatch(updateLoadingStatus({ isApplicationLoading: false }))
 
