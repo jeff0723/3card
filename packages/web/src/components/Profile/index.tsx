@@ -74,7 +74,7 @@ const Profile: NextPage = (props: Props) => {
                 setTxList([])
             }
             const txlistResult = (await res.json())
-            setTxList(txlistResult.txlist)
+            setTxList(txlistResult.txlist??txlistResult)
         }
     };
 
@@ -86,7 +86,7 @@ const Profile: NextPage = (props: Props) => {
                 setRanking([])
             }
             const rankingResult = (await res.json())
-            setRanking(rankingResult.ranking)
+            setRanking(rankingResult.ranking??[])
         }
     }
 
