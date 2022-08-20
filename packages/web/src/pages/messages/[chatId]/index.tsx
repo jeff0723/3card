@@ -26,6 +26,7 @@ const ChatPage: NextPage<Props> = () => {
     const { address } = useAccount()
     const currentUser = useAppSelector(state => state.user.currentUser)
     const { query: { chatId } } = useRouter()
+    const router = useRouter()
     const [peerAddress, setPeerAddress] = useState("")
     const [avatar, setAvatar] = useState("")
     const [name, setName] = useState("")
@@ -33,6 +34,7 @@ const ChatPage: NextPage<Props> = () => {
     const [messages, setMessages] = useState<Message[]>()
     const [loading, setLoading] = useState(false)
     const [checkSuccess, setCheckSuccess] = useState(false)
+    const isApplicationLoading = useAppSelector(state => state.application.isApplicationLoading)
     const [getProfileByAddress, { error: errorProfiles, loading: profilesLoading }] =
         useLazyQuery(GET_PROFILE_BY_ADDRESS,
             {
@@ -40,39 +42,47 @@ const ChatPage: NextPage<Props> = () => {
                     console.log("[Lazy query completed]", data)
                 }
             })
+
     const getMessages = async () => {
-        if (checkSuccess) {
-            const { data } = await GraphQLAPI.graphql({
-                query: listMessages,
-                variables: {
-                    filter: {
-                        conversationId: {
-                            eq: chatId
-                        }
-                    },
-                    limit: 500
-                }
-            }) as { data: ListMessagesQuery }
-            const messages = data?.listMessages?.items as Message[]
-            setMessages(messages)
-        }
+        const { data } = await GraphQLAPI.graphql({
+            query: listMessages,
+            variables: {
+                filter: {
+                    conversationId: {
+                        eq: chatId
+                    }
+                },
+                limit: 500
+            }
+        }) as { data: ListMessagesQuery }
+        const messages = data?.listMessages?.items as Message[]
+        setMessages(messages)
 
     }
     const checkIfInConversation = async () => {
-        if (!currentUser) Router.push("/")
+        if (!currentUser && !isApplicationLoading) {
+            router.push("/")
+            return
+        }
         if (currentUser && chatId?.includes('-')) {
             //@ts-ignore
             const list = chatId.split('-')
-            if (!list.includes(currentUser.ownedBy)) Router.push("/messages")
+            if (!list.includes(currentUser.ownedBy)) {
+                router.push("/messages")
+                return
+            }
             const peer = list.find((item: string) => item !== currentUser.ownedBy)
             const { data: profilesData } = await getProfileByAddress({
                 variables: { ownedBy: peer },
             });
             if (profilesData?.profiles?.items?.length == 0) {
-                Router.push("/messages")
-            } else {
-                setPeerAddress(peer)
+                router.push("/messages")
+                return
             }
+
+            setPeerAddress(peer)
+            setCheckSuccess(true)
+
         }
     }
 
@@ -90,11 +100,13 @@ const ChatPage: NextPage<Props> = () => {
 
 
     useEffect(() => {
-        checkIfInConversation().finally(() => { setCheckSuccess(true) })
-    }, [chatId, address, getProfileByAddress, currentUser])
+        checkIfInConversation()
+    }, [chatId, address, getProfileByAddress, currentUser, isApplicationLoading])
     useEffect(() => {
         setLoading(true)
-        getMessages().finally(() => setLoading(false))
+        if (checkSuccess) {
+            getMessages().finally(() => setLoading(false))
+        }
     }, [checkSuccess, chatId])
 
 
