@@ -8,7 +8,7 @@ import {
 import { RecResult, getCorrelation, TABLE_NAME, docClient } from 'rec-helper';
 
 const TABLE_SIZE = 3000;
-const SCAN_RANGE = 100;
+const SCAN_RANGE = 30;
 const RANDOM_NUMBER_RANGE = TABLE_SIZE - SCAN_RANGE;
 const ONE_DAY_INTERVAL = 86400000;
 

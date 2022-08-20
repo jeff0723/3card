@@ -35,7 +35,7 @@ export default async function handler(
     try {
       const s3data = await S3.getObject({
         Bucket: BUCKET_NAME,
-        Key: `onchain/${account.toLowerCase()}/${chain}/ranking`,
+        Key: `onchain/${account.toLowerCase()}/${chain}/erc20`,
       }).promise();
       const scanResult: ScanERC20Result = s3data.Body? JSON.parse(s3data.Body.toString()):{
         account,

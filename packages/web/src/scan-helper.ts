@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import { ethers, utils } from 'ethers';
+const CoinGecko = require('coingecko-api');
 
 export const BUCKET_NAME = '3card';
 
@@ -175,6 +176,17 @@ export class EnsFetcher {
             return remoteEnsName;
         }
     }
+}
+
+export const CoinGeckoClient = new CoinGecko();
+
+export async function priceToUsdByTokenAddress(tokenAddresses: string[]) {
+    //only ethereum chain address is available
+    const data = await CoinGeckoClient.simple.fetchTokenPrice({
+        contract_addresses: tokenAddresses,
+        vs_currencies: 'usd'
+    })
+    return data;
 }
 
 export const ADDRESS_TAGS = new Map<string, string>([
