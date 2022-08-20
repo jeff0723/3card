@@ -2,8 +2,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { utils } from 'ethers';
 import {
-  scanAPIKeyMap,
   provider,
+  scanAPIKeyMap,
   Frequency,
   ScanError,
   NormalTx,
@@ -17,7 +17,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<CheckResult | ScanError>
 ) {
-  const { account, test } = req.query;
+  const { account } = req.query;
   if (
     typeof account !== 'string' || 
     !utils.isAddress(account)

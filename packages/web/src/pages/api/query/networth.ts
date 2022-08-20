@@ -38,15 +38,17 @@ export default async function handler(
     .catch(err => {
         return [];
     });
-    const ethBalance = utils.formatUnits(await provider.getBalance(account), ETH_DECIMALS);
+    
+    const ethBalance = parseFloat(utils.formatUnits(await provider.getBalance(account), ETH_DECIMALS));
     const tokenAddressList = erc20Assets.map(asset => asset.contractAddress);
-    const balanceList = [...erc20Assets.map(asset => asset.balance), ethBalance];
-    const result: any = await priceToUsdByTokenAddress([...tokenAddressList, WETH_ADDR]);
+    const balanceList = erc20Assets.map(asset => parseFloat(asset.balance));
+    tokenAddressList.push(WETH_ADDR);
+    balanceList.push(ethBalance);
+    const result: any = await priceToUsdByTokenAddress(tokenAddressList);
     const priceMap = result.data;
     const worthList = tokenAddressList.map((addr, idx) => {
         if (priceMap[addr]) {
-            parseInt(balanceList[idx]);
-            return priceMap[addr]['usd'] * parseInt(balanceList[idx]);
+            return priceMap[addr]['usd'] * balanceList[idx];
         } else {
             return 0;
         }

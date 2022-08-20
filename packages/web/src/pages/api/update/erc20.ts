@@ -19,6 +19,8 @@ type TokenInfo = {
   decimal: string,
 };
 
+const WETH_ADDRESS = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ScanERC20Result | ScanError>,
@@ -69,8 +71,8 @@ export default async function handler(
           decimal: event.tokenDecimal,
         })
       });
+      erc20assetsMap.delete(WETH_ADDRESS);
       const erc20assets: ERC20Asset[] = [...erc20assetsMap.entries()]
-        .filter(info => info[1].balance.gt(utils.parseEther('0.001')))
         .map(info => {
           return {
             contractAddress: info[0],

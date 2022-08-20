@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
-import { ethers, utils } from 'ethers';
 const CoinGecko = require('coingecko-api');
+import { ethers } from 'ethers';
 
 export const BUCKET_NAME = '3card';
 
@@ -151,32 +151,32 @@ export type ScanError = {
     details?: string,
 };
 
-export class EnsFetcher {
-    localEnsMap: Map<string, string>;
+// export class EnsFetcher {
+//     localEnsMap: Map<string, string>;
 
-    constructor() {
-        this.localEnsMap = new Map<string, string>;
-    }
+//     constructor() {
+//         this.localEnsMap = new Map<string, string>;
+//     }
 
-    async queryEnsName(address: string): Promise<string> {
-        const ensName = await provider.lookupAddress(address);
-        return ensName === null ? address.toLowerCase() : ensName;
-    }
+//     async queryEnsName(address: string): Promise<string> {
+//         const ensName = await provider.lookupAddress(address);
+//         return ensName === null ? address.toLowerCase() : ensName;
+//     }
 
-    async getEnsName(address: string): Promise<string> {
-        if (!address) {
-            return '';
-        }
-        const localEnsName = this.localEnsMap.get(address);
-        if (localEnsName) {
-            return localEnsName;
-        } else {
-            const remoteEnsName = await this.queryEnsName(address);
-            this.localEnsMap.set(address, remoteEnsName);
-            return remoteEnsName;
-        }
-    }
-}
+//     async getEnsName(address: string): Promise<string> {
+//         if (!address) {
+//             return '';
+//         }
+//         const localEnsName = this.localEnsMap.get(address);
+//         if (localEnsName) {
+//             return localEnsName;
+//         } else {
+//             const remoteEnsName = await this.queryEnsName(address);
+//             this.localEnsMap.set(address, remoteEnsName);
+//             return remoteEnsName;
+//         }
+//     }
+// }
 
 export const CoinGeckoClient = new CoinGecko();
 
