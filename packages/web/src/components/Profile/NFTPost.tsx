@@ -20,6 +20,7 @@ import { useAppSelector } from 'state/hooks'
 import toast from 'react-hot-toast'
 import omit from 'utils/omit'
 import { HiCheck } from 'react-icons/hi'
+import { OPENSEA_URL } from 'constants/constants'
 
 dayjs.extend(relativeTime)
 type Props = {
@@ -126,7 +127,7 @@ const NFTPost = ({ post }: Props) => {
             <div className='flex gap-[10px] w-full'>
                 <PostHeader profile={post?.profile as Profile & { picture: MediaSet & NftImage }} />
                 <div className='flex flex-col w-full'>
-                    <div className='flex justify-between items-center text-[15px]  w-full '>
+                    <div className='flex justify-between text-[15px]  w-full '>
                         <div className='flex'>
                             <div>{post?.profile?.name}</div>
                             <div className='text-gray-400'>@{post?.profile?.handle} · {dayjs(new Date(post?.createdAt)).fromNow()}</div>
@@ -157,14 +158,17 @@ const NFTPost = ({ post }: Props) => {
                         <div className='flex flex-col gap-2' >
                             <div className='text-[15px] font-bold'>Offer</div>
                             {offer?.map((item: Offer, index) => (
-                                <div key={`${index}-offer`} className='flex gap-4 items-center p-2 rounded-lg border border-border-gray w-full'>
-                                    <img src={getIPFSLink(item.contentUri)} alt={item.name} className='w-[100px] h-[100px] rounded-lg' />
-                                    <div className='flex flex-col'>
-                                        <div>Contract Address: {item.token}</div>
-                                        <div>Name: {item.name}</div>
-                                        <div>ID: {item.identifier}</div>
+                                //[FIX] to fix add chainId to item
+                                <a href={`${OPENSEA_URL}/assets/mumbai/${item.token}/${item.identifier}`} target="_blank" rel="noopener noreferrer">
+                                    <div key={`${index}-offer`} className='flex gap-4 items-center p-2 rounded-lg border border-border-gray w-full hover:border-primary-blue'>
+                                        <img src={getIPFSLink(item.contentUri)} alt={item.name} className='w-[100px] h-[100px] rounded-lg' />
+                                        <div className='flex flex-col'>
+                                            <div>Contract Address: {item.token}</div>
+                                            <div>Name: {item.name}</div>
+                                            <div>ID: {item.identifier}</div>
+                                        </div>
                                     </div>
-                                </div>
+                                </a>
 
                             ))}
                         </div>
