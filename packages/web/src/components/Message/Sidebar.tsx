@@ -27,6 +27,8 @@ const messagesList = Array(100).fill(messageChannel)
 const Sidebar: FC<Props> = () => {
     const { address } = useAccount()
     const dispatch = useAppDispatch()
+    const currentUser = useAppSelector(state => state.user.currentUser)
+    const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
     const openModal = () => {
         dispatch(setIsNewMessageModalOpen({ isNewMessageModalOpen: true }))
     }
@@ -43,8 +45,14 @@ const Sidebar: FC<Props> = () => {
 
             setConversations(data.listConversations?.items as Conversation[] || [])
         }
-        listConversationQuery()
-    }, [address])
+        if (currentUser && isAuthenticated && address) {
+            listConversationQuery()
+        }
+        if (!currentUser && !isAuthenticated) {
+            setConversations([])
+        }
+    }, [address, currentUser, isAuthenticated])
+
 
     return (
         <div>

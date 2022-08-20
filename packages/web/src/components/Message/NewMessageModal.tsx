@@ -64,19 +64,8 @@ const NewMessageModal = (props: Props) => {
                         router.push(`/messages/${converstaionId}`)
                     }
                     if (query.listConversations?.items.length === 0) {
-                        const { data: mutation } = await GraphQLAPI.graphql({
-                            query: createConversation,
-                            variables: {
-                                input: {
-                                    conversationId: converstaionId,
-                                    participants: [address, opponentAddress]
-                                }
-                            }
-                        }) as { data: CreateConversationMutation }
-                        if (mutation.createConversation?.conversationId) {
-                            closeModal()
-                            router.push(`/messages/${converstaionId}`)
-                        }
+                        closeModal()
+                        router.push(`/messages/${converstaionId}`)
                     }
                 } catch (e) {
                     toast.error("Something went wrong")

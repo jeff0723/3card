@@ -43,7 +43,7 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
     }, [conversationId, messages]);
     useEffect(() => {
         setStateMessages([...messages])
-    }, [conversationId])
+    }, [conversationId, messages])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(e.target.value);
@@ -64,7 +64,7 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
             }) as { data: CreateConversationMutation }
         }
         try {
-            console.log(conversationId)
+
             const { data } = (await GraphQLAPI.graphql({
                 query: createMessage,
                 variables: {
@@ -76,7 +76,6 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
                     },
                 },
             })) as { data: CreateMessageMutation };
-            console.log(data)
             const { update } = (await GraphQLAPI.graphql({
                 query: updateConversation,
                 variables: {

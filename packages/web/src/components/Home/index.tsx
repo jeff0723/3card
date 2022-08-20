@@ -99,6 +99,7 @@ const Home: NextPage<Props> = (props: Props) => {
       reactionRequest: currentUser ? { profileId: currentUser?.id } : null,
       profileId: currentUser?.id ?? null
     },
+    skip: !currentUser,
     fetchPolicy: 'no-cache',
     errorPolicy: "all",
     onCompleted(data) {
@@ -107,7 +108,7 @@ const Home: NextPage<Props> = (props: Props) => {
       console.log('[Query]', `Fetched first 10 timeline publications`)
     },
     onError(error) {
-      console.error('[Query Error]', error)
+      console.error('[Query Home Feed Error] ', error)
     }
   })
   useEffect(() => {

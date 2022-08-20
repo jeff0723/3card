@@ -14,19 +14,25 @@ import { SEARCH_USERS_QUERY } from 'graphql/query/search-user';
 import { GET_PROFILE_BY_ADDRESS } from 'graphql/query/user'
 
 import getIPFSLink from 'utils/getIPFSLink'
+import Cookies from 'js-cookie'
+import { current } from '@reduxjs/toolkit'
+import { Spinner } from 'components/UI/Spinner'
 
 interface Props {
-    messages: Message[]
 }
 
 
-const ChatPage: NextPage<Props> = ({ messages }) => {
+const ChatPage: NextPage<Props> = () => {
     const { address } = useAccount()
+    const currentUser = useAppSelector(state => state.user.currentUser)
     const { query: { chatId } } = useRouter()
     const [peerAddress, setPeerAddress] = useState("")
     const [avatar, setAvatar] = useState("")
     const [name, setName] = useState("")
     const [handle, setHandle] = useState("")
+    const [messages, setMessages] = useState<Message[]>()
+    const [loading, setLoading] = useState(false)
+    const [checkSuccess, setCheckSuccess] = useState(false)
     const [getProfileByAddress, { error: errorProfiles, loading: profilesLoading }] =
         useLazyQuery(GET_PROFILE_BY_ADDRESS,
             {
@@ -34,6 +40,42 @@ const ChatPage: NextPage<Props> = ({ messages }) => {
                     console.log("[Lazy query completed]", data)
                 }
             })
+    const getMessages = async () => {
+        if (checkSuccess) {
+            const { data } = await GraphQLAPI.graphql({
+                query: listMessages,
+                variables: {
+                    filter: {
+                        conversationId: {
+                            eq: chatId
+                        }
+                    },
+                    limit: 500
+                }
+            }) as { data: ListMessagesQuery }
+            const messages = data?.listMessages?.items as Message[]
+            setMessages(messages)
+        }
+
+    }
+    const checkIfInConversation = async () => {
+        if (!currentUser) Router.push("/")
+        if (currentUser && chatId?.includes('-')) {
+            //@ts-ignore
+            const list = chatId.split('-')
+            if (!list.includes(currentUser.ownedBy)) Router.push("/messages")
+            const peer = list.find((item: string) => item !== currentUser.ownedBy)
+            const { data: profilesData } = await getProfileByAddress({
+                variables: { ownedBy: peer },
+            });
+            if (profilesData?.profiles?.items?.length == 0) {
+                Router.push("/messages")
+            } else {
+                setPeerAddress(peer)
+            }
+        }
+    }
+
     useEffect(() => {
         const updateProfile = async () => {
             const { data } = await getProfileByAddress({
@@ -46,25 +88,14 @@ const ChatPage: NextPage<Props> = ({ messages }) => {
         updateProfile()
     }, [peerAddress, getProfileByAddress])
 
+
     useEffect(() => {
-        const checkIfInConversation = async () => {
-            if (address && chatId?.includes('-')) {
-                //@ts-ignore
-                const list = chatId.split('-')
-                if (!list.includes(address)) Router.push("/message")
-                const peer = list.find((item: string) => item !== address)
-                const { data: profilesData } = await getProfileByAddress({
-                    variables: { ownedBy: peer },
-                });
-                if (profilesData?.profiles?.items?.length == 0) {
-                    Router.push("/message")
-                } else {
-                    setPeerAddress(peer)
-                }
-            }
-        }
-        checkIfInConversation()
-    }, [chatId, address, getProfileByAddress])
+        checkIfInConversation().finally(() => { setCheckSuccess(true) })
+    }, [chatId, address, getProfileByAddress, currentUser])
+    useEffect(() => {
+        setLoading(true)
+        getMessages().finally(() => setLoading(false))
+    }, [checkSuccess, chatId])
 
 
     return (
@@ -87,7 +118,14 @@ const ChatPage: NextPage<Props> = ({ messages }) => {
 
                         </div>
                     </div>
-                    <MessageBox messages={messages} conversationId={chatId as string} peerAddress={peerAddress} />
+                    {
+                        !loading && messages && <MessageBox messages={messages} conversationId={chatId as string} peerAddress={peerAddress} />
+                    }
+                    {
+                        loading &&
+                        <div className='flex h-screen justify-center items-center'><Spinner size='lg' /></div>
+                    }
+
                 </div>
             </div>
         </div>
@@ -95,24 +133,5 @@ const ChatPage: NextPage<Props> = ({ messages }) => {
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const { query: { chatId } } = context
-    const { data } = await GraphQLAPI.graphql({
-        query: listMessages,
-        variables: {
-            filter: {
-                conversationId: {
-                    eq: chatId
-                }
-            },
-            limit: 500
-        }
-    }) as { data: ListMessagesQuery }
-    const messages = data?.listMessages?.items
-    return {
-        props: {
-            messages
-        }
-    }
-}
+
 export default ChatPage

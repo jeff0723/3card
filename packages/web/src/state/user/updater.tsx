@@ -29,9 +29,12 @@ const UserUpdater = (props: Props) => {
     const updateStatus = async () => {
         dispatch(updateLoadingStatus({ isApplicationLoading: true }))
         const token = Cookies.get('accessToken')
-        dispatch(setIsConnected({ isConnected: true }));
-        dispatch(setIsAuthenticated({ isAuthenticated: true }));
+
         if (token && address) {
+            console.log('have token!!!!')
+            dispatch(setIsConnected({ isConnected: true }));
+            dispatch(setIsAuthenticated({ isAuthenticated: true }));
+            console.log('update')
             const { data: profilesData } = await getProfileByAddress({
                 variables: { ownedBy: address },
             });
@@ -45,27 +48,35 @@ const UserUpdater = (props: Props) => {
         dispatch(updateLoadingStatus({ isApplicationLoading: false }))
 
     }
-    const updateUser = async () => {
-        if (currentUser && address) {
-            if (currentUser.ownedBy !== address) {
-                Cookies.remove('accessToken')
-                Cookies.remove('refreshToken')
-                dispatch(updateLoadingStatus({ isApplicationLoading: true }))
-                dispatch(setIsConnected({ isConnected: false }));
-                dispatch(setIsAuthenticated({ isAuthenticated: false }));
-                dispatch(
-                    setCurrentUser({ currentUser: null })
-                );
-                dispatch(updateLoadingStatus({ isApplicationLoading: false }))
+    const logout = async () => {
+        dispatch(updateLoadingStatus({ isApplicationLoading: true }))
+        Cookies.remove('accessToken')
+        Cookies.remove('refreshToken')
+        dispatch(setIsConnected({ isConnected: false }));
+        dispatch(setIsAuthenticated({ isAuthenticated: false }));
+        dispatch(
+            setCurrentUser({ currentUser: null })
+        );
+        dispatch(updateLoadingStatus({ isApplicationLoading: false }))
 
-            }
+    }
+
+    const update = async () => {
+        if (currentUser?.ownedBy !== undefined && currentUser.ownedBy !== address) {
+            console.log('logout!!!!')
+            logout()
         }
+        await updateStatus()
     }
     useEffect(() => {
-        updateStatus()
-        updateUser()
+        update()
 
     }, [address])
+
+    console.log('address: ', address)
+    const token = Cookies.get('accessToken')
+    console.log('accessToken: ', token)
+    console.log(currentUser)
     return null
 }
 
