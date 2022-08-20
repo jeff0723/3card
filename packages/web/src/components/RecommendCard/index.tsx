@@ -25,45 +25,50 @@ const RecommendCard: NextPage = (props: Props) => {
     const { address } = useAccount()
     const [netWorth, setNetworth] = useState(0)
     const [ranking, setRanking] = useState<Frequency[]>([])
-    const [ifRegistered, setIfRegistered] = useState<boolean>(false)
     const [ifDrawable, setIfDrawable] = useState<boolean>(false)
     const [recommendAddress, setRecommendAddress] = useState<string>('')
     const [tags, setTags] = useState<string[]>(_tags)
-    const [isDrew, setIsDrew] = useState<boolean>(false)
 
-    const checkRegister = async (address: string) => {
-        // const check = await fetch(`http://localhost:3000/api/recommend/check?account=${address}`)
-        const check = await fetch(`http://localhost:3000/api/recommend/check?account=${address}&test=true`)
-        const res = check.ok ? check : await fetch(`http://localhost:3000/api/recommend/register?account=${address}`)
-        setIfRegistered(res.ok);
-        setIfDrawable((await res.json() as CheckResult).ifDrawable);
+    const check = async (address: string) => {
+        const check = await fetch(`http://localhost:3000/api/recommend/check?account=${address}`)
+        if (check.ok) {
+            const result = (await check.json()) as CheckResult;
+            console.log(result)
+            setIfDrawable(result.ifDrawable)
+            if (result.lastestRec) {
+                setRecommendAddress(result.lastestRec.account)
+                setRanking(result.lastestRec.ranking)
+            } else {
+                recommend(address)
+            }
+        }
     }
 
-    const recommend = async (address: string): Promise<boolean> => {
-        // const recResponse = await fetch(`http://localhost:3000/api/recommend?account=${address}`)
-        const recResponse = await fetch(`http://localhost:3000/api/recommend?account=${address}&test=true`)
+    const recommend = async (address: string) => {
+        const recResponse = await fetch(`http://localhost:3000/api/recommend?account=${address}`)
         if (!recResponse.ok) {
-            console.log('rec error')
-            setRecommendAddress('')
-            return false;
+            setRecommendAddress('0xa77d84dd50ac12a5c98846e673b29c5ddb079f50')
         } else {
             const recResult = (await recResponse.json()) as RecResult
             setRecommendAddress(recResult.account)
-            setRanking(recResult.ranking??[])
-            return true;
+            setRanking(recResult.ranking)
         }
     };
 
     useEffect(() => {
-        if (address) checkRegister(address)
+        if (address) check(address)
     }, [address])
 
-    const handleClick: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
-        e.preventDefault();
-        if (address && ifRegistered && ifDrawable) {
-            setIsDrew(await recommend(address))
-        }
-    }
+    useEffect(() => {
+        if (address && ifDrawable) recommend(address)
+    }, [address, ifDrawable])
+
+    // const handleClick: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
+    //     e.preventDefault();
+    //     if (address && ifRegistered && ifDrawable) {
+    //         setIsDrew(await recommend(address))
+    //     }
+    // }
 
     useEffect(() => {
         const tagSet = new Set<string>();
@@ -93,12 +98,12 @@ const RecommendCard: NextPage = (props: Props) => {
                         :<></>
                     }
                 </div>
-                {isDrew? <InfoCard
+                {ifDrawable? <InfoCard
                     recommendAddress={recommendAddress}
                     tags={tags}
                     netWorth={netWorth} />
                     :
-                    <Button outline onClick={handleClick} disabled={!ifDrawable}>Draw</Button>
+                    <>LOADING</>
                 }
             </div>
 

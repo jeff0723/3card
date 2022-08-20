@@ -68,7 +68,7 @@ export default async function handler(
     const otherCount = othersData.Count;
     if (otherCount === 0) {
       res.status(200).json({
-        account: '',
+        account: '0xa77d84dd50ac12a5c98846e673b29c5ddb079f50',
         ranking: [],
       } as RecResult);
     } else {
