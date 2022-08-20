@@ -217,4 +217,10 @@ export const ADDRESS_TAGS = new Map<string, string>([
     ['0xabefbc9fd2f806065b4f3c237d4b59d9a97bcac7', 'Zora'],
     ['0x1f9840a85d5af5bf1d1762f925bdaddc4201f984', 'UNI'],
     ['0x80c67432656d59144ceff962e8faf8926599bcf8', 'Orbiter Bridge'],
+    ['0x74ee68a33f6c9f113e22b3b77418b75f85d07d22', 'Zerion Genesis'],
+    ['0xcc8fa225d80b9c7d42f96e9570156c65d6caaa25', 'SLP Token'],
+    ['0xcd4ec7b66fbc029c116ba9ffb3e59351c20b5b06', 'Rarible'],
+    ['0x1a2a1c938ce3ec39b6d47113c7955baa9dd454f2', 'Ronin Bridge'],
+    ['0x71c4658acc7b53ee814a29ce31100ff85ca23ca7', 'GalaXY Kats'],
+    ['0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab', 'Alchemist'],
 ]);
