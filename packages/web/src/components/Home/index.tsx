@@ -14,6 +14,7 @@ import { useAccount } from "wagmi";
 import CreateButton from "./CreateButton";
 import ExploreFeed from "./ExploreFeed";
 import Feed from "./Feed";
+import NewsFeed from "./NewsFeed";
 import Search from "./Search";
 
 interface Item {
@@ -28,7 +29,7 @@ interface Item {
 }
 
 interface Props {
-  feeds?: Item[];
+
 }
 const Content = styled.div`
   display: flex;
@@ -215,25 +216,7 @@ const Home: NextPage<Props> = (props: Props) => {
               )
             )}
           </FilterContainer> */}
-          <Header>
-            <Title>News</Title>
-          </Header>
-
-          <NewsContainer className="overflow-y-auto no-scrollbar" id='scrollableDiv2'>
-            <InfiniteScroll
-              dataLength={items.length}
-              next={fetchMoreNews}
-              hasMore={hasMore}
-              loader={<div className="flex justify-center"><Spinner size="md" /></div>}
-              endMessage={<h4>Nothing more to show</h4>}
-              scrollableTarget="scrollableDiv2"
-            >
-              {items?.map((item, index) => (
-                <Feed key={index} item={item} />
-              ))}
-            </InfiniteScroll>
-
-          </NewsContainer>
+          <NewsFeed height="65vh" />
         </FunctionContainer>
       </div >
     </>

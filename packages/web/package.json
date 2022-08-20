@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "codegen": "graphql-codegen"
+    "codegen": "graphql-codegen",
+    "export": "next export"
   },
   "dependencies": {
     "@3card-monorepo/scan": "1.0.0",

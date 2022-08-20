@@ -1,5 +1,7 @@
 import { useQuery } from '@apollo/client'
 import CommentFeeds from 'components/Comment/CommentFeeds'
+import NewsFeed from 'components/Home/NewsFeed'
+import Search from 'components/Home/Search'
 import Button from 'components/UI/Button'
 import { Spinner } from 'components/UI/Spinner'
 import dayjs from 'dayjs'
@@ -101,7 +103,10 @@ const Post: NextPage = (props: Props) => {
                 <CommentFeeds publicationId={publication?.id} />
 
             </div>
-            <div className='col-span-1'>sidebar</div>
+            <div className='col-span-1 p-4 gap-2'>
+                <Search />
+                <NewsFeed height='100vh' />
+            </div>
 
 
         </div >
