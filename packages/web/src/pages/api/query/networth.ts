@@ -54,9 +54,7 @@ export default async function handler(
         }
     });
 
-    const networth = worthList.reduce(
-        (previousValue, currentValue) => previousValue + currentValue, 0,
-    );
+    const networth = worthList.reduce((p, c) => p + c, 0);
 
     res.status(200).json({
         account,

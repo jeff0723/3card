@@ -36,6 +36,7 @@ export const getCorrelation = (
     : number => {
     const map1 = new Map<string, number>(ranking1.map(fre => [fre.address, fre.frequency]));
     const map2 = new Map<string, number>(ranking2.map(fre => [fre.address, fre.frequency]));
-    // const multi = map1.keys()
-    return ranking2.length;
+    const multiList = [...map1.entries()].map(([addr, freq]) => freq * (map2.get(addr)??0));
+    const multiSum = multiList.reduce((p, c) => p + c, 0);
+    return multiSum;
 };
