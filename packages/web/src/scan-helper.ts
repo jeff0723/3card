@@ -7,7 +7,6 @@ AWS.config.update({
     accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY
 });
-console.log('api key: ,', process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID)
 export const S3 = new AWS.S3();
 
 export const provider = new ethers.providers.JsonRpcProvider(
