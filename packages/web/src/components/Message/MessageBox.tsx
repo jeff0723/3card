@@ -5,6 +5,7 @@ import { GraphQLSubscription } from '@aws-amplify/api';
 import { listMessages } from "graphql/amplify/queries";
 import { createMessage, updateConversation } from "graphql/amplify/mutations";
 import { onCreateMessageByConversationId } from "graphql/amplify/subscriptions";
+import { ChainChoice } from "pages/api/query/coingecko";
 
 import { useAccount } from "wagmi";
 import { API } from "aws-amplify";
@@ -81,14 +82,13 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
             console.log(e);
         } finally {
             setMessage("");
-            CoinGeckoApi.ping()
             const tokenList = ['bitcoin', 'ethereum', 'vetter-token']
             const fiatList = ['usd', 'eur']
             const binanceVetterAddress = '0x6169b3b23e57de79a6146a2170980ceb1f83b9e0'
             const ethereum1InchAddress = '0x111111111117dc0aa78b770fa6a738034120c302'
-            CoinGeckoApi.priceToFiatByIds(tokenList, fiatList)
-            CoinGeckoApi.priceToUsdByTokenAddress(binanceVetterAddress)
-            CoinGeckoApi.getTokenInfoByTokenAddress(ethereum1InchAddress)
+            const ethTokenList = ['0x111111111117dc0aa78b770fa6a738034120c302', '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984']
+            const binanceChainName = 'binance-smart-chain'
+            CoinGeckoApi.priceToUsdByTokenAddress(ethTokenList, ChainChoice.ethereum)
         }
         return false
     };
