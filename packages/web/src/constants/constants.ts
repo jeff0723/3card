@@ -1,3 +1,5 @@
+export const NEXT_URL =
+    process.env.NEXT_PUBLIC_ENDPOINT_URL || "http://localhost:3000";
 export const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY
 
 export const API_URL = process.env.NEXT_PUBLIC_ENV === 'production'

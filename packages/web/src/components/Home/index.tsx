@@ -232,6 +232,7 @@ const Home: NextPage<Props> = (props: Props) => {
                 <Feed key={index} item={item} />
               ))}
             </InfiniteScroll>
+
           </NewsContainer>
         </FunctionContainer>
       </div >

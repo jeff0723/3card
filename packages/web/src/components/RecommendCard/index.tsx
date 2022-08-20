@@ -10,6 +10,7 @@ import InfoCard from './InfoCard'
 import Button from 'components/UI/Button'
 import getIPFSLink from 'utils/getIPFSLink';
 import { Spinner } from 'components/UI/Spinner'
+import { NEXT_URL } from 'constants/constants'
 
 
 type Props = {}
@@ -32,7 +33,7 @@ const RecommendCard: NextPage = (props: Props) => {
     const [tags, setTags] = useState<string[]>(_tags)
 
     const check = async (address: string) => {
-        const check = await fetch(`http://localhost:3000/api/recommend/check?account=${address}`)
+        const check = await fetch(`${NEXT_URL}/api/recommend/check?account=${address}`)
         if (check.ok) {
             const result = (await check.json()) as CheckResult;
             console.log(result)
@@ -47,7 +48,7 @@ const RecommendCard: NextPage = (props: Props) => {
     }
 
     const recommend = async (address: string) => {
-        const recResponse = await fetch(`http://localhost:3000/api/recommend?account=${address}`)
+        const recResponse = await fetch(`${NEXT_URL}/api/recommend?account=${address}`)
         if (!recResponse.ok) {
             setRecommendAddress('0xa77d84dd50ac12a5c98846e673b29c5ddb079f50')
         } else {
@@ -85,9 +86,6 @@ const RecommendCard: NextPage = (props: Props) => {
             setTags([])
         }
     }, [ranking])
-
-    console.log("recommend address:", recommendAddress)
-    console.log("drawable:", ifDrawable)
 
     return (
         <div className='grid grid-cols-4 w-full'>

@@ -56,7 +56,7 @@ const Search = (props: Props) => {
                 className="flex absolute flex-col mt-2 w-full flex-grow"
                 ref={dropdownRef}
             >
-                <div className="bg-black rounded-xl border border-border-gray overflow-y-auto py-2 max-h-[80vh]">
+                <div className="z-10 bg-black rounded-xl border border-border-gray overflow-y-auto py-2 max-h-[80vh]">
                     {searchUsersLoading ? (
                         <div className="py-2 px-4 space-y-2 text-sm font-bold text-center">
                             <Spinner size="sm" className="mx-auto" />

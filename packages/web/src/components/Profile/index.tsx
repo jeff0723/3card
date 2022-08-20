@@ -24,6 +24,8 @@ import { AiOutlineGlobal } from 'react-icons/ai'
 import FollowButton from './FollowButton'
 import UnfollowButton from './UnfollowButton'
 import toast from 'react-hot-toast'
+import { NEXT_URL } from 'constants/constants'
+
 type Props = {}
 export enum TabType {
     POST = 'POST',
@@ -67,26 +69,26 @@ const Profile: NextPage = (props: Props) => {
 
     const getTxList = async () => {
         if (profile) {
-            const query = await fetch(`http://localhost:3000/api/query/ranking?account=${profile?.ownedBy}&chain=ether`)
-            const res = query.ok ? query : await fetch(`http://localhost:3000/api/update/ranking?account=${profile?.ownedBy}&chain=ether`)
+            const query = await fetch(`${NEXT_URL}/api/query/ranking?account=${profile?.ownedBy}&chain=ether`)
+            const res = query.ok ? query : await fetch(`${NEXT_URL}/api/update/ranking?account=${profile?.ownedBy}&chain=ether`)
             if (!res.ok) {
                 console.log('scan error:', await res.json())
                 setTxList([])
             }
             const txlistResult = (await res.json())
-            setTxList(txlistResult.txlist??txlistResult)
+            setTxList(txlistResult.txlist ?? txlistResult)
         }
     };
 
     const getRanking = async () => {
         if (profile) {
-            const res = await fetch(`http://localhost:3000/api/recommend/check?account=${profile?.ownedBy}`)
+            const res = await fetch(`${NEXT_URL}/api/recommend/check?account=${profile?.ownedBy}`)
             if (!res.ok) {
                 console.log('check error:', await res.json())
                 setRanking([])
             }
             const rankingResult = (await res.json())
-            setRanking(rankingResult.ranking??[])
+            setRanking(rankingResult.ranking ?? [])
         }
     }
 
