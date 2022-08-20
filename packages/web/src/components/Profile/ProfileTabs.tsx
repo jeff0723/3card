@@ -20,9 +20,9 @@ const ProfileTabs = ({ setCurrentTab, currentTab }: Props) => {
 
                     )}
                     onClick={() => {
-                        console.log(tab)
-                        console.log(currentTab)
-                        console.log(currentTab === tab)
+                        // console.log(tab)
+                        // console.log(currentTab)
+                        // console.log(currentTab === tab)
                         setCurrentTab(tab)
                     }}>{tab.charAt(0) + tab.toLowerCase().slice(1)}</button>
             ))}

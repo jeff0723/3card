@@ -36,7 +36,7 @@ const RecommendCard: NextPage = (props: Props) => {
         const check = await fetch(`${NEXT_URL}/api/recommend/check?account=${address}`)
         if (check.ok) {
             const result = (await check.json()) as CheckResult;
-            console.log(result)
+            // console.log(result)
             setIfDrawable(result.ifDrawable)
             if (result.lastestRec) {
                 setRecommendAddress(result.lastestRec.account)

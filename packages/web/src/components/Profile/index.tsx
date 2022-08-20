@@ -72,7 +72,6 @@ const Profile: NextPage = (props: Props) => {
             const query = await fetch(`${NEXT_URL}/api/query/ranking?account=${profile?.ownedBy}&chain=ether`)
             const res = query.ok ? query : await fetch(`${NEXT_URL}/api/update/ranking?account=${profile?.ownedBy}&chain=ether`)
             if (!res.ok) {
-                console.log('scan error:', await res.json())
                 setTxList([])
             }
             const txlistResult = (await res.json())
