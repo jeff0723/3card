@@ -84,7 +84,7 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
     };
     return (
         <div className="h-full py-4 flex flex-col justify-end ">
-            <div className="h-[700px] flex flex-col overflow-y-auto gap-2 py-4">
+            <div className="max-h-[700px] flex flex-col overflow-y-auto gap-2 py-4">
                 {stateMessages
                     .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
                     .map((item, index) => (

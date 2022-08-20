@@ -16,3 +16,11 @@ export const AUTHENTICATE_MUTATION = gql`
     }
   }
 `
+export const REFRESH_AUTHENTICATION_MUTATION = `
+  mutation Refresh($request: RefreshRequest!) {
+    refresh(request: $request) {
+      accessToken
+      refreshToken
+    }
+  }
+`

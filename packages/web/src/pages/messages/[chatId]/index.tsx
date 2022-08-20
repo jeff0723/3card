@@ -72,7 +72,7 @@ const ChatPage: NextPage<Props> = ({ messages }) => {
             <div className='col-span-1 flex flex-col overflow-y-auto border border-transparent border-r-[#2F3336]'>
                 <Sidebar />
             </div>
-            <div className='col-span-2 flex'>
+            <div className='col-span-2 flex overflow-y-auto'>
                 <div className='w-full flex flex-col px-4'>
                     <div className='flex gap-2 items-center h-[53px]'>
                         <div>
