@@ -27,7 +27,6 @@ async function main() {
             const address = tx.to === user ? tx.from : tx.to;
             const cumu = (frequencyMap.get(address) ?? 0) + 1;
             frequencyMap.set(address, cumu);
-            return parseInt(tx.blockNumber);
         });
         console.log(`ranking size:`, frequencyMap.size);
         const frequencyPairs = [...frequencyMap.entries()].sort((a,b) => b[1] - a[1]);

@@ -2,16 +2,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { utils } from 'ethers';
 import {
-  S3,
   scanAPIKeyMap,
   NormalTx,
   Frequency,
-  ScanRankingResult,
   ScanError,
   ERROR_MESSAGE,
-  BUCKET_NAME
+  provider
 } from 'scan-helper';
-import { CheckResult, RecMetadata } from 'rec-helper';
+import { docClient, CheckResult, TABLE_NAME, TABLE_SIZE } from 'rec-helper';
 
 export default async function handler(
   req: NextApiRequest,
@@ -28,72 +26,64 @@ export default async function handler(
     } as ScanError);
   } else {
     const acc = account.toLowerCase();
-    const ranking = await S3.getObject({
-        Bucket: BUCKET_NAME,
-        Key: `onchain/${acc}/ether/ranking`,
-      }).promise()
-      .then(data => {
-        const scanResult: ScanRankingResult = data.Body? JSON.parse(data.Body.toString()):[];
-        return scanResult.ranking;
-      })
-      .catch(async () => {
-        const queryURL = `https://api.etherscan.io/api?module=account&action=txlist&page=1&offset=10000&sort=asc&apikey=${scanAPIKeyMap.get('ether')}&address=${account}&startblock=0`;
-        const scanResponse = await fetch(queryURL);
-        if (!scanResponse.ok) {
-          return undefined;
-        } else {
-          const rawTxlist: NormalTx[] = (await scanResponse.json()).result;
-          const frequencyMap = new Map<string, number>();
-          const accLower = account.toLowerCase();
-    
-          await Promise.all(rawTxlist.map(async tx => {
-              const peerAddress = accLower === tx.from ? tx.to : tx.from;
-              const currFreq = frequencyMap.get(peerAddress);
-              frequencyMap.set(peerAddress, currFreq?currFreq+1:1);
-          }));
-          const frequencyPairs = [...frequencyMap.entries()].sort((a,b) => b[1] - a[1]);
-          const ranking: Frequency[] = await Promise.all(frequencyPairs.map(async pair => ({
-            address: pair[0],
-            frequency: pair[1],
-          })));
+    const latestBlock = await provider.getBlockNumber();
+    const queryURL = `https://api.etherscan.io/api?module=account&action=txlist&page=1&offset=10000&sort=asc&apikey=${scanAPIKeyMap.get('ether')}&address=${account}&startblock=0`;
+    const scanResponse = await fetch(queryURL);
+    if (!scanResponse.ok) {
+      res.status(500).json({
+        account,
+        message: ERROR_MESSAGE.SCAN_QUERY_ERROR,
+      } as ScanError);
+      return;
+    }
+    const result = (await scanResponse.json()).result;
+    if (typeof result === 'string') {
+      res.status(500).json({
+        account,
+        message: ERROR_MESSAGE.SCAN_QUERY_ERROR,
+      } as ScanError);
+      return;
+    }
+    const txList = result as NormalTx[];
+    const frequencyMap = new Map<string, number>();
+    const accLower = account.toLowerCase();
 
-          return ranking;
-      }});
-      if (ranking) {
-        try {
-          const rankingInfo = await S3.upload({
-            Bucket: BUCKET_NAME,
-            Key: `rec/${acc}`,
-            Body: JSON.stringify(ranking),
-          }).promise();
-          const metadata: RecMetadata = {
-            nextDrawDate: new Date().toLocaleDateString(),
-            alreadyRecTo: [],
-          };
-          const metadataInfo = await S3.upload({
-            Bucket: BUCKET_NAME,
-            Key: `rec/${acc}-metadata`,
-            Body: JSON.stringify(metadata),
-          }).promise();
-          res.status(200).json({
-            account,
-            ifDrawable: true,
-            rankingLoc: rankingInfo.Location,
-            metadataLoc: metadataInfo.Location,
-          } as CheckResult);
-        } catch (err: any) {
-          res.status(500).json({
-            account,
-            message: ERROR_MESSAGE.AWS_UPLOAD_ERROR,
-            details: err.message,
-          } as ScanError);
-        }
-      } else {
-        res.status(500).json({
-          account,
-          chain: 'ether',
-          message: ERROR_MESSAGE.SCAN_QUERY_ERROR,
-        } as ScanError);
-      }
+    await Promise.all(txList.map(async tx => {
+        if (tx.to === tx.from) return;
+        const address = tx.to === accLower ? tx.from : tx.to;
+        const cumu = (frequencyMap.get(address) ?? 0) + 1;
+        frequencyMap.set(address, cumu);
+    }));
+    const frequencyPairs = [...frequencyMap.entries()].sort((a,b) => b[1] - a[1]);
+    const ranking: Frequency[] = await Promise.all(frequencyPairs.map(async pair => ({
+      address: pair[0],
+      frequency: pair[1],
+    })));
+    const nextDrawDate = new Date().toLocaleDateString();
+    const ddbParams: any = {
+      TableName: TABLE_NAME,
+      Item: {
+          account: accLower,
+          accountIndex: Math.round(Math.random() * TABLE_SIZE),
+          latestBlock,
+          ranking,
+          rankingCount: ranking.length,
+          latestRecUser: '',
+          nextDrawDate,
+      },
+    }
+    try {
+      await docClient.put(ddbParams).promise();
+      res.status(200).json({
+        account,
+        ifDrawable: true,
+      } as CheckResult);
+    } catch (err) {
+      res.status(500).json({
+        account,
+        message: ERROR_MESSAGE.AWS_UPLOAD_ERROR,
+        details: err
+      } as ScanError);
+    }
   }
 }

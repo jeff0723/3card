@@ -2,13 +2,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { utils } from 'ethers';
 import {
-  S3,
-  Frequency,
   ScanError,
   ERROR_MESSAGE,
-  BUCKET_NAME
 } from 'scan-helper';
-import { CheckResult, RecMetadata } from 'rec-helper';
+import { CheckResult, docClient, TABLE_NAME } from 'rec-helper';
 
 export default async function handler(
   req: NextApiRequest,
@@ -29,29 +26,29 @@ export default async function handler(
       ifDrawable: true,
     });
   } else {
-    try {
-        const s3data = await S3.getObject({
-          Bucket: BUCKET_NAME,
-          Key: `rec/${account.toLowerCase()}-metadata`,
-        }).promise();
-        const metadata = s3data.Body? JSON.parse(s3data.Body.toString()) as RecMetadata: undefined;
-        if (metadata) {
-          res.status(200).json({
-            account,
-            ifDrawable: Date.now() > (new Date(metadata.nextDrawDate)).valueOf(),
-          });
-        } else {
-          res.status(200).json({
-            account,
-            ifDrawable: false,
-          });
+    const ddbGet: any = {
+      TableName: TABLE_NAME,
+      ProjectionExpression: "account, latestRecUser, latestRecRanking, nextDrawDate",
+      Key: {
+          account: account.toLowerCase(),
+      }
+    };
+    const data = await docClient.get(ddbGet).promise();
+    if (data.Item) {
+      const ifDrawable = Date.now() > (new Date(data.Item.nextDrawDate)).valueOf();
+      res.status(200).json({
+        account,
+        ifDrawable, 
+        lastestRec: { 
+          account: data.Item.latestRecUser,
+          ranking: data.Item.latestRecRanking,
         }
-      } catch (err: any) {
-        res.status(500).json({
-          account,
-          message: ERROR_MESSAGE.AWS_QUERY_ERROR,
-          details: err.message,
-        } as ScanError);
-      }    
+      } as CheckResult);
+    } else {
+      res.status(500).json({
+        account,
+        message: ERROR_MESSAGE.AWS_QUERY_ERROR,
+      } as ScanError);        
+    }
   }
 }
