@@ -10,7 +10,9 @@ import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useAppSelector } from "state/hooks";
 import styled from "styled-components";
+import { useAccount } from "wagmi";
 import CreateButton from "./CreateButton";
+import ExploreFeed from "./ExploreFeed";
 import Feed from "./Feed";
 import Search from "./Search";
 
@@ -77,6 +79,7 @@ const Home: NextPage<Props> = (props: Props) => {
   const [hasMore, setHasMore] = useState(true);
   const [feedLength, setFeedLength] = useState(0);
   const [itemLength, setItemLength] = useState(0);
+  const { address } = useAccount()
   // const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
@@ -97,6 +100,7 @@ const Home: NextPage<Props> = (props: Props) => {
       setPageInfo(data?.timeline?.pageInfo)
       setPublications(data?.timeline?.items)
       console.log('[Query]', `Fetched first 10 timeline publications`)
+      console.log(data)
     },
     onError(error) {
 
@@ -188,6 +192,9 @@ const Home: NextPage<Props> = (props: Props) => {
               </InfiniteScroll>
             </div>
           }
+          {
+            (!currentUser || (publications?.length == 0 && !feedLoading)) && <ExploreFeed />
+          }
 
         </Content>
         <FunctionContainer className="col-span-5">
@@ -227,7 +234,7 @@ const Home: NextPage<Props> = (props: Props) => {
             </InfiniteScroll>
           </NewsContainer>
         </FunctionContainer>
-      </div>
+      </div >
     </>
   );
 };
