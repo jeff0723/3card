@@ -75,7 +75,7 @@ const InfoCard = ({ recommendAddress, tags, netWorth }: Props) => {
             <div className='w-full  py-[16px] flex flex-col'>
                 <div className='font-bold text-[15px]'>Bio:</div>
                 <div>
-                    {recommendUser?.bio}
+                    {recommendUser?.bio ? recommendUser?.bio : 'No bio'}
                 </div>
             </div>
             <div className='w-full  py-[16px] flex flex-col'>

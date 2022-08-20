@@ -10,6 +10,8 @@ import toast from "react-hot-toast";
 import Button from "components/UI/Button";
 import { useMutation } from "@apollo/client";
 import { CREATE_PROFILE_MUTATION } from "graphql/mutation/create-profile";
+import Pending from "./Pending";
+import { v4 as uuid } from 'uuid';
 
 
 type Props = {
@@ -36,7 +38,7 @@ type FormValues = {
 const CreateProfileModal = ({ open, setOpen }: Props) => {
     const [uploading, setUploading] = useState(false);
     const [avatar, setAvatar] = useState("");
-    const { register, handleSubmit, getValues } = useForm<FormValues>();
+    const { register, handleSubmit, getValues, reset } = useForm<FormValues>();
 
     const [createProfile, { data, loading }] = useMutation(
         CREATE_PROFILE_MUTATION
@@ -51,8 +53,9 @@ const CreateProfileModal = ({ open, setOpen }: Props) => {
             try {
                 // this part should be adjusted
                 const client = makeStorageClient();
-                const filename = e.target.files[0].name;
-                const cid = await client.put([e.target.files[0]]);
+                const filename = uuid() + ".png"
+                const file = new File([e.target.files[0]], filename)
+                const cid = await client.put([file]);
                 setAvatar(`https://ipfs.io/ipfs/${cid}/${filename}`);
             } finally {
                 setUploading(false);
@@ -74,7 +77,10 @@ const CreateProfileModal = ({ open, setOpen }: Props) => {
                     return;
                 }
                 toast.success("Create profile transaction sent!");
+                reset()
+                setAvatar("")
                 closeModal();
+
             },
             onError: (error) => {
                 toast.error(`create profile error: ${error}`);
@@ -84,6 +90,7 @@ const CreateProfileModal = ({ open, setOpen }: Props) => {
 
     return (
         <>
+            {data?.createProfile?.txHash && <Pending txHash={data?.createProfile?.txHash} />}
             <Transition appear show={open} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={closeModal}>
                     <Transition.Child
@@ -155,7 +162,7 @@ const CreateProfileModal = ({ open, setOpen }: Props) => {
                                         <div className="mt-4">
                                             <Button
                                                 type="submit"
-                                                disabled={loading}
+                                                disabled={loading || uploading}
                                                 // should refactor this info UI/components/Spinner
                                                 icon={
                                                     loading && (

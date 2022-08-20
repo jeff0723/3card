@@ -1,27 +1,18 @@
+import { useQuery } from "@apollo/client";
+import NFTPost from "components/Profile/NFTPost";
+import ProfileLoading from "components/Profile/ProfileLoading";
+import SingleThread from "components/Publication/SingleThread";
 import { Spinner } from "components/UI/Spinner";
-import { Fragment, useEffect, useState } from "react";
+import { PaginatedResultInfo, Publication } from "generated/types";
+import { HOME_FEED_QUERY } from "graphql/query/home-feed-query";
+import type { NextPage } from 'next';
+import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useAppSelector } from "state/hooks";
 import styled from "styled-components";
-import CreateProfileHelper from "./CreateProfileHelper";
-import Feed from "./Feed";
-import RecommendUser from "./RecommendUser";
-import { HiPlus } from 'react-icons/hi'
-import Modal from "components/UI/Modal";
-import { FiX } from "react-icons/fi";
-import { HiPencilAlt, HiUserGroup } from 'react-icons/hi'
-import CreatePost from "./CreatePost";
-import { Dialog, Transition } from "@headlessui/react";
-import { Domain } from "domain";
 import CreateButton from "./CreateButton";
+import Feed from "./Feed";
 import Search from "./Search";
-import type { GetServerSideProps, NextPage } from 'next'
-import { HOME_FEED_QUERY } from "graphql/query/home-feed-query";
-import { useQuery } from "@apollo/client";
-import { Publication, PaginatedResultInfo } from "generated/types";
-import SingleThread from "components/Publication/SingleThread";
-import ProfileLoading from "components/Profile/ProfileLoading";
-import NFTPost from "components/Profile/NFTPost";
 
 interface Item {
   [key: string]: string

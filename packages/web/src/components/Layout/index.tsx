@@ -44,12 +44,16 @@ const Layout: FC<Props> = ({ children }) => {
     useEffect(() => {
         setMounted(true);
     }, []);
-    if (!mounted) return <h1>Loading</h1>;
+    if (!mounted) return <div className="flex h-screen w-full justify-center items-center">
+        <img src='/logo.png' className="w-[300px] h-[300px]" />
+    </div>;
 
     return (
         <Container>
             <Toaster position="top-right" toastOptions={toastOptions} />
-            <Suspense fallback={<h1>Loading</h1>}>
+            <Suspense fallback={<div className="flex h-screen w-full justify-center items-center">
+                <img src='/logo.png' className="w-[300px] h-[300px]" />
+            </div>}>
                 <Navbar />
                 <Content>
                     <SideBar />

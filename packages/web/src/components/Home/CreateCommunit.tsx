@@ -233,23 +233,23 @@ const CreateCommunity = ({ open, setOpen }: Props) => {
                 </div>
 
                 <form className='flex flex-col w-full gap-2 p-4' onSubmit={onSubmit}>
-                    <div className='flex flex-col'>
+                    <div className='flex flex-col gap-1'>
                         <label>
                             Name
                         </label>
-                        <input placeholder='Name your community' className='p-4 rounded-lg focus:outline-none'
+                        <input placeholder='Name your community' className='p-4 bg-black rounded-lg border border-border-gray focus:outline-primary-blue'
                             {...register('name', { required: true })} />
                     </div>
-                    <div className='flex flex-col'>
+                    <div className='flex flex-col gap-1'>
                         <label>
                             Description
                         </label>
-                        <textarea placeholder='What is it for...' className='p-4 rounded-lg focus:outline-none'
+                        <textarea placeholder='What is it for...' className='p-4 bg-black rounded-lg border border-border-gray focus:outline-primary-blue'
                             {...register('description', { required: true })} />
                     </div>
-                    <div className='flex flex-col'>
+                    <div className='flex flex-col gap-1'>
                         <label>Categories</label>
-                        <select className="p-4 rounded-lg focus:outline-none" placeholder='Choose a category' {...register('category', { required: true })}>
+                        <select className='p-4 bg-black rounded-lg border border-border-gray focus:outline-primary-blue' placeholder='Choose a category' {...register('category', { required: true })}>
                             <option value="GENERAL">General</option>
                             <option value="NFT">NFT</option>
                             <option value="DAO">DAO</option>
