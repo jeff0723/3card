@@ -58,6 +58,14 @@ const RecommendCard: NextPage = (props: Props) => {
         }
     };
 
+    const getNetworth = async (recAddress: string) => {
+        const res = await fetch(`${NEXT_URL}/api/query/networth?account=${recommendAddress}`);
+        if (!res.ok) {
+            const result = await res.json();
+            setNetworth(result.networth);
+        }
+    }
+
     useEffect(() => {
         if (address) check(address)
     }, [address])
@@ -87,6 +95,10 @@ const RecommendCard: NextPage = (props: Props) => {
         }
     }, [ranking])
 
+    useEffect(() => {
+        if (recommendAddress) getNetworth(recommendAddress)
+    }, [recommendAddress])
+    
     return (
         <div className='grid grid-cols-4 w-full'>
 
