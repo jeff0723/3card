@@ -19,18 +19,18 @@ async function main() {
         console.log("tx count:", txList.length);
         const ranking = await scanner.getFrequencyRanking(txList);
         console.log("ranking count:", ranking.length);
-        const rankingPayload = {
-            Bucket: '3card',
-            Key: `onchain/${scanner.account}/${chain}/ranking`,
-            Body: JSON.stringify(ranking),
-        };
-        S3.upload(rankingPayload).promise()
-        .then(function (data) {
-            console.log('Upload succeed', data.Location);
-        })
-        .catch(function (err) {
-            console.log("Upload error", err);
-        });
+        // const rankingPayload = {
+        //     Bucket: '3card',
+        //     Key: `onchain/${scanner.account}/${chain}/ranking`,
+        //     Body: JSON.stringify(ranking),
+        // };
+        // S3.upload(rankingPayload).promise()
+        // .then(function (data) {
+        //     console.log('Upload succeed', data.Location);
+        // })
+        // .catch(function (err) {
+        //     console.log("Upload error", err);
+        // });
         
         // fetch erc20 events and upload S3
         const erc20Events = await scanner.fetchERC20EventList(chain, startBlock);
@@ -40,13 +40,13 @@ async function main() {
             Key: `onchain/${scanner.account}/${chain}/erc20events`,
             Body: JSON.stringify(erc20Events),
         };
-        S3.upload(erc20EventPayload).promise()
-        .then(function (data) {
-            console.log('Upload succeed', data.Location);
-        })
-        .catch(function (err) {
-            console.log("Upload error", err);
-        });
+        // S3.upload(erc20EventPayload).promise()
+        // .then(function (data) {
+        //     console.log('Upload succeed', data.Location);
+        // })
+        // .catch(function (err) {
+        //     console.log("Upload error", err);
+        // });
         
         // fetch erc721 events
         const erc721Events = await scanner.fetchERC721EventList(chain, startBlock);
@@ -56,13 +56,13 @@ async function main() {
             Key: `onchain/${scanner.account}/${chain}/erc721events`,
             Body: JSON.stringify(erc721Events),
         };
-        S3.upload(erc721EventPayload).promise()
-        .then(function (data) {
-            console.log('Upload succeed', data.Location);
-        })
-        .catch(function (err) {
-            console.log("Upload error", err);
-        });
+        // S3.upload(erc721EventPayload).promise()
+        // .then(function (data) {
+        //     console.log('Upload succeed', data.Location);
+        // })
+        // .catch(function (err) {
+        //     console.log("Upload error", err);
+        // });
     }
 }
 

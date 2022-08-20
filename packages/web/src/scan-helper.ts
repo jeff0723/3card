@@ -1,4 +1,7 @@
 import AWS from 'aws-sdk';
+import { ethers, utils } from 'ethers';
+
+export const BUCKET_NAME = '3card';
 
 AWS.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -6,6 +9,10 @@ AWS.config.update({
 });
 
 export const S3 = new AWS.S3();
+
+export const provider = new ethers.providers.JsonRpcProvider(
+    process.env.INFURA_MAINNET_URL,
+);
 
 export const scanAPIKeyMap = new Map<string, string | undefined>([
     ['ether', process.env.ETHERSCAN_API_KEY],
@@ -21,7 +28,9 @@ export type NormalTx = {
     blockHash: string,
     transactionIndex: string,
     from: string,
+    fromEnsName?: string,
     to: string,
+    toEnsName?: string,
     value: string,
     gas: string,
     gasPrice: string,
@@ -38,6 +47,7 @@ export type NormalTx = {
 
 export type Frequency = {
     address: string,
+    addressEnsName?: string,
     frequency: number,
 }
 
@@ -141,14 +151,41 @@ export type ScanError = {
     details?: string,
 };
 
+export class EnsFetcher {
+    localEnsMap: Map<string, string>;
+
+    constructor() {
+        this.localEnsMap = new Map<string, string>;
+    }
+
+    async queryEnsName(address: string): Promise<string> {
+        const ensName = await provider.lookupAddress(address);
+        return ensName === null? address.toLowerCase() : ensName;
+    }
+
+    async getEnsName(address: string): Promise<string> {
+        if (!address) {
+            return '';
+        }
+        const localEnsName = this.localEnsMap.get(address);
+        if (localEnsName) {
+            return localEnsName;
+        } else {
+            const remoteEnsName = await this.queryEnsName(address);
+            this.localEnsMap.set(address, remoteEnsName);
+            return remoteEnsName;
+        }
+    }
+}
+
 export const ADDRESS_TAGS = new Map<string, string>([
-    ['0x7a250d5630b4cf539739df2c5dacb4c659f2488d', 'Uniswap V2 Trader'],
+    ['0x7a250d5630b4cf539739df2c5dacb4c659f2488d', 'Uniswap V2 Router'],
     ['0x7be8076f4ea4a4ad08075c2508e481d6c946d12b', 'Opensea V1'],
     ['0x283af0b28c62c092c9727f1ee09c02ca627eb7f5', 'ENS'],
     ['0x7f268357a8c2552623316e2562d90e642bb538e5', 'Opensea V2'],
-    ['0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45', 'Uniswap V3 Trader'],
-    ['0xd9e1ce17f2641f24ae83637ab66a2cca9c378b9f', 'SushiSwap Trader'],
-    ['0xe592427a0aece92de3edee1f18e0157c05861564', 'Uniswap V3 Trader'],
+    ['0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45', 'Uniswap V3 Router'],
+    ['0xd9e1ce17f2641f24ae83637ab66a2cca9c378b9f', 'SushiSwap Router'],
+    ['0xe592427a0aece92de3edee1f18e0157c05861564', 'Uniswap V3 Router'],
     ['0xdef1c0ded9bec7f1a1670819833240f027b25eff', 'OxExchage'],
     ['0xc098b2a3aa256d2140208c3de6543aaef5cd3a94', 'FTX'],
     ['0x881d40237659c251811cec9c364ef91dc08d300c', 'Metamask swap'],
@@ -156,20 +193,20 @@ export const ADDRESS_TAGS = new Map<string, string>([
     ['0xa0c68c638235ee32657e8f720a23cec1bfc77c77', 'Polygon Brdige'],
     ['0xabea9132b05a70803a4e85094fd0e1800777fbef', 'zkSync'],
     ['0xf1f3ca6268f330fda08418db12171c3173ee39c9', 'Zapper'],
-    ['0xc36442b4a4522e871399cd717abdd847ab11fe88', 'Uniswap V3 Provider'],
+    ['0xc36442b4a4522e871399cd717abdd847ab11fe88', 'Uniswap V3 Position'],
     ['0x8d12a197cb00d4747a1fe03395095ce2a5cc6819', 'EtherDelta2'],
     ['0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9', 'Aave Lending V1'],
     ['0x084b1c3c81545d370f3634392de611caabff8148', 'ENS'],
     ['0xba12222222228d8ba445958a75a0704d566bf2c8', 'Balancer Vault'],
     ['0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85', 'ENS'],
-    ['0x1111111254fb6c44bac0bed2854e76f90643097d', '1inch V4 Trader'],
+    ['0x1111111254fb6c44bac0bed2854e76f90643097d', '1inch V4 Router'],
     ['0x4dbd4fc535ac27206064b68ffcf827b0a60bab3f', 'Arbitrum'],
-    ['0xdef171fe48cf0115b1d80b88dc8eab59176fee57', 'Paraswap V5 Trader'],
+    ['0xdef171fe48cf0115b1d80b88dc8eab59176fee57', 'Paraswap V5 Router'],
     ['0x4976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41', 'ENS'],
     ['0xae7ab96520de3a18e5e111b5eaab095312d7fe84', 'Lido'],
     ['0xfaff15c6cdaca61a4f87d329689293e07c98f578', 'Zapper NFT'],
     ['0xcda72070e455bb31c7690a170224ce43623d0b6f', 'Foundation Market'],
-    ['0x11111112542d85b3ef69ae05771c2dccff4faa26', '1inch V3 Trader'],
+    ['0x11111112542d85b3ef69ae05771c2dccff4faa26', '1inch V3 Router'],
     ['0xfd43d1da000558473822302e1d44d81da2e4cc0d', 'Love Death + Robots'],
     ['0x398ec7346dcd622edc5ae82352f02be94c62d119', 'Aave Lending V1'],
     ['0x56eddb7aa87536c09ccc2793473599fd21a8b17f', 'Binance'],

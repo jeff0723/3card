@@ -30,12 +30,13 @@ const Activities = ({ txList }: Props) => {
         <>
             {
                 txList?.sort((a, b) => parseInt(b.timeStamp) - parseInt(a.timeStamp))
-                    .map(tx => {
+                    .map((tx, idx) => {
                         const from = ADDRESS_TAGS.has(tx.from) ? ADDRESS_TAGS.get(tx.from) : tx.from;
                         const to = ADDRESS_TAGS.has(tx.to) ? ADDRESS_TAGS.get(tx.to) : tx.to;
                         const fxName = tx.contractAddress ? 'DEPLOY' : (tx.functionName ?
                             tx.functionName.split('(')[0] : 'NATIVE TRANSFER');
                         return (
+                            <div key={idx}>
                             <a href={`https://etherscan.io/tx/${tx.hash}`} target="_blank" rel="noopener noreferrer" key={tx.hash}>
                                 <div className='border-b border-border-gray py-2 grid grid-cols-3 w-full'>
                                     <div className='flex flex-col'>
@@ -65,6 +66,7 @@ const Activities = ({ txList }: Props) => {
                                     </div>
                                 </div>
                             </a>
+                            </div>
                         )
                     }
                     )

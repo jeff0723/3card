@@ -6,8 +6,9 @@ import { Signer, providers, ethers } from 'ethers';
 import SeaportContext from 'contexts/seaport';
 import { ItemType } from '@opensea/seaport-js/lib/constants';
 import { OrderParameters, OrderWithCounter } from '@opensea/seaport-js/lib/types';
+import getIPFSLink from 'utils/getIPFSLink';
+import { uploadIpfs } from 'utils/uploadToIPFS';
 type Props = {}
-
 
 const SeaportPage: NextPage = (props: Props) => {
     const { seaport } = useContext(SeaportContext)
@@ -19,8 +20,8 @@ const SeaportPage: NextPage = (props: Props) => {
             offer: [
                 {
                     itemType: ItemType.ERC721,
-                    token: "0x9bc7C2CC790aA34eB72FAebd1AD2066BB194fC88",
-                    identifier: "4"
+                    token: "0x2f201Dcc51Dd30B060F1339ed55fAeE5b82F6F38",
+                    identifier: "13"
                 }
             ],
             consideration: [
@@ -32,7 +33,9 @@ const SeaportPage: NextPage = (props: Props) => {
         })
         const order = await executeAllActions();
         setOrder(order)
-        console.log(order)
+        console.log("order:", order)
+        const {path } = await uploadIpfs(order)
+        console.log("cid:", path)
 
     }
     const fullfillOrder = async () => {
