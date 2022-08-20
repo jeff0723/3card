@@ -8,6 +8,7 @@ import {
   ScanRankingResult,
   ScanError,
   ERROR_MESSAGE,
+  BUCKET_NAME,
 } from 'scan-helper';
 import { utils } from 'ethers';
 
@@ -45,19 +46,23 @@ export default async function handler(
         details: (await scanResponse.json()).message,
       } as ScanError);
     } else {
-      const txlist: NormalTx[] = (await scanResponse.json()).result;
+      const rawTxlist: NormalTx[] = (await scanResponse.json()).result;
       const frequencyMap = new Map<string, number>();
-      const acc = account.toLowerCase();
-      txlist.map(tx => {
-          const interactiveAddress = acc === tx.from ? tx.to : tx.from;
-          const currFreq = frequencyMap.get(interactiveAddress);
-          frequencyMap.set(interactiveAddress, currFreq?currFreq+1:1);
-      });
+      const accLower = account.toLowerCase();
+
+      const txlist: NormalTx[] = await Promise.all(rawTxlist.map(async tx => {
+          const peerAddress = accLower === tx.from ? tx.to : tx.from;
+          const currFreq = frequencyMap.get(peerAddress);
+          frequencyMap.set(peerAddress, currFreq?currFreq+1:1);
+          return {
+            ...tx,
+          };
+      }));
       const frequencyPairs = [...frequencyMap.entries()].sort((a,b) => b[1] - a[1]);
-      const ranking: Frequency[] = frequencyPairs.map(pair => ({
+      const ranking: Frequency[] = await Promise.all(frequencyPairs.map(async pair => ({
         address: pair[0],
         frequency: pair[1],
-      }));
+      })));
       const scanResult: ScanRankingResult = {
         account,
         chain,
@@ -66,8 +71,8 @@ export default async function handler(
         endblock: 0,
       };
       const rankingPayload = {
-        Bucket: '3card',
-        Key: `onchain/${acc}/${chain}/ranking`,
+        Bucket: BUCKET_NAME,
+        Key: `onchain/${accLower}/${chain}/ranking`,
         Body: JSON.stringify(scanResult),
       };
       try {

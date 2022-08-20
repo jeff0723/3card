@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "fs";
 
 async function main() {
-    const users = readFileSync('lens-users-polygon.txt').toString().split('\n');
+    const users = readFileSync('lens-users-mumbai.txt').toString().split('\n');
     console.log('before user size:', users.length);
     var seen = {};
     const uniqueUsers = users.filter((user) => {

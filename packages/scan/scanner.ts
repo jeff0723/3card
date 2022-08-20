@@ -1,12 +1,12 @@
 import * as dotenv from 'dotenv';
 import fetch from 'node-fetch';
-import { utils } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 
 dotenv.config();
 
 const { isAddress } = utils;
 
-export type NormalTrasaction = {
+export type NormalTx = {
     blockNumber: string,
     timeStamp: string,
     hash: string,
@@ -78,12 +78,21 @@ export type Frequency = {
     frequency: number,
 }
 
-export type NormalTxList = Array<NormalTrasaction>;
+export type ERC20Asset = {
+    contractAddress: string,
+    tokenName: string,
+    tokenSymbol: string,
+    balance: string,
+};
+
 export type FrequencyRanking = Array<Frequency>;
-export type ERC20EventList = Array<ERC20Event>;
-export type ERC20AssetList = Array<any>;
-export type ERC721EventList = Array<ERC721Event>;
-export type ERC721AssetList = Array<any>;
+
+type TokenInfo = {
+    tokenName: string,
+    tokenSymbol: string,
+    balance: BigNumber,
+    decimal: string,
+};
 
 export class Scanner {
     
@@ -137,28 +146,28 @@ export class Scanner {
         return true;
     }
 
-    async fetchNormalTxList(chain: string, startBlock: number): Promise<NormalTxList> {
+    async fetchNormalTxList(chain: string, startBlock: number): Promise<NormalTx[]> {
         if (!this.check(chain, startBlock)) return [];
         const queryURL = this.scanTxUrlMap.get(chain) + `&address=${this.account}&startblock=${startBlock}`;
         const res = await fetch(queryURL);
         return (await res.json()).result;
     }
 
-    async fetchERC20EventList(chain: string, startBlock: number): Promise<ERC20EventList> {
+    async fetchERC20EventList(chain: string, startBlock: number): Promise<ERC20Event[]> {
         if (!this.check(chain, startBlock)) return [];
         const queryURL = this.scanERC20UrlMap.get(chain) + `&address=${this.account}&startblock=${startBlock}`;
         const res = await fetch(queryURL);
         return (await res.json()).result;
     }
 
-    async fetchERC721EventList(chain: string, startBlock: number): Promise<ERC20EventList> {
+    async fetchERC721EventList(chain: string, startBlock: number): Promise<ERC20Event[]> {
         if (!this.check(chain, startBlock)) return [];
         const queryURL = this.scanERC721UrlMap.get(chain) + `&address=${this.account}&startblock=${startBlock}`;
         const res = await fetch(queryURL);
         return (await res.json()).result;
     }
 
-    async getFrequencyRanking(normalTxList: NormalTxList): Promise<FrequencyRanking> {
+    async getFrequencyRanking(normalTxList: NormalTx[]): Promise<FrequencyRanking> {
         const frequencyMap = new Map<string, number>();
         normalTxList.map((tx) => {
             const interactiveAddress = this.account === tx.from ? tx.to : tx.from;
@@ -174,6 +183,32 @@ export class Scanner {
             contractAddress: pair[0],
             frequency: pair[1],
         }));
+    }
+    
+    async getERC20Assets(erc20Events: ERC20Event[]): Promise<ERC20Asset[]> {
+        const erc20assetsMap = new Map<string, TokenInfo>();
+        erc20Events.map(event => {
+        const tokenInfo = erc20assetsMap.get(event.contractAddress);
+        if (event.to === event.from) return;
+        const op = event.to === this.account.toLowerCase()? 'add': 'sub';
+        erc20assetsMap.set(event.contractAddress, tokenInfo?{
+        ...tokenInfo,
+        balance: tokenInfo.balance[op](event.value),
+        }:{
+        tokenName: event.tokenName,
+        tokenSymbol: event.tokenSymbol,
+        balance: BigNumber.from(0)[op](event.value),
+        decimal: event.tokenDecimal,
+        })});
+        return [...erc20assetsMap.entries()]
+            .map(info => {
+            return {
+                contractAddress: info[0],
+                tokenName: info[1].tokenName,
+                tokenSymbol: info[1].tokenSymbol,
+                balance: utils.formatUnits(info[1].balance, info[1].decimal),
+            };
+        });
     }
 }
 
