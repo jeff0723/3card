@@ -83,7 +83,7 @@ const InfoCard = ({ recommendAddress, tags, netWorth }: Props) => {
                     Net worth:
                 </div>
                 <div>
-                    ${formatNumber(netWorth)}
+                    ${netWorth.toFixed(1)}
                 </div>
             </div>
             {tags.length > 0 &&

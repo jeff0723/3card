@@ -59,8 +59,8 @@ const RecommendCard: NextPage = (props: Props) => {
     };
 
     const getNetworth = async (recAddress: string) => {
-        const res = await fetch(`${NEXT_URL}/api/query/networth?account=${recommendAddress}`);
-        if (!res.ok) {
+        const res = await fetch(`${NEXT_URL}/api/query/networth?account=${recAddress}`);
+        if (res.ok) {
             const result = await res.json();
             setNetworth(result.networth);
         }
