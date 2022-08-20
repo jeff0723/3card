@@ -1,23 +1,7 @@
-import React, { FC, ReactNode, Suspense, useEffect, useState } from "react";
-import Head from "next/head";
-import styled from "styled-components";
 import dynamic from "next/dynamic";
-import { useAccount, useDisconnect, useNetwork, useSignMessage } from "wagmi";
-import {
-    AUTHENTICATE_MUTATION,
-    CHALLENGE_QUERY,
-} from "graphql/query/authentication";
-import { useLazyQuery, useMutation } from "@apollo/client";
-import toast, { Toaster } from "react-hot-toast";
-import { CURRENT_USER_QUERY } from "graphql/query/user";
-import Cookies from "js-cookie";
-import { useAppDispatch, useAppSelector } from "state/hooks";
-import {
-    setCurrentUser,
-    setIsAuthenticated,
-    setIsConnected,
-} from "state/user/reducer";
-import { updateLoadingStatus } from "state/application/reducer";
+import { FC, ReactNode, Suspense, useEffect, useState } from "react";
+import { Toaster } from "react-hot-toast";
+import styled from "styled-components";
 
 const Navbar = dynamic(() => import("./Navbar"), { suspense: true });
 const SideBar = dynamic(() => import("./SideBar"), { suspense: true });

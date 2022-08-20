@@ -19,7 +19,7 @@ dayjs.extend(relativeTime)
 
 type Props = {}
 
-const index: NextPage = (props: Props) => {
+const Post: NextPage = (props: Props) => {
     const router = useRouter()
     const { post_id } = router.query
     const [publication, setPublication] = useState<Publication>()
@@ -109,4 +109,4 @@ const index: NextPage = (props: Props) => {
 }
 
 
-export default index
+export default Post

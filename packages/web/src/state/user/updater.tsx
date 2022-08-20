@@ -73,10 +73,6 @@ const UserUpdater = (props: Props) => {
 
     }, [address])
 
-    console.log('address: ', address)
-    const token = Cookies.get('accessToken')
-    console.log('accessToken: ', token)
-    console.log(currentUser)
     return null
 }
 

@@ -56,9 +56,9 @@ const NFTPost = ({ post }: Props) => {
     }
     const fetchStatus = async () => {
         if (seaport && order) {
-            const _order = omit(order, 'counter') as Order
+            // const _order = omit(order, 'counter') as Order
             try {
-                const { callStatic } = await seaport.validate([_order])
+                const { callStatic } = await seaport.validate([order as Order])
                 const status = await callStatic()
                 setFulfilled(!status)
             } catch {
@@ -119,6 +119,7 @@ const NFTPost = ({ post }: Props) => {
 
         }
     }
+    console.log(order)
     return (
         <div className='flex flex-col border-b border-border-gray py-4'>
 
