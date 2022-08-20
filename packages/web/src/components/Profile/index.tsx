@@ -66,25 +66,37 @@ const Profile: NextPage = (props: Props) => {
     const isMe = profile?.ownedBy === currentUser?.ownedBy && isConnected
     const [followed, setFollowed] = useState<boolean>(profile?.isFollowedByMe)
     const [followerCount, setFollowerCount] = useState(profile?.stats?.totalFollowers)
+
+    const getTxList = async () => {
+        if (profile) {
+            const query = await fetch(`http://localhost:3000/api/query/ranking?account=${profile?.ownedBy}&chain=ether`)
+            const res = query.ok ? query : await fetch(`http://localhost:3000/api/update/ranking?account=${profile?.ownedBy}&chain=ether`)
+            if (!res.ok) {
+                console.log('scan error:', await res.json())
+                setTxList([])
+            }
+            const txlistResult = (await res.json())
+            setTxList(txlistResult.txlist)
+        }
+    };
+
+    const getRanking = async () => {
+        if (profile) {
+            const res = await fetch(`http://localhost:3000/api/recommend/check?account=${profile?.ownedBy}`)
+            if (!res.ok) {
+                console.log('check error:', await res.json())
+                setRanking([])
+            }
+            const rankingResult = (await res.json())
+            setRanking(rankingResult.ranking)
+        }
+    }
+
     useEffect(() => {
         setFollowed(profile?.isFollowedByMe)
         setFollowerCount(profile?.stats?.totalFollowers)
     }, [profile])
     useEffect(() => {
-        const getRanking = async () => {
-            if (profile) {
-                const query = await fetch(`http://localhost:3000/api/query/ranking?account=${profile?.ownedBy}&chain=ether`)
-                const res = query.ok ? query : await fetch(`http://localhost:3000/api/update/ranking?account=${profile?.ownedBy}&chain=ether`)
-                if (!res.ok) {
-                    console.log('scan error:', await res.json())
-                    setTxList([])
-                    setRanking([])
-                }
-                const rankingResult = (await res.json()) as ScanRankingResult
-                setTxList(rankingResult.txlist)
-                setRanking(rankingResult.ranking)
-            }
-        };
         getRanking()
     }, [profile])
 

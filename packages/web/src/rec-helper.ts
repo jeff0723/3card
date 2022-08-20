@@ -26,6 +26,7 @@ export type RecResult = {
 export type CheckResult = {
     account: string,
     ifDrawable: boolean,
+    ranking: Frequency[],
     lastestRec?: RecResult,
 };
 
@@ -33,5 +34,5 @@ export const getCorrelation = (
     ranking1: Frequency[],
     ranking2: Frequency[])
     : number => {
-    return Math.random();
+    return ranking2.length;
 };

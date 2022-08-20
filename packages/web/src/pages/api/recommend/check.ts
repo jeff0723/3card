@@ -26,15 +26,10 @@ export default async function handler(
       account,
       message: ERROR_MESSAGE.INVALID_ADDRESS,
     } as ScanError);
-  } else if (test) {
-    res.status(200).json({
-      account,
-      ifDrawable: true,
-    });
   } else {
     const ddbGet: any = {
       TableName: TABLE_NAME,
-      ProjectionExpression: "account, latestRecUser, latestRecRanking, nextDrawDate",
+      ProjectionExpression: "account, latestRecUser, latestRecRanking, nextDrawDate, ranking",
       Key: {
           account: account.toLowerCase(),
       }
@@ -44,7 +39,8 @@ export default async function handler(
       const ifDrawable = Date.now() > (new Date(data.Item.nextDrawDate)).valueOf();
       res.status(200).json({
         account,
-        ifDrawable, 
+        ifDrawable,
+        ranking: data.Item.ranking,
         lastestRec: { 
           account: data.Item.latestRecUser,
           ranking: data.Item.latestRecRanking,

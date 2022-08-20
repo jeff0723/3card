@@ -94,11 +94,11 @@ const RecommendCard: NextPage = (props: Props) => {
                 <div className='flex justify-between items-center gap-2 p-4' >
                     <div className='font-bold text-[20px]'>Card of Today </div>
                     {!ifDrawable?
-                        <div >Time Left: <Countdown date={new Date().setHours(24, 0, 0, 0)} /></div>
+                        <div >Next Card: <Countdown date={new Date().setHours(24, 0, 0, 0)} /></div>
                         :<></>
                     }
                 </div>
-                {ifDrawable? <InfoCard
+                {recommendAddress? <InfoCard
                     recommendAddress={recommendAddress}
                     tags={tags}
                     netWorth={netWorth} />
