@@ -34,5 +34,8 @@ export const getCorrelation = (
     ranking1: Frequency[],
     ranking2: Frequency[])
     : number => {
+    const map1 = new Map<string, number>(ranking1.map(fre => [fre.address, fre.frequency]));
+    const map2 = new Map<string, number>(ranking2.map(fre => [fre.address, fre.frequency]));
+    // const multi = map1.keys()
     return ranking2.length;
 };

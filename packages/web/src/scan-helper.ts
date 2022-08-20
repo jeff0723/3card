@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import { ethers, utils } from 'ethers';
+const CoinGecko = require('coingecko-api');
 
 export const BUCKET_NAME = '3card';
 
@@ -7,7 +8,7 @@ AWS.config.update({
     accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY
 });
-console.log('api key: ,', process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID)
+// console.log('api key: ,', process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID)
 export const S3 = new AWS.S3();
 
 export const provider = new ethers.providers.JsonRpcProvider(
@@ -176,6 +177,17 @@ export class EnsFetcher {
             return remoteEnsName;
         }
     }
+}
+
+export const CoinGeckoClient = new CoinGecko();
+
+export async function priceToUsdByTokenAddress(tokenAddresses: string[]) {
+    //only ethereum chain address is available
+    const data = await CoinGeckoClient.simple.fetchTokenPrice({
+        contract_addresses: tokenAddresses,
+        vs_currencies: 'usd'
+    })
+    return data;
 }
 
 export const ADDRESS_TAGS = new Map<string, string>([
