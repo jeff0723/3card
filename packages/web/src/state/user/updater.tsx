@@ -3,7 +3,7 @@ import { GET_PROFILE_BY_ADDRESS } from 'graphql/query/user'
 import Cookies from 'js-cookie'
 import { useEffect } from 'react'
 import { updateLoadingStatus } from 'state/application/reducer'
-import { useAppDispatch } from 'state/hooks'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 import {
     setCurrentUser,
     setIsAuthenticated,
@@ -15,6 +15,7 @@ type Props = {}
 
 const UserUpdater = (props: Props) => {
     const { address } = useAccount()
+    const currentUser = useAppSelector(state => state.user.currentUser)
     const dispatch = useAppDispatch()
     const [getProfileByAddress, { error: errorProfiles, loading: profilesLoading }] =
         useLazyQuery(GET_PROFILE_BY_ADDRESS, {
@@ -44,10 +45,27 @@ const UserUpdater = (props: Props) => {
         dispatch(updateLoadingStatus({ isApplicationLoading: false }))
 
     }
+    const updateUser = async () => {
+        if (currentUser && address) {
+            if (currentUser.ownedBy !== address) {
+                Cookies.remove('accessToken')
+                Cookies.remove('refreshToken')
+                dispatch(updateLoadingStatus({ isApplicationLoading: true }))
+                dispatch(setIsConnected({ isConnected: false }));
+                dispatch(setIsAuthenticated({ isAuthenticated: false }));
+                dispatch(
+                    setCurrentUser({ currentUser: null })
+                );
+                dispatch(updateLoadingStatus({ isApplicationLoading: false }))
+
+            }
+        }
+    }
     useEffect(() => {
         updateStatus()
+        updateUser()
 
-    }, [])
+    }, [address])
     return null
 }
 

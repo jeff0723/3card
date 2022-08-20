@@ -154,7 +154,7 @@ const Profile: NextPage = (props: Props) => {
                                 </div>
                             </div>
                         </div>
-                        {isMe ?
+                        {(isMe && currentUser) ?
                             <div className='flex justify-start items-center'>
                                 <EditProfileModal open={editModalOpen} setOpen={setEditModalOpen} />
                                 <button
@@ -166,7 +166,7 @@ const Profile: NextPage = (props: Props) => {
                             </div> :
                             <div className='flex gap-[10px] items-center justify-start'>
                                 {
-                                    followed ? <UnfollowButton profile={profile} setFollowed={setFollowed} setFollowerCount={setFollowerCount} followerCount={followerCount}></UnfollowButton> : <FollowButton profile={profile} setFollowed={setFollowed} setFollowerCount={setFollowerCount} followerCount={followerCount} />
+                                    (followed && currentUser) ? <UnfollowButton profile={profile} setFollowed={setFollowed} setFollowerCount={setFollowerCount} followerCount={followerCount}></UnfollowButton> : <FollowButton profile={profile} setFollowed={setFollowed} setFollowerCount={setFollowerCount} followerCount={followerCount} />
                                 }
 
                                 <button

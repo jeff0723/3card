@@ -37,14 +37,14 @@ const ChatPage: NextPage<Props> = ({ messages }) => {
     useEffect(() => {
         const updateProfile = async () => {
             const { data } = await getProfileByAddress({
-                variables: { ownedBy: address },
+                variables: { ownedBy: peerAddress },
             });
             setAvatar(data?.profiles?.items[0]?.picture?.original?.url)
             setName(data?.profiles?.items[0]?.name)
             setHandle(data?.profiles?.items[0]?.handle)
         }
         updateProfile()
-    }, [address, getProfileByAddress])
+    }, [peerAddress, getProfileByAddress])
 
     useEffect(() => {
         const checkIfInConversation = async () => {
@@ -104,11 +104,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                 conversationId: {
                     eq: chatId
                 }
-            }
+            },
+            limit: 500
         }
     }) as { data: ListMessagesQuery }
     const messages = data?.listMessages?.items
-
     return {
         props: {
             messages

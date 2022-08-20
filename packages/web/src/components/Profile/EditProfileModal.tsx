@@ -16,12 +16,14 @@ import { HiCamera } from 'react-icons/hi';
 import { useAppSelector } from 'state/hooks';
 import 'tippy.js/dist/tippy.css';
 import getAttribute from 'utils/getAttribute';
+import getIPFSLink from 'utils/getIPFSLink';
 import omit from 'utils/omit';
 import splitSignature from 'utils/splitSignature';
 import { uploadIpfs } from 'utils/uploadToIPFS';
 import { makeStorageClient } from 'utils/web3-storage';
 import { v4 as uuid } from 'uuid';
 import { useContractWrite, useSignTypedData } from 'wagmi';
+import UpdateProfileImageDialog from './UpdateProfileImageDialog';
 
 type Props = {
     open: boolean;
@@ -50,6 +52,7 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
             toast.error(error?.message)
         }
     })
+    const [updateImageOpen, setUpdateImageOpen] = useState<boolean>(false)
     useEffect(() => {
         //@ts-ignore
         setCoverPreviewUrl(currentUser?.coverPicture?.original?.url)
@@ -158,7 +161,7 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
                 const filename = uuid() + ".png"
                 const file = new File([e.target.files[0]], filename)
                 const cid = await client.put([file])
-                setCoverUrl(`https://ipfs.infura.io/${cid}/${filename}`)
+                setCoverUrl(`https://ipfs.infura.io/ipfs/${cid}/${filename}`)
             } finally {
                 const objectUrl = URL.createObjectURL(e.target.files[0])
                 setCoverPreviewUrl(objectUrl)
@@ -178,11 +181,13 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
                 const filename = uuid() + ".png"
                 const file = new File([e.target.files[0]], filename)
                 const cid = await client.put([file])
-                setPhotoUrl(`https://ipfs.infura.io/${cid}/${filename}`)
-            } finally {
+                setPhotoUrl(`https://ipfs.infura.io/ipfs/${cid}/${filename}`)
                 const objectUrl = URL.createObjectURL(e.target.files[0])
                 setPhotoPreviewUrl(objectUrl)
+            } finally {
+
                 setPhotoUploading(false)
+                setUpdateImageOpen(true)
             }
         }
     }
@@ -264,7 +269,7 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
             </div>
             <div className='h-40 bg-black mt-4 flex justify-center items-center' style={{
                 //@ts-ignore
-                backgroundImage: `url(${coverPreviewUrl})`,
+                backgroundImage: `url(${getIPFSLink(coverPreviewUrl)})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center center',
                 backgroundRepeat: 'no-repeat',
@@ -286,7 +291,7 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
             <div className='w-28 h-28 -mt-14 object-cover rounded-full flex justify-center items-center'
                 style={{
                     //@ts-ignore
-                    backgroundImage: `url(${photoPreviewUrl})`,
+                    backgroundImage: `url(${getIPFSLink(photoPreviewUrl)})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center center',
                     backgroundRepeat: 'no-repeat',
@@ -335,6 +340,7 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
                     </input>
                 </div>
             </form>
+            <UpdateProfileImageDialog open={updateImageOpen} setOpen={setUpdateImageOpen} avatar={photoUrl} setPhotoPreviewUrl={setPhotoPreviewUrl} />
         </Modal >
     )
 }

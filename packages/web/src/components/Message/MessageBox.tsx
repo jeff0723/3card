@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Message, ListMessagesQuery, CreateMessageMutation, UpdateConversationMutation } from "API";
-import GraphQLAPI, { graphqlOperation } from "@aws-amplify/api-graphql";
 import { GraphQLSubscription } from '@aws-amplify/api';
-import { listMessages } from "graphql/amplify/queries";
-import { createMessage, updateConversation } from "graphql/amplify/mutations";
-import { onCreateMessageByConversationId } from "graphql/amplify/subscriptions";
-
-import { useAccount } from "wagmi";
+import GraphQLAPI from "@aws-amplify/api-graphql";
+import { CreateConversationMutation, CreateMessageMutation, Message, UpdateConversationMutation } from "API";
 import { API } from "aws-amplify";
+import { createConversation, createMessage, updateConversation } from "graphql/amplify/mutations";
+import { onCreateMessageByConversationId } from "graphql/amplify/subscriptions";
+import React, { useEffect, useState } from "react";
+import { useAccount } from 'wagmi';
 import SingleMessage from "./SingleMessage";
 
 type Props = {
@@ -53,7 +51,20 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
     const handleSend = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (message.trim() === '') return;
+        if (stateMessages.length == 0) {
+            const { data: mutation } = await GraphQLAPI.graphql({
+                query: createConversation,
+                variables: {
+                    input: {
+                        conversationId: conversationId,
+                        participants: [address, peerAddress],
+                        lastMessage: message,
+                    }
+                }
+            }) as { data: CreateConversationMutation }
+        }
         try {
+            console.log(conversationId)
             const { data } = (await GraphQLAPI.graphql({
                 query: createMessage,
                 variables: {
@@ -65,6 +76,7 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
                     },
                 },
             })) as { data: CreateMessageMutation };
+            console.log(data)
             const { update } = (await GraphQLAPI.graphql({
                 query: updateConversation,
                 variables: {
@@ -103,7 +115,7 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
                     placeholder="Start a new message"
                     onChange={handleChange}
                     value={message}
-                    className="bg-black focus:outline-none"
+                    className="bg-black focus:outline-none w-full"
                 />
                 <button type="submit" className="text-primary-blue">
                     SEND
