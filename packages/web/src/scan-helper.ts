@@ -4,20 +4,20 @@ import { ethers, utils } from 'ethers';
 export const BUCKET_NAME = '3card';
 
 AWS.config.update({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY
 });
-
+console.log('api key: ,', process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID)
 export const S3 = new AWS.S3();
 
 export const provider = new ethers.providers.JsonRpcProvider(
-    process.env.INFURA_MAINNET_URL,
+    process.env.NEXT_PUBLIC_INFURA_MAINNET_URL,
 );
 
 export const scanAPIKeyMap = new Map<string, string | undefined>([
-    ['ether', process.env.ETHERSCAN_API_KEY],
-    ['polygon', process.env.POLYGONSCAN_API_KEY],
-    ['bsc', process.env.BSCSCAN_API_KEY],
+    ['ether', process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY],
+    ['polygon', process.env.NEXT_PUBLIC_POLYGONSCAN_API_KEY],
+    ['bsc', process.env.NEXT_PUBLIC_BSCSCAN_API_KEY],
 ]);
 
 export type NormalTx = {
@@ -160,7 +160,7 @@ export class EnsFetcher {
 
     async queryEnsName(address: string): Promise<string> {
         const ensName = await provider.lookupAddress(address);
-        return ensName === null? address.toLowerCase() : ensName;
+        return ensName === null ? address.toLowerCase() : ensName;
     }
 
     async getEnsName(address: string): Promise<string> {
