@@ -7,6 +7,7 @@ export const MinimalProfileFields = gql`
     handle
     bio
     ownedBy
+    isFollowedByMe
     attributes {
       key
       value

@@ -9,6 +9,7 @@ import { MediaSet, NftImage, Profile } from 'generated/types'
 import InfoCard from './InfoCard'
 import Button from 'components/UI/Button'
 import getIPFSLink from 'utils/getIPFSLink';
+import { Spinner } from 'components/UI/Spinner'
 
 
 type Props = {}
@@ -94,14 +95,16 @@ const RecommendCard: NextPage = (props: Props) => {
             <div className="col-start-2 col-span-2 flex flex-col gap-10">
                 <div className='flex justify-between items-center gap-2 p-4' >
                     <div className='font-bold text-[20px]'>Card of Today </div>
-                        <div >Next Card: <Countdown date={new Date().setHours(24, 0, 0, 0)} /></div>
+                    <div >Next Card: <Countdown date={new Date().setHours(24, 0, 0, 0)} /></div>
                 </div>
-                {recommendAddress? <InfoCard
+                {recommendAddress ? <InfoCard
                     recommendAddress={recommendAddress}
                     tags={tags}
                     netWorth={netWorth} />
                     :
-                    <>LOADING</>
+                    <div className='flex justify-center items-center'>
+                        <Spinner size='lg' />
+                    </div>
                 }
             </div>
 
