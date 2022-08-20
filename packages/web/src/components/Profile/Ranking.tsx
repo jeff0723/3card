@@ -12,14 +12,14 @@ const Ranking = ({ ranking }: Props) => {
     return (
         <>
             {
-                ranking.map(fre => {
+                ranking.map((fre, idx) => {
                     const address = fre.address ? (
                         ADDRESS_TAGS.has(fre.address) ?
                             ADDRESS_TAGS.get(fre.address) : fre.address)
                         :
                         'Contract Creation';
 
-                    return <div className='flex flex-col border-b border-border-gray pb-2'>
+                    return <div key={idx} className='flex flex-col border-b border-border-gray pb-2'>
                         <div className='flex justify-between items-center'>
                             <div className='flex items-center gap-2'>
                                 <Blockies seed={address as string} size={8} scale={4} className='rounded-full' />
