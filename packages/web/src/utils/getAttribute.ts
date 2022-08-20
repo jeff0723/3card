@@ -10,6 +10,7 @@ type Query =
     | 'twitter'
     | 'location'
     | 'website'
+    | 'type'
 
 const getAttribute = (
     attributes: Maybe<Attribute[]> | undefined,

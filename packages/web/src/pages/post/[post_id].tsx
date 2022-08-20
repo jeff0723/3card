@@ -19,7 +19,7 @@ dayjs.extend(relativeTime)
 
 type Props = {}
 
-const index: NextPage = (props: Props) => {
+const Post: NextPage = (props: Props) => {
     const router = useRouter()
     const { post_id } = router.query
     const [publication, setPublication] = useState<Publication>()
@@ -88,7 +88,7 @@ const index: NextPage = (props: Props) => {
                 </div>
                 {currentUser && <div className='flex justify-between items-center py-4 border-b border-border-gray'>
                     <div className='flex items-start gap-2'>
-                        <img src={currentUser?.picture?.original?.url} className='w-12 h-12 rounded-full' />
+                        <img src={getIPFSLink(currentUser?.picture?.original?.url)} className='w-12 h-12 rounded-full' />
                         <div contentEditable className='text-[20px] outline-none py-3' placeholder='Write your reply' />
                     </div>
                     <div>
@@ -109,4 +109,4 @@ const index: NextPage = (props: Props) => {
 }
 
 
-export default index
+export default Post

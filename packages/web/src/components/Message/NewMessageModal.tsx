@@ -10,6 +10,7 @@ import { MediaSet, NftImage, Profile } from 'generated/types';
 import { createConversation } from 'graphql/amplify/mutations';
 import { listConversations } from 'graphql/amplify/queries';
 import { SEARCH_USERS_QUERY } from 'graphql/query/search-user';
+import { GET_PROFILE_BY_ADDRESS } from 'graphql/query/user';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ChangeEvent, Fragment, useRef, useState } from 'react';
@@ -28,6 +29,7 @@ const NewMessageModal = (props: Props) => {
     const { address } = useAccount()
     const [loading, setLoading] = useState(false)
     const [searchInput, setSearchInput] = useState("")
+    const [searchByHandle, setSearchByHandle] = useState(false)
     const [profile, setProfile] = useState<Profile>()
     const dropdownRef = useRef(null)
 
@@ -39,72 +41,75 @@ const NewMessageModal = (props: Props) => {
     }
     const isButtonEnable = address !== undefined && searchInput.length > 0
 
-    const creaeteNewConversation = async () => {
+    const createNewConversation = async () => {
+        if (!searchInput) return
         if (searchInput && address) {
-            try {
-                let opponentAddress;
-                if (profile) opponentAddress = profile?.ownedBy
-                else {
-                    //add address validating
-                }
-                setLoading(true)
-                const { data: query } = await GraphQLAPI.graphql({
-                    query: listConversations,
-                    variables: {
-                        filter: {
-                            or: { conversationId: { eq: `${address}-${searchInput}` } }, conversationId: { eq: `${searchInput}-${address}` }
-                        }
-                    }
-                }) as { data: ListConversationsQuery }
-                let converstaionId;
-
-                if (query.listConversations?.items.length === 0) {
-                    converstaionId = `${address}-${searchInput}`
-                    const { data: mutation } = await GraphQLAPI.graphql({
-                        query: createConversation,
+            if (!profile) { alert("Please select a user below!") }
+            let opponentAddress = profile?.ownedBy
+            if (opponentAddress && address) {
+                let converstaionId = (BigInt(address) > BigInt(opponentAddress)) ? `${address}-${opponentAddress}` : `${opponentAddress}-${address}`
+                console.log(converstaionId)
+                try {
+                    setLoading(true)
+                    const { data: query } = await GraphQLAPI.graphql({
+                        query: listConversations,
                         variables: {
-                            input: {
-                                conversationId: converstaionId,
-                                participants: [address, searchInput]
+                            filter: {
+                                conversationId: { eq: converstaionId }
                             }
                         }
-                    }) as { data: CreateConversationMutation }
-                    if (mutation.createConversation?.conversationId) {
+                    }) as { data: ListConversationsQuery }
+                    if (query.listConversations?.items.length !== 0) {
+                        closeModal()
                         router.push(`/messages/${converstaionId}`)
                     }
+                    if (query.listConversations?.items.length === 0) {
+                        closeModal()
+                        router.push(`/messages/${converstaionId}`)
+                    }
+                } catch (e) {
+                    toast.error("Something went wrong")
+                    console.log(e)
+                } finally {
+                    setLoading(false)
                 }
-                else {
-                    converstaionId = query.listConversations?.items[0]?.conversationId
-                    router.push(`/messages/${converstaionId}`)
-                }
-            } catch (e) {
-                toast.error("Something went wrong")
-            } finally {
-                setLoading(false)
             }
         }
+
     }
     const [searchUsers, { data: searchUsersData, loading: searchUsersLoading }] =
         useLazyQuery(SEARCH_USERS_QUERY, {
             onCompleted(data) {
+                if (data?.search?.items?.length > 0) setSearchByHandle(true)
                 console.log(
                     '[Lazy Query]',
                     `Fetched ${data?.search?.items?.length} search result for ${searchInput}`
                 )
             }
         })
+    const [getProfileByAddress, { data: userData, loading: profilesLoading }] =
+        useLazyQuery(GET_PROFILE_BY_ADDRESS,
+            {
+                onCompleted(data) {
+                    console.log("[Lazy query completed]", data)
+                }
+            })
 
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
         const keyword = e.target.value
         setSearchInput(keyword)
-
         searchUsers({
             variables: { request: { type: 'PROFILE', query: keyword, limit: 8 } }
         })
+        if (searchByHandle == false) {
+            getProfileByAddress({
+                variables: { ownedBy: keyword }
+            })
+        }
+
     }
 
-    console.log("loading:", loading)
-    console.log(isButtonEnable)
+
     return (
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={closeModal}>
@@ -152,7 +157,7 @@ const NewMessageModal = (props: Props) => {
                                     </div>
                                     <Button
                                         disabled={!isButtonEnable}
-                                        onClick={creaeteNewConversation}
+                                        onClick={createNewConversation}
                                         icon={loading && <Spinner size='xs' />}
                                     >
                                         Next
@@ -207,7 +212,20 @@ const NewMessageModal = (props: Props) => {
                                                             </div>
                                                         </div>
                                                     ))}
-                                                    {searchUsersData?.search?.items?.length === 0 && (
+                                                    {userData?.profiles?.items?.map((profile: Profile & { picture: MediaSet & NftImage }) => (
+                                                        <div
+                                                            key={profile?.handle}
+                                                            className="py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                                        >
+                                                            <div onClick={() => {
+                                                                setProfile(profile)
+                                                            }}>
+
+                                                                <UserProfile profile={profile} />
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    {searchUsersData?.search?.items?.length === 0 && userData?.profiles?.items?.length === 0 && (
                                                         <div className="py-2 px-4">No matching users</div>
                                                     )}
                                                 </>

@@ -1,9 +1,10 @@
+import MirrorText from 'components/Profile/MirrorText'
 import PostBody from 'components/Profile/PostBody'
 import PostHeader from 'components/Profile/PostHeader'
 import { MediaSet, NftImage, Profile, Publication } from 'generated/types'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { HiOutlineSwitchHorizontal } from "react-icons/hi"
+
 type Props = {
     post: Publication
 }
@@ -13,11 +14,8 @@ const SingleThread = ({ post }: Props) => {
 
     return (
         <div className='flex flex-col border-b border-border-gray pt-4'>
-            {post?.__typename === "Mirror" &&
-                <div className='flex items-center pb-4 gap-2 text-gray-400 font-bold'>
-                    <HiOutlineSwitchHorizontal />
-                    <div> {post?.profile?.name} mirrored {post.mirrorOf?.profile?.name}&apos;s post</div>
-                </div>}
+            {post?.__typename === "Mirror" && <MirrorText post={post} />
+            }
             {post?.__typename === "Comment" &&
                 //@ts-ignore
                 <div onClick={() => { router.push(`/post/${post?.commentOn?.pubId}`) }} className='hover:cursor-pointer'>
@@ -30,12 +28,11 @@ const SingleThread = ({ post }: Props) => {
             <div onClick={
                 post?.__typename === "Mirror" ?
                     //@ts-ignore
-                    () => { router.push(`/post/${post?.commentOn?.pubId}`) } :
+                    () => { router.push(`/post/${post?.mirrorOf?.id}`) } :
                     () => { router.push(`/post/${post?.id}`) }}
                 className='hover:cursor-pointer'>
                 <div className='flex gap-[10px]'>
-                    {post?.__typename !== "Mirror" && <PostHeader profile={post?.profile as Profile & { picture: MediaSet & NftImage }} />}
-                    {post?.__typename === "Mirror" && <PostHeader profile={post?.mirrorOf.profile as Profile & { picture: MediaSet & NftImage }} />}
+                    <PostHeader profile={post?.__typename === "Mirror" ? post?.mirrorOf.profile as Profile & { picture: MediaSet & NftImage } : post?.profile as Profile & { picture: MediaSet & NftImage }} />
                     <PostBody post={post} mirror={post?.__typename === "Mirror"} />
                 </div>
             </div>

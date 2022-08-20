@@ -8,6 +8,9 @@ import { listConversations } from 'graphql/amplify/queries';
 import { useAccount } from 'wagmi';
 import ConversationCard from './ConversationCard';
 import NewMessageModal from './NewMessageModal';
+import { API } from 'aws-amplify';
+import { GraphQLSubscription } from '@aws-amplify/api';
+import { onUpdateConversationByConversationId } from 'graphql/amplify/subscriptions';
 
 
 interface Props {
@@ -24,24 +27,33 @@ const messagesList = Array(100).fill(messageChannel)
 const Sidebar: FC<Props> = () => {
     const { address } = useAccount()
     const dispatch = useAppDispatch()
+    const currentUser = useAppSelector(state => state.user.currentUser)
+    const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
     const openModal = () => {
         dispatch(setIsNewMessageModalOpen({ isNewMessageModalOpen: true }))
     }
     const [conversations, setConversations] = useState<Conversation[]>([])
-    const listConversationQuery = async () => {
-        const { data } = await GraphQLAPI.graphql({
-            query: listConversations,
-            variables: {
-                filter: { participants: { contains: address } }
-            }
-        }) as { data: ListConversationsQuery }
-
-        setConversations(data.listConversations?.items as Conversation[] || [])
-    }
 
     useEffect(() => {
-        listConversationQuery()
-    }, [address])
+        const listConversationQuery = async () => {
+            const { data } = await GraphQLAPI.graphql({
+                query: listConversations,
+                variables: {
+                    filter: { participants: { contains: address } }
+                }
+            }) as { data: ListConversationsQuery }
+
+            setConversations(data.listConversations?.items as Conversation[] || [])
+        }
+        if (currentUser && isAuthenticated && address) {
+            listConversationQuery()
+        }
+        if (!currentUser && !isAuthenticated) {
+            setConversations([])
+        }
+    }, [address, currentUser, isAuthenticated])
+
+
     return (
         <div>
             <div className='flex justify-between items-center px-4 bg-black'>

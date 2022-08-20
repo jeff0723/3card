@@ -1,13 +1,9 @@
-import React, { Fragment, useState } from 'react'
-import type { NextPage } from 'next'
 import Sidebar from 'components/Message/Sidebar'
 import Button from 'components/UI/Button'
-import { Dialog, Transition } from '@headlessui/react'
-import { FiX } from "react-icons/fi";
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import type { NextPage } from 'next'
+import { useAppDispatch } from 'state/hooks'
 
-import { setIsNewMessageModalOpen } from 'state/application/reducer';
-import NewMessageModal from 'components/Message/NewMessageModal'
+import { setIsNewMessageModalOpen } from 'state/application/reducer'
 
 type Props = {}
 

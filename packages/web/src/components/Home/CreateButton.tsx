@@ -15,11 +15,14 @@ import CreatePost from "./CreatePost";
 import { Dialog, Transition } from "@headlessui/react";
 import { Domain } from "domain";
 import CreateCommunity from './CreateCommunit';
+import { MdSell } from 'react-icons/md'
+import CreateNFTPost from './CreateNFTPost';
 type Props = {}
 const CreateButton = (props: Props) => {
     const [createPostOpen, setCreatePostOpen] = useState(false)
     const [optionShow, setOptionShow] = useState(false)
     const [creaetCommunityOpen, setCreateCommunityOpen] = useState(false)
+    const [createNFTPostOpen, setCreateNFTPostOpen] = useState(false)
     return (
         <>
             <div className="absolute flex flex-col bottom-5 right-10 gap-2">
@@ -65,6 +68,13 @@ const CreateButton = (props: Props) => {
                                     <HiUserGroup className="text-[20px] text-gray-400" />
                                 </div>
                             </div>
+                            <div className="flex gap-2 items-center pr-2">
+                                <div className="h-10 w-20  flex items-center justify-center">NFT Post</div>
+                                <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex justify-center items-center hover:bg-opacity-30"
+                                    onClick={() => setCreateNFTPostOpen(true)}>
+                                    <MdSell className="text-[20px] text-gray-400" />
+                                </div>
+                            </div>
                         </div>
 
                     </Transition.Child>
@@ -80,7 +90,7 @@ const CreateButton = (props: Props) => {
             </div>
             <CreatePost open={createPostOpen} setOpen={setCreatePostOpen} />
             <CreateCommunity open={creaetCommunityOpen} setOpen={setCreateCommunityOpen} />
-
+            <CreateNFTPost open={createNFTPostOpen} setOpen={setCreateNFTPostOpen} />
         </>
     )
 }

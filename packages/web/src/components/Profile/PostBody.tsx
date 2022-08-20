@@ -11,6 +11,7 @@ import Comment from 'components/Actions/Comment'
 import Like from 'components/Actions/Like'
 import Mirror from 'components/Actions/Mirror'
 import Collect from 'components/Actions/Collect'
+import getAttribute from 'utils/getAttribute'
 
 interface Props {
     post: Publication
@@ -20,6 +21,7 @@ dayjs.extend(relativeTime)
 const PostBody = ({ post, mirror }: Props) => {
     const profile = mirror ? post.mirrorOf.profile as Profile : post.profile as Profile
     const isCommunity = post?.metadata?.attributes[0]?.value === 'community'
+
     return (
         <div className='flex flex-col text-[15px] gap-2 pb-4'>
             <div className='flex gap-2'>

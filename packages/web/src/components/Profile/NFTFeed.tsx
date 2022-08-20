@@ -57,7 +57,7 @@ const NFTFeed = ({ profile }: Props) => {
                 console.log("[Query Fetch More Error]", err);
             });
     };
-    console.log(data);
+
     return (
         <div>
             {loading && <NFTsLoading />}

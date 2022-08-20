@@ -11,6 +11,7 @@ import { HiOutlineHeart, HiOutlineSwitchHorizontal, } from "react-icons/hi";
 import { Spinner } from 'components/UI/Spinner'
 import Link from 'next/link'
 import SingleThread from 'components/Publication/SingleThread'
+import NFTPost from './NFTPost'
 
 interface Props {
     currentTab: string
@@ -58,7 +59,6 @@ const Content = ({ currentTab, profile }: Props) => {
             console.log('[Query Error]', err)
         })
     }
-
     return (
         <>
             {loading && <ProfileLoading />}
@@ -72,7 +72,14 @@ const Content = ({ currentTab, profile }: Props) => {
                     className='no-scrollbar'
                 >
                     {publications.map((post, index) => (
-                        <SingleThread post={post} key={index} />
+                        (
+                            post?.metadata?.attributes[0]?.value === 'NFTPost' ?
+                                <NFTPost post={post} key={index} />
+                                :
+                                <SingleThread post={post} key={index} />
+
+                        )
+
                     ))}
                 </InfiniteScroll>
             )}

@@ -14,7 +14,6 @@ const SeaportPage: NextPage = (props: Props) => {
     const { seaport } = useContext(SeaportContext)
     const [order, setOrder] = useState<OrderWithCounter>()
     const { address } = useAccount()
-    console.log(seaport)
     const createOrder = async () => {
         //@ts-ignore
         const { executeAllActions } = await seaport?.createOrder({
@@ -28,8 +27,8 @@ const SeaportPage: NextPage = (props: Props) => {
             consideration: [
                 {
                     amount: ethers.utils.parseEther("0.01").toString(),
-                    recipient: "0xf25f975E5175C69757FdD61CAbFc8a518475E635"
-                }
+                    recipient: address
+                },
             ],
         })
         const order = await executeAllActions();

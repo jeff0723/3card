@@ -24,7 +24,7 @@ const BaycDao: FC = () => (
         </div>
     </div>
 )
-const index: NextPage = (props: Props) => {
+const Explore: NextPage = (props: Props) => {
     const [communities, setCommunities] = useState<{ [key: string]: Publication[] }>({
         defi: [],
         nft: [],
@@ -42,7 +42,6 @@ const index: NextPage = (props: Props) => {
         },
         errorPolicy: "all",
         onCompleted: (data) => {
-            console.log(data)
             const defi = data?.communities?.items?.filter((publication: Publication) => publication?.metadata?.attributes[1]?.value === 'DEFI')
             const dao = data?.communities?.items?.filter((publication: Publication) => publication?.metadata?.attributes[1]?.value === 'NFT')
             const nft = data?.communities?.items?.filter((publication: Publication) => publication?.metadata?.attributes[1]?.value === 'DAO')
@@ -119,4 +118,4 @@ const index: NextPage = (props: Props) => {
     )
 }
 
-export default index
+export default Explore

@@ -43,8 +43,6 @@ const InfoBox = styled.div`
 
 const RecommendUser = (props: Props) => {
     const profile = useAppSelector(state => state.application.recommendUser) as Profile & { picture: MediaSet & NftImage }
-    console.log('profile: ', profile)
-    console.log('profile image:', profile)
     const [profileUrl, setProfileUrl] = useState('')
 
     return (

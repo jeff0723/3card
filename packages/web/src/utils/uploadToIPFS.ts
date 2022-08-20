@@ -5,7 +5,7 @@ const projectId = process.env.NEXT_PUBLIC_INFURA_IPFS_PROJECT_ID;   // <--------
 const projectSecret = process.env.NEXT_PUBLIC_INFURA_IPFS_PROJECT_SECRET  // <---------- your Infura Secret
 // (for security concerns, consider saving these values in .env files)
 
-const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+export const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
 const client = create({
     host: 'ipfs.infura.io',
     port: 5001,
@@ -17,8 +17,6 @@ const client = create({
 
 export const uploadIpfs = async <T>(data: T) => {
     const result = await client.add(JSON.stringify(data));
-
-    console.log('upload result ipfs', result);
     return result;
 };
 

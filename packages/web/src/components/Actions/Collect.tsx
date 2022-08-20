@@ -34,7 +34,7 @@ const Collect = ({ post }: Props) => {
         isAuthenticated ? post?.hasCollectedByMe : false)
     const [count, setCount] = useState<number>(post?.stats?.totalAmountOfCollects)
 
-    const { isLoading: signLoading, signTypedDataAsync } = useSignTypedData({
+    const { isLoading: signLoading, signTypedDataAsync, isError } = useSignTypedData({
         onError(error) {
             toast.error(error?.message)
         }
@@ -52,8 +52,8 @@ const Collect = ({ post }: Props) => {
         onSuccess() {
             onCompleted()
         },
-        onError(error: any) {
-            toast.error(error?.data?.message ?? error?.message)
+        onError(error) {
+            toast.error(error.message)
         }
     })
 
@@ -88,29 +88,30 @@ const Collect = ({ post }: Props) => {
                         value: omit(typedData?.value, '__typename')
                     })
 
-                    const { profileId, pubId, data: collectData } = typedData?.value
-                    const { v, r, s } = splitSignature(signature)
-                    const sig = { v, r, s, deadline }
-                    const inputStruct = {
-                        collector: address,
-                        profileId,
-                        pubId,
-                        data: collectData,
-                        sig
-                    }
 
-                    const {
-                        data: { broadcast: result }
-                    } = await broadcast({ variables: { request: { id, signature } } })
+                    // const { profileId, pubId, data: collectData } = typedData?.value
+                    // const { v, r, s } = splitSignature(signature)
+                    // const sig = { v, r, s, deadline }
+                    // const inputStruct = {
+                    //     collector: address,
+                    //     profileId,
+                    //     pubId,
+                    //     data: collectData,
+                    //     sig
+                    // }
 
-                    if ('reason' in result)
-                        write?.({ recklesslySetUnpreparedArgs: inputStruct })
+                    // const {
+                    //     data: { broadcast: result }
+                    // } = await broadcast({ variables: { request: { id, signature } } })
+
+                    // if ('reason' in result)
+                    //     write?.({ recklesslySetUnpreparedArgs: inputStruct })
                 } catch (error) {
                     console.warn('[Sign Error]', error)
                 }
             },
             onError(error) {
-                toast.error(error?.message)
+                toast.error(error.message)
             }
         }
     )

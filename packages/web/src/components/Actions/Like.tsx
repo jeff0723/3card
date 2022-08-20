@@ -88,7 +88,7 @@ const Like = ({ post }: Props) => {
 
         {liked ? <HiHeart className='text-[20px]' /> : <HiOutlineHeart className='text-[20px]' />}
       </HoverBox>
-      <div className='text-[13px]'>{post?.stats?.totalUpvotes}</div>
+      <div className='text-[13px]'>{count}</div>
 
     </Container>
   )

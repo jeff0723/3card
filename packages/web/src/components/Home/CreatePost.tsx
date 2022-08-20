@@ -1,29 +1,26 @@
-import Modal from 'components/UI/Modal';
-import React, { useState } from 'react'
-import { FiX } from 'react-icons/fi';
-import { useAppSelector } from 'state/hooks';
-import { RiImage2Line } from 'react-icons/ri'
-import { FaGlobeAsia } from 'react-icons/fa'
-import { AiOutlineFileGif } from 'react-icons/ai'
-import { BiCommentDetail } from 'react-icons/bi'
-import Button from 'components/UI/Button';
-import styled from 'styled-components';
-import { useForm } from "react-hook-form";
-import toast from 'react-hot-toast';
-import { EnabledModule, CreatePostBroadcastItemResult } from 'generated/types'
-import { useSignTypedData } from 'wagmi';
-import { uploadIpfs } from 'utils/uploadToIPFS';
-import { v4 as uuid } from 'uuid'
-import { PublicationMainFocus, PublicationMetadata } from 'types/publication-metadata';
-import { APP_NAME, LENSHUB_PROXY } from 'constants/constants';
 import { useMutation } from '@apollo/client';
-import { CREATE_POST_TYPED_DATA_MUTATION } from 'graphql/mutation/create-post';
-import { Spinner } from 'components/UI/Spinner';
-import { usePrepareContractWrite, useContractWrite } from 'wagmi'
 import { LensHubProxy } from 'abis/LensHubProxy';
+import Button from 'components/UI/Button';
+import Modal from 'components/UI/Modal';
+import { Spinner } from 'components/UI/Spinner';
+import { APP_NAME, LENSHUB_PROXY } from 'constants/constants';
+import { CreatePostBroadcastItemResult, EnabledModule } from 'generated/types';
 import { BROADCAST_MUTATION } from 'graphql/mutation/broadcast-mutation';
+import { CREATE_POST_TYPED_DATA_MUTATION } from 'graphql/mutation/create-post';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { AiOutlineFileGif } from 'react-icons/ai';
+import { FaGlobeAsia } from 'react-icons/fa';
+import { FiX } from 'react-icons/fi';
+import { RiImage2Line } from 'react-icons/ri';
+import { useAppSelector } from 'state/hooks';
+import { PublicationMainFocus, PublicationMetadata } from 'types/publication-metadata';
+import getIPFSLink from 'utils/getIPFSLink';
 import omit from 'utils/omit';
 import splitSignature from 'utils/splitSignature';
+import { uploadIpfs } from 'utils/uploadToIPFS';
+import { v4 as uuid } from 'uuid';
+import { useContractWrite, useSignTypedData } from 'wagmi';
 
 type Props = {
     open: boolean;
@@ -193,7 +190,8 @@ const CreatePost = ({ open, setOpen }: Props) => {
                 </div>
                 <div className="flex gap-4">
                     <div>
-                        <img src={currentUser?.picture?.original.url} alt="" className="w-10 h-10 rounded-full" />
+
+                        <img src={getIPFSLink(currentUser?.picture?.original.url)} alt="" className="w-10 h-10 rounded-full" />
                     </div>
                     <div className='flex flex-col w-full gap-2 '>
                         <div className='min-h-[90px]  max-h-[600px] overflow-y-auto h-fit justify-center items-center ' >

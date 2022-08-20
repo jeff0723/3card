@@ -5,7 +5,7 @@ import {
     AUTHENTICATE_MUTATION,
     CHALLENGE_QUERY
 } from "graphql/query/authentication"
-import { CURRENT_USER_QUERY } from "graphql/query/user"
+import { GET_PROFILE_BY_ADDRESS } from "graphql/query/user"
 import Cookies from "js-cookie"
 import Link from 'next/link'
 import { useState } from "react"
@@ -67,8 +67,8 @@ function SideBar({ }: Props) {
 
     const [authenticate, { error: errorAuthenticate, loading: authLoading }] =
         useMutation(AUTHENTICATE_MUTATION);
-    const [getProfiles, { error: errorProfiles, loading: profilesLoading }] =
-        useLazyQuery(CURRENT_USER_QUERY, {
+    const [getProfileByAddress, { error: errorProfiles, loading: profilesLoading }] =
+        useLazyQuery(GET_PROFILE_BY_ADDRESS, {
             onCompleted(data) {
                 console.log(
                     "[Lazy Query]",
@@ -103,7 +103,7 @@ function SideBar({ }: Props) {
             dispatch(setIsAuthenticated({ isAuthenticated: true }));
             toast.success("Logged in successfully!");
 
-            const { data: profilesData } = await getProfiles({
+            const { data: profilesData } = await getProfileByAddress({
                 variables: { ownedBy: address },
             });
             if (profilesData?.profiles?.items?.length > 0) {
@@ -117,6 +117,8 @@ function SideBar({ }: Props) {
             dispatch(updateLoadingStatus({ isApplicationLoading: false }));
         }
     };
+    console.log('sidebar currentuser:', currentUser)
+
     return (
         <div className='border border-transparent border-r-[#2F3336] flex flex-col justify-between px-4 pb-4'>
             <Column>

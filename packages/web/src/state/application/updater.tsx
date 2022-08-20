@@ -14,7 +14,6 @@ const ApplicationUpdater = (props: Props) => {
         "[Query]",
         `Fetched ${data?.recommendedProfiles?.length} recommended profiles`
       );
-      console.log("fetched:", data);
       dispatch(
         updateRecommendedProfiles({
           recommendedProfiles: data?.recommendedProfiles,

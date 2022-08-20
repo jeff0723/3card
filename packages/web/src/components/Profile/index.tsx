@@ -35,7 +35,6 @@ export enum TabType {
 }
 
 const Container = styled.div`
-    height: calc(100vh - 60px);
 `
 const Profile: NextPage = (props: Props) => {
     const currentUser = useAppSelector(state => state.user.currentUser)
@@ -52,7 +51,6 @@ const Profile: NextPage = (props: Props) => {
         variables: { request: { handle: username }, who: currentUser?.id ?? null },
         skip: !username,
         onCompleted(data) {
-            console.log(data)
             console.log(
                 '[Query]',
                 `Fetched profile details Profile:${data?.profile?.id}`
@@ -117,19 +115,18 @@ const Profile: NextPage = (props: Props) => {
         const conversationId = profile?.ownedBy > address ? `${profile?.ownedBy}-${address}` : `${address}-${profile?.ownedBy}`
         router.push(`/messages/${conversationId}`)
     }
-    console.log("IS ME: ", isMe)
-    console.log(profile)
+
     return (
-        <Container className='w-full overflow-hidden'>
+        <div className='w-full overflow-y-auto'>
             <div className='h-52 sm:h-80 bg-black bg-opacity-50' style={{
-                backgroundImage: `url(${profile?.coverPicture?.original?.url})`,
+                backgroundImage: `url(${getIPFSLink(profile?.coverPicture?.original?.url)})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center center',
                 backgroundRepeat: 'no-repeat',
             }} />
 
             <div className='grid grid-cols-3 '>
-                <div className='col-span-1 h-full flex flex-col items-center -mt-24 gap-[10px] overflow-auto'>
+                <div className='col-span-1 flex flex-col items-center -mt-24 gap-[10px] overflow-y-scroll'>
                     {
                         profile?.picture?.original?.url || profile?.picture?.uri ? (<div
                             className='ring-8 ring-black rounded-full bg-black w-48 h-48 object-cover'
@@ -169,7 +166,7 @@ const Profile: NextPage = (props: Props) => {
                                 </div>
                             </div>
                         </div>
-                        {isMe ?
+                        {(isMe && currentUser) ?
                             <div className='flex justify-start items-center'>
                                 <EditProfileModal open={editModalOpen} setOpen={setEditModalOpen} />
                                 <button
@@ -181,7 +178,7 @@ const Profile: NextPage = (props: Props) => {
                             </div> :
                             <div className='flex gap-[10px] items-center justify-start'>
                                 {
-                                    followed ? <UnfollowButton profile={profile} setFollowed={setFollowed} setFollowerCount={setFollowerCount} followerCount={followerCount}></UnfollowButton> : <FollowButton profile={profile} setFollowed={setFollowed} setFollowerCount={setFollowerCount} followerCount={followerCount} />
+                                    (followed && currentUser) ? <UnfollowButton profile={profile} setFollowed={setFollowed} setFollowerCount={setFollowerCount} followerCount={followerCount}></UnfollowButton> : <FollowButton profile={profile} setFollowed={setFollowed} setFollowerCount={setFollowerCount} followerCount={followerCount} />
                                 }
 
                                 <button
@@ -254,7 +251,7 @@ const Profile: NextPage = (props: Props) => {
                 </div>
             </div>
 
-        </Container>
+        </div>
     )
 }
 

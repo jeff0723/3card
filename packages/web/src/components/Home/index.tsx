@@ -21,6 +21,7 @@ import { useQuery } from "@apollo/client";
 import { Publication, PaginatedResultInfo } from "generated/types";
 import SingleThread from "components/Publication/SingleThread";
 import ProfileLoading from "components/Profile/ProfileLoading";
+import NFTPost from "components/Profile/NFTPost";
 
 interface Item {
   [key: string]: string
@@ -74,7 +75,7 @@ const FilterContainer = styled.div`
   gap: 10px;
 `;
 const NewsContainer = styled.div`
-  height:55vh;
+  height:65vh;
 `
 const BATCHSIZE = 30;
 
@@ -98,6 +99,7 @@ const Home: NextPage<Props> = (props: Props) => {
       reactionRequest: currentUser ? { profileId: currentUser?.id } : null,
       profileId: currentUser?.id ?? null
     },
+    skip: !currentUser,
     fetchPolicy: 'no-cache',
     errorPolicy: "all",
     onCompleted(data) {
@@ -106,7 +108,7 @@ const Home: NextPage<Props> = (props: Props) => {
       console.log('[Query]', `Fetched first 10 timeline publications`)
     },
     onError(error) {
-      console.error('[Query Error]', error)
+      console.error('[Query Home Feed Error] ', error)
     }
   })
   useEffect(() => {
@@ -183,7 +185,13 @@ const Home: NextPage<Props> = (props: Props) => {
                 className='no-scrollbar'
               >
                 {publications.map((post, index) => (
-                  <SingleThread post={post} key={index} />
+                  (
+                    post?.metadata?.attributes[0]?.value === 'NFTPost' ?
+                      <NFTPost post={post} />
+                      :
+                      <SingleThread post={post} key={index} />
+
+                  )
                 ))}
               </InfiniteScroll>
             </div>
@@ -192,7 +200,7 @@ const Home: NextPage<Props> = (props: Props) => {
         </Content>
         <FunctionContainer className="col-span-5">
           <Search />
-          <FilterContainer>
+          {/* <FilterContainer>
             <div>Filter</div>
             {["Project Update", "Research", "Newsletter"].map(
               (item, index) => (
@@ -207,7 +215,7 @@ const Home: NextPage<Props> = (props: Props) => {
                 </div>
               )
             )}
-          </FilterContainer>
+          </FilterContainer> */}
           <Header>
             <Title>News</Title>
           </Header>
