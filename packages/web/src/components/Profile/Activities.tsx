@@ -25,7 +25,7 @@ const formatAddress = (address: string): string => {
     return address
 }
 const Activities = ({ txList }: Props) => {
-    console.log(txList)
+    // console.log(txList)
     return (
         <>
             {

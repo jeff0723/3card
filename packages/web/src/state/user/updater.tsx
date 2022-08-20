@@ -77,6 +77,7 @@ const UserUpdater = (props: Props) => {
     const updateData = async () => {
         if (currentUser) {
             await fetch(`${NEXT_URL}/api/update/erc20?account=${currentUser.ownedBy}&chain=ether`)
+            await fetch(`${NEXT_URL}/api/update/ranking?account=${currentUser.ownedBy}&chain=ether`)
         }
     }
 

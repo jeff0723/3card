@@ -55,9 +55,15 @@ export default async function handler(
     });
 
     const networth = worthList.reduce((p, c) => p + c, 0);
-
-    res.status(200).json({
+    if (networth) {
+      res.status(200).json({
+          account,
+          networth
+      } as NetworthResult);
+    } else {
+      res.status(200).json({
         account,
-        networth
+        networth: 0,
     } as NetworthResult);
+  }
 }
