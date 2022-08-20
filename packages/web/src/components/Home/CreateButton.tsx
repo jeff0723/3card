@@ -4,7 +4,6 @@ import { Fragment, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useAppSelector } from "state/hooks";
 import styled from "styled-components";
-import CreateProfileHelper from "./CreateProfileHelper";
 import Feed from "./Feed";
 import RecommendUser from "./RecommendUser";
 import { HiPlus } from 'react-icons/hi'

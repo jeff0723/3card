@@ -159,8 +159,8 @@ const NFTPost = ({ post }: Props) => {
                             <div className='text-[15px] font-bold'>Offer</div>
                             {offer?.map((item: Offer, index) => (
                                 //[FIX] to fix add chainId to item
-                                <a href={`${OPENSEA_URL}/assets/mumbai/${item.token}/${item.identifier}`} target="_blank" rel="noopener noreferrer">
-                                    <div key={`${index}-offer`} className='flex gap-4 items-center p-2 rounded-lg border border-border-gray w-full hover:border-primary-blue'>
+                                <a href={`${OPENSEA_URL}/assets/mumbai/${item.token}/${item.identifier}`} target="_blank" rel="noopener noreferrer" key={`${index}-offer`} >
+                                    <div className='flex gap-4 items-center p-2 rounded-lg border border-border-gray w-full hover:border-primary-blue'>
                                         <img src={getIPFSLink(item.contentUri)} alt={item.name} className='w-[100px] h-[100px] rounded-lg' />
                                         <div className='flex flex-col'>
                                             <div>Contract Address: {item.token}</div>
