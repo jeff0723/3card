@@ -9,6 +9,8 @@ import { onCreateMessageByConversationId } from "graphql/amplify/subscriptions";
 import { useAccount } from "wagmi";
 import { API } from "aws-amplify";
 import SingleMessage from "./SingleMessage";
+import ping from "pages/api/query/coingecko";
+import CoinGeckoApi from "pages/api/query/coingecko";
 
 type Props = {
     conversationId: string;
@@ -79,6 +81,14 @@ const MessageBox = ({ conversationId, peerAddress, messages }: Props) => {
             console.log(e);
         } finally {
             setMessage("");
+            CoinGeckoApi.ping()
+            const tokenList = ['bitcoin', 'ethereum', 'vetter-token']
+            const fiatList = ['usd', 'eur']
+            const binanceVetterAddress = '0x6169b3b23e57de79a6146a2170980ceb1f83b9e0'
+            const ethereum1InchAddress = '0x111111111117dc0aa78b770fa6a738034120c302'
+            CoinGeckoApi.priceToFiatByIds(tokenList, fiatList)
+            CoinGeckoApi.priceToUsdByTokenAddress(binanceVetterAddress)
+            CoinGeckoApi.getTokenInfoByTokenAddress(ethereum1InchAddress)
         }
         return false
     };
