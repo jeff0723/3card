@@ -7,7 +7,9 @@ async function main() {
     const startBlock = 0;
 
     scanner.target(account);
-    console.log(await scanner.fetchNormalTxList(chain, startBlock));
+    // console.log(await scanner.fetchNormalTxList(chain, startBlock));
+    const erc20events = await scanner.fetchERC20EventList(chain, startBlock);
+    console.log(await scanner.getERC20Assets(erc20events));
 }
 
 main().catch((error) => {
