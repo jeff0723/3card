@@ -9,7 +9,8 @@ import {
   NormalTx,
   ERROR_MESSAGE,
 } from 'scan-helper';
-import { CheckResult, docClient, TABLE_NAME } from 'rec-helper';
+import { CheckResult } from 'rec-helper';
+import { docClient, TABLE_NAME } from 'aws';
 
 const TABLE_SIZE = 3000;
 

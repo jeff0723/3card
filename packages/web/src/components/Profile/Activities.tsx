@@ -40,7 +40,7 @@ const Activities = ({ txList }: Props) => {
                             <a href={`https://etherscan.io/tx/${tx.hash}`} target="_blank" rel="noopener noreferrer" key={tx.hash}>
                                 <div className='border-b border-border-gray py-2 grid grid-cols-3 w-full'>
                                     <div className='flex flex-col'>
-                                        <div className='w-fit p-2 rounded-lg bg-green-400 bg-opacity-10 text-green-400'>{fxName}</div>
+                                        <div className='w-fit p-2 rounded-lg bg-green-400 bg-opacity-10 text-green-400'>{fxName.slice(0,20)}</div>
                                         <p className='text-gray-400'>{dayjs(new Date(parseInt(tx.timeStamp) * 1000)).fromNow()}</p>
 
                                     </div>

@@ -74,13 +74,6 @@ const RecommendCard: NextPage = (props: Props) => {
         if (address && ifDrawable) recommend(address)
     }, [address, ifDrawable])
 
-    // const handleClick: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
-    //     e.preventDefault();
-    //     if (address && ifRegistered && ifDrawable) {
-    //         setIsDrew(await recommend(address))
-    //     }
-    // }
-
     useEffect(() => {
         const tagSet = new Set<string>();
         try {

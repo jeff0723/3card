@@ -83,12 +83,12 @@ const Profile: NextPage = (props: Props) => {
     const getRanking = async () => {
         if (profile) {
             const res = await fetch(`${NEXT_URL}/api/recommend/check?account=${profile?.ownedBy}`)
-            if (!res.ok) {
-                console.log('check error:', await res.json())
+            if (res.ok) {
+                const rankingResult = (await res.json())
+                setRanking(rankingResult.ranking ?? [])
+            } else {
                 setRanking([])
             }
-            const rankingResult = (await res.json())
-            setRanking(rankingResult.ranking ?? [])
         }
     }
 
@@ -99,7 +99,6 @@ const Profile: NextPage = (props: Props) => {
     useEffect(() => {
         getTxList()
         getRanking()
-        getTxList()
     }, [profile])
 
     useEffect(() => {

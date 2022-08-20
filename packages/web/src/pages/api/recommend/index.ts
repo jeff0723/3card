@@ -5,7 +5,8 @@ import {
   ScanError,
   ERROR_MESSAGE,
 } from 'scan-helper';
-import { RecResult, getCorrelation, TABLE_NAME, docClient } from 'rec-helper';
+import { RecResult, getCorrelation } from 'rec-helper';
+import { TABLE_NAME, docClient } from 'aws';
 
 const TABLE_SIZE = 3000;
 const SCAN_RANGE = 30;

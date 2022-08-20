@@ -1,8 +1,14 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { utils } from 'ethers';
-import { S3, ERROR_MESSAGE, BUCKET_NAME, ScanError, ERC20Asset, priceToUsdByTokenAddress, provider } from 'scan-helper';
-
+import {
+  ERROR_MESSAGE,
+  ScanError,
+  ERC20Asset,
+  priceToUsdByTokenAddress,
+  provider
+} from 'scan-helper';
+import { S3, BUCKET_NAME } from 'aws';
 
 type NetworthResult = {
   account: string,
