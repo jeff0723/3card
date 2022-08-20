@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Button from "components/UI/Button";
 import { MediaSet, NftImage, Profile } from 'generated/types'
 import { useQuery } from "@apollo/client";
-import { CURRENT_USER_QUERY } from "graphql/query/user";
+import { GET_PROFILE_BY_ADDRESS } from "graphql/query/user";
 import { useAccount } from "wagmi";
 import Link from "next/link";
 
@@ -21,7 +21,7 @@ const formatNumber = (num: number) => {
 const InfoCard = ({ recommendAddress, tags, netWorth }: Props) => {
     const { isConnected } = useAccount()
     const [recommendUser, setRecommendUser] = useState<RecommendUser>()
-    const { data, loading } = useQuery(CURRENT_USER_QUERY, {
+    const { data, loading } = useQuery(GET_PROFILE_BY_ADDRESS, {
         variables: { ownedBy: recommendAddress },
         skip: !isConnected,
         onCompleted(data) {

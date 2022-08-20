@@ -8,8 +8,6 @@ import { useAccount } from 'wagmi'
 import { MediaSet, NftImage, Profile } from 'generated/types'
 import InfoCard from './InfoCard'
 import Button from 'components/UI/Button'
-import Countdown from 'react-countdown';
-import { Frequency, ScanRankingResult, ADDRESS_TAGS } from 'scan-helper';
 import getIPFSLink from 'utils/getIPFSLink';
 
 

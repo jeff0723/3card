@@ -95,11 +95,13 @@ const Profile: NextPage = (props: Props) => {
         setFollowerCount(profile?.stats?.totalFollowers)
     }, [profile])
     useEffect(() => {
+        getTxList()
         getRanking()
     }, [profile])
 
     useEffect(() => {
         const tagSet = new Set<string>();
+        if (!ranking) return
         for (const addressFreq of ranking) {
             const tagName = ADDRESS_TAGS.get(addressFreq.address)
             if (tagName && !tagSet.has(tagName)) tagSet.add(tagName)
