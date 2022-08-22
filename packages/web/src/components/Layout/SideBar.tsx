@@ -31,19 +31,26 @@ const Column = styled.div`
     width: 224px;
 
 `
-const Text = styled.div`
+const Text = styled.div<{ isSelectedTab: boolean }>`
     display: flex;
     align-items: flex-start;
     padding: 12px;
-    font-weight: 400;
+    font-weight: ${({ isSelectedTab }) => isSelectedTab ? "bold" : "400"};
     font-size: 20px;
     line-height: 24px;
 `
-
+enum Tab {
+    Home,
+    Communities,
+    Messages,
+    Card,
+    Profile,
+}
 function SideBar({ }: Props) {
     const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
     const currentUser = useAppSelector(state => state.user.currentUser)
     const dispatch = useAppDispatch()
+    const [selectedTab, setSelectedTab] = useState<Tab>(Tab.Home)
     const [open, setOpen] = useState(false)
     const { isConnected, address } = useAccount()
     const { signMessageAsync, isLoading: signLoading } = useSignMessage({
@@ -122,16 +129,16 @@ function SideBar({ }: Props) {
         <div className='border border-transparent border-r-[#2F3336] flex flex-col justify-between px-4 pb-4'>
             <Column>
                 <Link href='/'>
-                    <div className='rounded-md hover:bg-white hover:bg-opacity-10'>
-                        <Text>
-                            Feeds
+                    <div onClick={() => { setSelectedTab(Tab.Home) }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                        <Text isSelectedTab={Tab.Home == selectedTab}>
+                            Home
                         </Text>
                     </div>
                 </Link>
                 <Link href='/explore' >
-                    <div className='rounded-md hover:bg-white hover:bg-opacity-10'>
-                        <Text>
-                            Explore
+                    <div onClick={() => { setSelectedTab(Tab.Communities) }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                        <Text isSelectedTab={Tab.Communities == selectedTab}>
+                            Communities
                         </Text>
                     </div>
                 </Link>
@@ -140,22 +147,22 @@ function SideBar({ }: Props) {
                     currentUser && (
                         <>
                             <Link href='/messages'>
-                                <div className='rounded-md hover:bg-white hover:bg-opacity-10'>
-                                    <Text>
+                                <div onClick={() => { setSelectedTab(Tab.Messages) }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                                    <Text isSelectedTab={Tab.Messages == selectedTab}>
                                         Messages
                                     </Text>
                                 </div>
                             </Link>
                             <Link href={`/card`}>
-                                <div className='rounded-md hover:bg-white hover:bg-opacity-10'>
-                                    <Text>
+                                <div onClick={() => { setSelectedTab(Tab.Card) }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                                    <Text isSelectedTab={Tab.Card == selectedTab}>
                                         Card
                                     </Text>
                                 </div>
                             </Link>
                             <Link href={`/user/${currentUser.handle}`}>
-                                <div className='rounded-md hover:bg-white hover:bg-opacity-10'>
-                                    <Text>
+                                <div onClick={() => { setSelectedTab(Tab.Profile) }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                                    <Text isSelectedTab={Tab.Profile == selectedTab}>
                                         Profile
                                     </Text>
                                 </div>
