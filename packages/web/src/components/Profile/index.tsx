@@ -124,7 +124,7 @@ const Profile: NextPage = (props: Props) => {
     }
 
     return (
-        <div className='w-full overflow-y-auto'>
+        <div className='w-full overflow-y-auto no-scrollbar'>
             <div className='h-52 sm:h-80 bg-black bg-opacity-50' style={{
                 backgroundImage: `url(${getIPFSLink(profile?.coverPicture?.original?.url)})`,
                 backgroundSize: 'cover',
@@ -133,7 +133,7 @@ const Profile: NextPage = (props: Props) => {
             }} />
 
             <div className='grid grid-cols-3 '>
-                <div className='col-span-1 flex flex-col items-center -mt-24 gap-[10px] overflow-y-scroll'>
+                <div className='col-span-1 flex flex-col items-center -mt-24 gap-[10px] overflow-y-scroll no-scrollbar'>
                     {
                         profile?.picture?.original?.url || profile?.picture?.uri ? (<div
                             className='ring-8 ring-black rounded-full bg-black w-48 h-48 object-cover'
@@ -243,7 +243,7 @@ const Profile: NextPage = (props: Props) => {
                 </div>
                 <div className='col-span-2 flex flex-col h-screen'>
                     <ProfileTabs setCurrentTab={setCurrentTab} currentTab={currentTab} />
-                    <div id='scrollableDiv' className='px-4 py-2 flex flex-col gap-2 overflow-y-scroll '>
+                    <div id='scrollableDiv' className='px-4 py-2 flex flex-col gap-2 overflow-y-scroll no-scrollbar'>
                         {(currentTab === TabType.POST ||
                             currentTab === TabType.COMMENT ||
                             currentTab === TabType.MIRROR) && (

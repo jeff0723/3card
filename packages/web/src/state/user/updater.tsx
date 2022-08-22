@@ -36,7 +36,7 @@ const UserUpdater = (props: Props) => {
             dispatch(setIsConnected({ isConnected: true }));
             dispatch(setIsAuthenticated({ isAuthenticated: true }));
             console.log('update')
-            const { data: profilesData } = await getProfileByAddress({
+            const { data: profilesData, error } = await getProfileByAddress({
                 variables: { ownedBy: address },
             });
             if (profilesData?.profiles?.items?.length > 0) {
@@ -44,6 +44,8 @@ const UserUpdater = (props: Props) => {
                 dispatch(
                     setCurrentUser({ currentUser: profilesData?.profiles?.items[0] })
                 );
+            } else {
+                console.log('error', error)
             }
             console.log('finish fetch user')
         }

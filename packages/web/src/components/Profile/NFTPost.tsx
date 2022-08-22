@@ -91,7 +91,7 @@ const NFTPost = ({ post }: Props) => {
                     });
 
                 const tx = await executeAllFulfillActions().finally(() => {
-                    toast.success('Successfully sent transaction: ' + tx.hash)
+                    toast.success('Successfully sent transaction')
                     setFulfillLoading(false)
                 });
                 toast.promise(

@@ -44,7 +44,10 @@ const CreateProfileModal = ({ open, setOpen }: Props) => {
         CREATE_PROFILE_MUTATION
     );
     const closeModal = () => {
+        reset()
+        setAvatar("")
         setOpen(false);
+
     };
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -62,11 +65,12 @@ const CreateProfileModal = ({ open, setOpen }: Props) => {
             }
         }
     };
-    const onSubmit = handleSubmit((data) => {
+    const onSubmit = () => {
+        const { handle } = getValues();
         createProfile({
             variables: {
                 request: {
-                    handle: data.handle,
+                    handle: handle,
                     profilePictureUri: avatar ? avatar : ``,
                 },
             },
@@ -77,8 +81,7 @@ const CreateProfileModal = ({ open, setOpen }: Props) => {
                     return;
                 }
                 toast.success("Create profile transaction sent!");
-                reset()
-                setAvatar("")
+
                 closeModal();
 
             },
@@ -86,7 +89,7 @@ const CreateProfileModal = ({ open, setOpen }: Props) => {
                 toast.error(`create profile error: ${error}`);
             },
         });
-    });
+    };
 
     return (
         <>
@@ -117,7 +120,7 @@ const CreateProfileModal = ({ open, setOpen }: Props) => {
                                 leaveTo="opacity-0 scale-95"
                             >
                                 <Dialog.Panel className="border border-white border-opacity-20 w-full max-w-md transform overflow-hidden rounded-2xl bg-black p-6 text-left align-middle shadow-xl transition-all">
-                                    <form onSubmit={onSubmit}>
+                                    <div >
                                         <div className="flex justify-between items-center">
                                             <Dialog.Title
                                                 as="h3"
@@ -161,7 +164,7 @@ const CreateProfileModal = ({ open, setOpen }: Props) => {
 
                                         <div className="mt-4">
                                             <Button
-                                                type="submit"
+                                                onClick={onSubmit}
                                                 disabled={loading || uploading}
                                                 // should refactor this info UI/components/Spinner
                                                 icon={
@@ -173,7 +176,7 @@ const CreateProfileModal = ({ open, setOpen }: Props) => {
                                                 Create
                                             </Button>
                                         </div>
-                                    </form>
+                                    </div>
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>

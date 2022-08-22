@@ -1,22 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import type { NextPage, GetServerSideProps } from 'next'
-import Sidebar from 'components/Message/Sidebar'
-import Button from 'components/UI/Button'
-import Router, { useRouter } from 'next/router'
-import { useAccount } from 'wagmi'
-import MessageBox from 'components/Message/MessageBox'
+import { useLazyQuery } from '@apollo/client'
 import GraphQLAPI from '@aws-amplify/api-graphql'
+import { ListMessagesQuery, Message } from "API"
+import MessageBox from 'components/Message/MessageBox'
+import Sidebar from 'components/Message/Sidebar'
 import { listMessages } from 'graphql/amplify/queries'
-import { Message, ListMessagesQuery } from "API"
-import { useLazyQuery, useQuery } from '@apollo/client'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { SEARCH_USERS_QUERY } from 'graphql/query/search-user';
 import { GET_PROFILE_BY_ADDRESS } from 'graphql/query/user'
+import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
+import { useAppSelector } from 'state/hooks'
+import { useAccount } from 'wagmi'
 
-import getIPFSLink from 'utils/getIPFSLink'
-import Cookies from 'js-cookie'
-import { current } from '@reduxjs/toolkit'
 import { Spinner } from 'components/UI/Spinner'
+import getIPFSLink from 'utils/getIPFSLink'
 
 interface Props {
 }
@@ -119,7 +115,7 @@ const ChatPage: NextPage<Props> = () => {
                 <div className='w-full flex flex-col px-4'>
                     <div className='flex gap-2 items-center h-[53px]'>
                         <div>
-                            {avatar && <img src={avatar} className="rounded-full w-8 h-8" alt={name} />}
+                            {avatar && <img src={getIPFSLink(avatar)} className="rounded-full w-8 h-8" alt={name} />}
                             {!avatar && <div className="rounded-full loading w-8 h-8" />}
 
                         </div>

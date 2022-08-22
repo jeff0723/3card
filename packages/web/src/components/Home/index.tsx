@@ -216,7 +216,7 @@ const Home: NextPage<Props> = (props: Props) => {
               )
             )}
           </FilterContainer> */}
-          <NewsFeed height="65vh" />
+          <NewsFeed height="74vh" />
         </FunctionContainer>
       </div >
     </>

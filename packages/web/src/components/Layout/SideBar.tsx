@@ -168,7 +168,7 @@ function SideBar({ }: Props) {
 
             </Column>
             <div className="flex flex-col gap-2">
-                {isAuthenticated && !currentUser && !isLoading && <div className="text-gray-400 italic">You don&apos;t have a profile yet</div>}
+                {isConnected && isAuthenticated && !currentUser && !isLoading && <div className="text-gray-400 italic">You don&apos;t have a profile yet</div>}
                 {isConnected && !currentUser &&
                     <Button
                         disabled={isLoading}
