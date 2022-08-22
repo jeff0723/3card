@@ -9,6 +9,7 @@ import {
   provider
 } from 'scan-helper';
 import { S3, BUCKET_NAME } from 'aws';
+import { NEXT_API_KEY } from 'constants/constants';
 
 type NetworthResult = {
   account: string,
@@ -22,7 +23,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse< NetworthResult | ScanError>
 ) {
-    const { account } = req.query;
+    const { account, apikey } = req.query;
+    if (apikey !== NEXT_API_KEY) {
+      res.status(500).json({
+        account,
+        message: ERROR_MESSAGE.INVALID_API_KEY,
+      } as ScanError);
+      return;
+    }
     if (
       typeof account !== 'string' || 
       !utils.isAddress(account)

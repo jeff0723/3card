@@ -8,12 +8,20 @@ import {
   ERROR_MESSAGE,
 } from 'scan-helper';
 import { utils } from 'ethers';
+import { NEXT_API_KEY } from 'constants/constants';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ScanERC20Result | ScanError>,
 ) {
-  const { account, chain } = req.query;
+  const { account, chain, apikey } = req.query;
+  if (apikey !== NEXT_API_KEY) {
+    res.status(500).json({
+      account,
+      message: ERROR_MESSAGE.INVALID_API_KEY,
+    } as ScanError);
+    return;
+  }
   if (
     typeof account !== 'string' || 
     !utils.isAddress(account)
@@ -22,34 +30,35 @@ export default async function handler(
       account,
       message: ERROR_MESSAGE.INVALID_ADDRESS,
     } as ScanError);
-  } else if (
-    typeof chain !== 'string' ||
+    return;
+  }
+  if (typeof chain !== 'string' ||
     !scanAPIKeyMap.has(chain)
   ) {
     res.status(500).json({
       chain,
       message: ERROR_MESSAGE.UNSPORTTED_CHAIN,
     } as ScanError);
-  } else {
-    try {
-      const s3data = await S3.getObject({
-        Bucket: BUCKET_NAME,
-        Key: `onchain/${account.toLowerCase()}/${chain}/erc20`,
-      }).promise();
-      const scanResult: ScanERC20Result = s3data.Body? JSON.parse(s3data.Body.toString()):{
-        account,
-        chain,
-        erc20events: [],
-        erc20assets: [],
-      }; 
-      res.status(200).json(scanResult);
-    } catch (err: any) {
-      res.status(500).json({
-        account,
-        chain,
-        message: ERROR_MESSAGE.AWS_QUERY_ERROR,
-        details: err.message,
-      } as ScanError);
-    }
+    return;
+  }
+  try {
+    const s3data = await S3.getObject({
+      Bucket: BUCKET_NAME,
+      Key: `onchain/${account.toLowerCase()}/${chain}/erc20`,
+    }).promise();
+    const scanResult: ScanERC20Result = s3data.Body? JSON.parse(s3data.Body.toString()):{
+      account,
+      chain,
+      erc20events: [],
+      erc20assets: [],
+    }; 
+    res.status(200).json(scanResult);
+  } catch (err: any) {
+    res.status(500).json({
+      account,
+      chain,
+      message: ERROR_MESSAGE.AWS_QUERY_ERROR,
+      details: err.message,
+    } as ScanError);
   }
 }

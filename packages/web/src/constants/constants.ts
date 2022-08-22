@@ -24,6 +24,7 @@ export const CHAIN_TO_NAME: ChainIdMap = {
     42: 'kovan'
 }
 
+export const NEXT_API_KEY = process.env.NEXT_PUBLIC_ENDPOINT_URL? process.env.NEXT_API_KEY : undefined;
 
 //address
 

@@ -128,6 +128,7 @@ export type ScanERC721Result = {
 };
 
 export const ERROR_MESSAGE = Object.freeze({
+    INVALID_API_KEY: 'invalid api key',
     INVALID_ADDRESS: 'invalid address',
     UNSPORTTED_CHAIN: 'unsuportted chain',
     AWS_QUERY_ERROR: 'aws query error',
