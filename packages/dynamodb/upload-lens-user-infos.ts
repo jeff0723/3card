@@ -6,6 +6,7 @@ require('dotenv').config();
 const apiKey = process.env.ETHERSCAN_API_KEY;
 const endBlock = 15389930;
 const txScanURL = `https://api.etherscan.io/api?module=account&action=txlist&page=1&offset=10000&sort=asc&startblock=0&endblock=${endBlock}&apikey=${apiKey}`;
+const erc20ScanURL = `https://api.etherscan.io/api?module=account&action=tokentx&page=1&offset=10000&sort=asc&startblock=0&endblock=${endBlock}&apikey=${apiKey}`;
 const nextDrawDate = new Date().toLocaleDateString();
 
 const startIndex = 3000;
@@ -16,11 +17,28 @@ async function main() {
     const users = readFileSync('lens-users-mumbai.txt').toString().split('\n').slice(startIndex, endIndex);
     console.log("user count:", users.length, '\n');
     for (const [idx, user] of users.entries()) {
+
+        const erc20res = await fetch(erc20ScanURL + '&address=' + user);
+        if (!erc20res.ok) continue;
+        const erc20events = (await erc20res.json()).result;
+        console.log(`erc20event size:`, erc20events.size);
+        const erc20Payload = {
+            Bucket: BUCKET_NAME,
+            Key: `onchain/${user}/ether/erc20`,
+            Body: JSON.stringify(erc20events),
+        };
+        s3.upload(erc20Payload).promise()
+        .then(function (data) {
+            console.log('Txlist upload S3 success', data.Location);
+        })
+        .catch(function (err) {
+            console.log("Txlist upload S3 error", err);
+        });
+
         const res = await fetch(txScanURL + '&address=' + user);
         if (!res.ok) continue;
         const frequencyMap = new Map<string, number>();
-        const json = await res.json()
-        const txlist = json.result
+        const txlist = (await res.json()).result;
         if(typeof txlist == 'string') {
             continue;
         }

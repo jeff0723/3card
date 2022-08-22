@@ -1,5 +1,5 @@
 import { useLazyQuery } from '@apollo/client'
-import { NEXT_API_KEY, NEXT_URL } from 'constants/constants'
+import { NEXT_API_KEY } from 'constants/constants'
 import { GET_PROFILE_BY_ADDRESS } from 'graphql/query/user'
 import Cookies from 'js-cookie'
 import { useEffect } from 'react'
@@ -95,8 +95,8 @@ const UserUpdater = (props: Props) => {
     }, [address])
     const updateData = async () => {
         if (currentUser) {
-            await fetch(`${NEXT_URL}/api/update/erc20?account=${currentUser.ownedBy}&chain=ether&apikey=${NEXT_API_KEY}`)
-            await fetch(`${NEXT_URL}/api/update/ranking?account=${currentUser.ownedBy}&chain=ether&apikey=${NEXT_API_KEY}`)
+            await fetch(`/api/update/erc20?account=${currentUser.ownedBy}&chain=ether&apikey=${NEXT_API_KEY}`)
+            await fetch(`/api/update/ranking?account=${currentUser.ownedBy}&chain=ether&apikey=${NEXT_API_KEY}`)
         }
     }
 

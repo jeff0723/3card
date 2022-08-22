@@ -1,5 +1,4 @@
 import { useQuery } from "@apollo/client";
-import { NEXT_URL } from "constants/constants";
 import { RECOMMENDED_PROFILES_QUERY } from "graphql/query/recommended-profiles";
 import { useEffect } from "react";
 import { setLoadingNews, updateNews } from "state/application/reducer";
@@ -32,7 +31,7 @@ const ApplicationUpdater = (props: Props) => {
   });
   const fetchFeed = async () => {
     dispatch(setLoadingNews({ loadingNews: true }))
-    const res = await fetch(`${NEXT_URL}/api/get-today-news`).finally(() => dispatch(setLoadingNews({ loadingNews: false })))
+    const res = await fetch(`/api/get-today-news`).finally(() => dispatch(setLoadingNews({ loadingNews: false })))
     dispatch(updateNews({ news: await res.json() }))
   }
   useEffect(() => {

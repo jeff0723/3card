@@ -10,7 +10,7 @@ import InfoCard from './InfoCard'
 import Button from 'components/UI/Button'
 import getIPFSLink from 'utils/getIPFSLink';
 import { Spinner } from 'components/UI/Spinner'
-import { NEXT_API_KEY, NEXT_URL } from 'constants/constants'
+import { NEXT_API_KEY } from 'constants/constants'
 
 
 type Props = {}
@@ -33,7 +33,7 @@ const RecommendCard: NextPage = (props: Props) => {
     const [tags, setTags] = useState<string[]>(_tags)
 
     const check = async (address: string) => {
-        const check = await fetch(`${NEXT_URL}/api/recommend/check?account=${address}&apikey=${NEXT_API_KEY}`)
+        const check = await fetch(`/api/recommend/check?account=${address}&apikey=${NEXT_API_KEY}`)
         if (check.ok) {
             const result = (await check.json()) as CheckResult;
             // console.log(result)
@@ -48,7 +48,7 @@ const RecommendCard: NextPage = (props: Props) => {
     }
 
     const recommend = async (address: string) => {
-        const recResponse = await fetch(`${NEXT_URL}/api/recommend?account=${address}&apikey=${NEXT_API_KEY}`)
+        const recResponse = await fetch(`/api/recommend?account=${address}&apikey=${NEXT_API_KEY}`)
         if (!recResponse.ok) {
             setRecommendAddress('0xa77d84dd50ac12a5c98846e673b29c5ddb079f50')
         } else {
@@ -59,7 +59,7 @@ const RecommendCard: NextPage = (props: Props) => {
     };
 
     const getNetworth = async (recAddress: string) => {
-        const res = await fetch(`${NEXT_URL}/api/query/networth?account=${recAddress}&apikey=${NEXT_API_KEY}`);
+        const res = await fetch(`/api/query/networth?account=${recAddress}&apikey=${NEXT_API_KEY}`);
         if (res.ok) {
             const result = await res.json();
             if (result.networth) setNetworth(result.networth);

@@ -24,7 +24,7 @@ import { AiOutlineGlobal } from 'react-icons/ai'
 import FollowButton from './FollowButton'
 import UnfollowButton from './UnfollowButton'
 import toast from 'react-hot-toast'
-import { NEXT_API_KEY, NEXT_URL } from 'constants/constants'
+import { NEXT_API_KEY } from 'constants/constants'
 
 type Props = {}
 export enum TabType {
@@ -69,8 +69,8 @@ const Profile: NextPage = (props: Props) => {
 
     const getTxList = async () => {
         if (profile) {
-            const query = await fetch(`${NEXT_URL}/api/query/ranking?account=${profile?.ownedBy}&chain=ether&apikey=${NEXT_API_KEY}`)
-            const res = query.ok ? query : await fetch(`${NEXT_URL}/api/update/ranking?account=${profile?.ownedBy}&chain=ether&apikey=${NEXT_API_KEY}`)
+            const query = await fetch(`/api/query/ranking?account=${profile?.ownedBy}&chain=ether&apikey=${NEXT_API_KEY}`)
+            const res = query.ok ? query : await fetch(`/api/update/ranking?account=${profile?.ownedBy}&chain=ether&apikey=${NEXT_API_KEY}`)
             if (!res.ok) {
                 setTxList([])
             }
@@ -81,7 +81,7 @@ const Profile: NextPage = (props: Props) => {
 
     const getRanking = async () => {
         if (profile) {
-            const res = await fetch(`${NEXT_URL}/api/recommend/check?account=${profile?.ownedBy}&apikey=${NEXT_API_KEY}`)
+            const res = await fetch(`/api/recommend/check?account=${profile?.ownedBy}&apikey=${NEXT_API_KEY}`)
             if (res.ok) {
                 const rankingResult = (await res.json())
                 setRanking(rankingResult.ranking ?? [])
