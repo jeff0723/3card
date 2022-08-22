@@ -23,13 +23,13 @@ export default async function handler(
   res: NextApiResponse<ScanERC721Result | ScanError>,
 ) {
   const { account, chain, apikey } = req.query;
-  if (apikey !== NEXT_API_KEY) {
-    res.status(500).json({
-      account,
-      message: ERROR_MESSAGE.INVALID_API_KEY,
-    } as ScanError);
-    return;    
-  }
+  // if (apikey !== NEXT_API_KEY) {
+  //   res.status(500).json({
+  //     account,
+  //     message: ERROR_MESSAGE.INVALID_API_KEY,
+  //   } as ScanError);
+  //   return;    
+  // }
   if (
     typeof account !== 'string' || 
     !utils.isAddress(account)
