@@ -184,7 +184,7 @@ const Home: NextPage<Props> = (props: Props) => {
                 {publications.map((post, index) => (
                   (
                     post?.metadata?.attributes[0]?.value === 'NFTPost' ?
-                      <NFTPost post={post} />
+                      <NFTPost post={post} key={index} />
                       :
                       <SingleThread post={post} key={index} />
 
@@ -216,7 +216,7 @@ const Home: NextPage<Props> = (props: Props) => {
               )
             )}
           </FilterContainer> */}
-          <NewsFeed height="74vh" />
+          <NewsFeed height="55vh" />
         </FunctionContainer>
       </div >
     </>

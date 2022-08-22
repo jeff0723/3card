@@ -27,6 +27,34 @@ const UserUpdater = (props: Props) => {
                 );
             },
         });
+    const updateUserProfile = async () => {
+        const { data: profilesData, error } = await getProfileByAddress({
+            variables: { ownedBy: address },
+        });
+        if (profilesData?.profiles?.items?.length > 0) {
+            dispatch(
+                setCurrentUser({ currentUser: profilesData?.profiles?.items[0] })
+            );
+        }
+        if (error) {
+            setTimeout(async () => {
+                const { data: profilesData, error } = await getProfileByAddress({
+                    variables: { ownedBy: address },
+                });
+                if (profilesData?.profiles?.items?.length > 0) {
+                    dispatch(
+                        setCurrentUser({ currentUser: profilesData?.profiles?.items[0] })
+                    );
+                }
+                if (error) {
+                    dispatch(setIsConnected({ isConnected: false }));
+                    dispatch(setIsAuthenticated({ isAuthenticated: false }));
+                    console.log(error)
+                }
+            })
+        }
+        return
+    }
     const updateStatus = async () => {
         dispatch(updateLoadingStatus({ isApplicationLoading: true }))
         const token = Cookies.get('accessToken')
@@ -36,18 +64,8 @@ const UserUpdater = (props: Props) => {
             dispatch(setIsConnected({ isConnected: true }));
             dispatch(setIsAuthenticated({ isAuthenticated: true }));
             console.log('update')
-            const { data: profilesData, error } = await getProfileByAddress({
-                variables: { ownedBy: address },
-            });
-            if (profilesData?.profiles?.items?.length > 0) {
-                // Cookies.set("profileId", profilesData?.profiles?.items[0].id)
-                dispatch(
-                    setCurrentUser({ currentUser: profilesData?.profiles?.items[0] })
-                );
-            } else {
-                console.log('error', error)
-            }
-            console.log('finish fetch user')
+            await updateUserProfile()
+
         }
         dispatch(updateLoadingStatus({ isApplicationLoading: false }))
 
@@ -67,7 +85,6 @@ const UserUpdater = (props: Props) => {
 
     const update = async () => {
         if (currentUser?.ownedBy !== undefined && currentUser.ownedBy !== address) {
-            console.log('logout!!!!')
             logout()
         }
         await updateStatus()

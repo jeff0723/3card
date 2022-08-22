@@ -50,6 +50,7 @@ const authLink = new ApolloLink((operation, forward) => {
             })
         })
             .then(({ data }) => {
+                console.log('refresh success', data)
                 const refresh = data?.data?.refresh
                 operation.setContext({
                     headers: {
