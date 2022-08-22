@@ -1,14 +1,5 @@
-import AWS from 'aws-sdk';
 const CoinGecko = require('coingecko-api');
 import { ethers } from 'ethers';
-
-export const BUCKET_NAME = '3card';
-
-AWS.config.update({
-    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY
-});
-export const S3 = new AWS.S3();
 
 export const provider = new ethers.providers.JsonRpcProvider(
     process.env.NEXT_PUBLIC_INFURA_MAINNET_URL,
@@ -151,33 +142,6 @@ export type ScanError = {
     details?: string,
 };
 
-// export class EnsFetcher {
-//     localEnsMap: Map<string, string>;
-
-//     constructor() {
-//         this.localEnsMap = new Map<string, string>;
-//     }
-
-//     async queryEnsName(address: string): Promise<string> {
-//         const ensName = await provider.lookupAddress(address);
-//         return ensName === null ? address.toLowerCase() : ensName;
-//     }
-
-//     async getEnsName(address: string): Promise<string> {
-//         if (!address) {
-//             return '';
-//         }
-//         const localEnsName = this.localEnsMap.get(address);
-//         if (localEnsName) {
-//             return localEnsName;
-//         } else {
-//             const remoteEnsName = await this.queryEnsName(address);
-//             this.localEnsMap.set(address, remoteEnsName);
-//             return remoteEnsName;
-//         }
-//     }
-// }
-
 export const CoinGeckoClient = new CoinGecko();
 
 export async function priceToUsdByTokenAddress(tokenAddresses: string[]) {
@@ -224,5 +188,39 @@ export const ADDRESS_TAGS = new Map<string, string>([
     ['0xa7efae728d2936e78bda97dc267687568dd593f3', 'OKEx 3'],
     ['0x737901bea3eeb88459df9ef1be8ff3ae1b42a2ba', 'Aztec Rollup'],
     ['0x9696f59e4d72e237be84ffd425dcad154bf96976', 'Binance'],
-    ['0xba17eeb3f0413b76184ba8ed73067063fba6e2eb', "ETH Global"]
+    ['0xba17eeb3f0413b76184ba8ed73067063fba6e2eb', 'ETH Global'],
+    ['0x6b175474e89094c44da98b954eedeac495271d0f', 'Dai Stablecoin'],
+    ['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 'USDC'],
+    ['0x5d3a536e4d6dbd6114cc1ead35777bab948e3643', 'Compound'],
+    ['0x3d9819210a31b4961b30ef54be2aed79b9c9cd3b', 'Compound'],
+    ['0x92be6adb6a12da0ca607f9d87db2f9978cd6ec3e', 'Zapper'],
+    ['0xca21d4228cdcc68d4e23807e5e370c07577dd152', 'Zorbs'],
+    ['0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e', 'Yearn.fi'],
+    ['0x99c9fc46f92e8a1c0dec1b1747d010903e884be1', 'Optimism'],
+    ['0x3b484b82567a09e2588a13d54d032153f0c0aee0', 'SOS'],
+    ['0x52ec2f3d7c5977a8e558c8d9c6000b615098e8fc', 'Optimism'],
+    ['0x28c6c06298d514db089934071355e5743bf21d60', 'Binance'],
+    ['0x469788fe6e9e9681c6ebf3bf78e7fd26fc015446', 'Snapshot'],
+    ['0x4976a4a02f38326660d17bf34b431dc6e2eb2327', 'Binance'],
+    ['0xdac17f958d2ee523a2206206994597c13d831ec7', 'USDT'],
+    ['0xae0ee0a63a2ce6baeeffe56e7714fb4efe48d419', 'StarkNet'],
+    ['0x2face815247a997eaa29881c16f75fd83f4df65b', 'RabbitHole'],
+    ['0x75e89d5979e4f6fba9f97c104c2f0afb3f1dcb88', 'MEXC'],
+    ['0xde30da39c46104798bb5aa3fe8b9e0e1f348163f', 'GitCoin'],
+    ['0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2', 'GemSwap 2'],
+    ['0xb8901acb165ed027e32754e0ffe830802919727f', 'Hop Protocol'],
+    ['0xbf92a355c73de74969a75258e02a15a2764d4970', '8GON'],
+    ['0xa3b61c077da9da080d22a4ce24f9fd5f139634ca', 'RabbitHole NFT'],
+    ['0x2aea4add166ebf38b63d09a75de1a7b94aa24163', 'KudosToken'],
+    ['0xd945f759d422ae30a6166838317b937de08380e3', 'Zora Hackathon'],
+    ['0x932261f9fc8da46c4a22e31b45c4de60623848bf', 'Zerion DNA '],
+    ['0xabefbc9fd2f806065b4f3c237d4b59d9a97bcac7', 'Zora'],
+    ['0x1f9840a85d5af5bf1d1762f925bdaddc4201f984', 'UNI'],
+    ['0x80c67432656d59144ceff962e8faf8926599bcf8', 'Orbiter Bridge'],
+    ['0x74ee68a33f6c9f113e22b3b77418b75f85d07d22', 'Zerion Genesis'],
+    ['0xcc8fa225d80b9c7d42f96e9570156c65d6caaa25', 'SLP Token'],
+    ['0xcd4ec7b66fbc029c116ba9ffb3e59351c20b5b06', 'Rarible'],
+    ['0x1a2a1c938ce3ec39b6d47113c7955baa9dd454f2', 'Ronin Bridge'],
+    ['0x71c4658acc7b53ee814a29ce31100ff85ca23ca7', 'GalaXY Kats'],
+    ['0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab', 'Alchemist'],
 ]);

@@ -120,7 +120,7 @@ const NFTPost = ({ post }: Props) => {
 
         }
     }
-    console.log(order)
+    // console.log(order)
     return (
         <div className='flex flex-col border-b border-border-gray py-4'>
 

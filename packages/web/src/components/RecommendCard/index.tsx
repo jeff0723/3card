@@ -36,7 +36,7 @@ const RecommendCard: NextPage = (props: Props) => {
         const check = await fetch(`${NEXT_URL}/api/recommend/check?account=${address}`)
         if (check.ok) {
             const result = (await check.json()) as CheckResult;
-            console.log(result)
+            // console.log(result)
             setIfDrawable(result.ifDrawable)
             if (result.lastestRec) {
                 setRecommendAddress(result.lastestRec.account)
@@ -73,13 +73,6 @@ const RecommendCard: NextPage = (props: Props) => {
     useEffect(() => {
         if (address && ifDrawable) recommend(address)
     }, [address, ifDrawable])
-
-    // const handleClick: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
-    //     e.preventDefault();
-    //     if (address && ifRegistered && ifDrawable) {
-    //         setIsDrew(await recommend(address))
-    //     }
-    // }
 
     useEffect(() => {
         const tagSet = new Set<string>();

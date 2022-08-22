@@ -52,7 +52,7 @@ const SeaportPage: NextPage = (props: Props) => {
             const transaction = executeAllFulfillActions();
         }
     }
-    console.log(address)
+    // console.log(address)
     return (
         <div>
             <button onClick={createOrder}>Create Order</button>

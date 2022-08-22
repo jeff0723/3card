@@ -1,14 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { S3, BUCKET_NAME } from 'aws';
 import {
-  S3,
   scanAPIKeyMap,
   ERC721Event,
   ERC721Asset,
   ScanERC721Result,
   ScanError,
   ERROR_MESSAGE,
-  BUCKET_NAME
 } from 'scan-helper';
 import { utils } from 'ethers';
 
