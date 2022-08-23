@@ -16,6 +16,8 @@ import { Domain } from "domain";
 import CreateCommunity from './CreateCommunit';
 import { MdSell } from 'react-icons/md'
 import CreateNFTPost from './CreateNFTPost';
+import { Mixpanel } from 'utils/Mixpanel';
+
 type Props = {}
 const CreateButton = (props: Props) => {
     const [createPostOpen, setCreatePostOpen] = useState(false)
@@ -82,7 +84,10 @@ const CreateButton = (props: Props) => {
                 <div className="flex justify-end z-20">
                     <button
                         className="flex items-center justify-center w-14 h-14 rounded-full bg-primary-blue bg-opacity-30 text-[20px] text-sky-400 hover:bg-opacity-50 disabled:bg-opacity-50"
-                        onClick={() => { setOptionShow(!optionShow) }}>
+                        onClick={() => {
+                            Mixpanel.track('create_button_click')
+                            setOptionShow(!optionShow)
+                        }}>
                         <HiPlus />
                     </button>
                 </div>

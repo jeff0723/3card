@@ -3,7 +3,7 @@ export const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY
 export const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN ?? ''
 export const IS_DEVELOPMENT = process.env.NODE_ENV === 'development'
 
-export const IS_PRODUCTION = process.env.NODE_ENV === 'development'
+export const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 
 export const API_URL = process.env.NEXT_PUBLIC_ENV === 'production'
     ? 'https://api.lens.dev'

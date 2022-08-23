@@ -46,6 +46,7 @@ enum Tab {
     Messages,
     Card,
     Profile,
+    Notifications
 }
 function SideBar({ }: Props) {
     const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
@@ -179,6 +180,16 @@ function SideBar({ }: Props) {
                                 }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
                                     <Text isSelectedTab={Tab.Messages == selectedTab}>
                                         Messages
+                                    </Text>
+                                </div>
+                            </Link>
+                            <Link href='/notifications'>
+                                <div onClick={() => {
+                                    Mixpanel.track('visit_notifications')
+                                    setSelectedTab(Tab.Notifications)
+                                }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                                    <Text isSelectedTab={Tab.Notifications == selectedTab}>
+                                        Notifications
                                     </Text>
                                 </div>
                             </Link>
