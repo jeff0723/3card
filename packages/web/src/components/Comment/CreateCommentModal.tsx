@@ -50,7 +50,7 @@ const CreateCommentModal = ({ open, setOpen, post, setCount, count }: Props) => 
     const [isUploading, setIsUploading] = useState<boolean>(false)
     const { isLoading: signLoading, signTypedDataAsync } = useSignTypedData({
         onError(error) {
-            toast.error(error?.message)
+            toast.error("User rejected denied message signature")
         }
     })
     const { data,

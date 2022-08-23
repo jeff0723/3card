@@ -31,7 +31,7 @@ const UpdateProfileImageDialog = ({ open, setOpen, avatar, setPhotoPreviewUrl }:
   const currentUser = useAppSelector(state => state.user.currentUser)
   const { isLoading: signLoading, signTypedDataAsync } = useSignTypedData({
     onError(error) {
-      toast.error(error?.message)
+      toast.error("User rejected denied message signature")
     }
   })
   const onCompleted = () => {

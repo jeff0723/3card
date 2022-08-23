@@ -29,7 +29,7 @@ const UnfollowButton = ({ profile, setFollowed, setFollowerCount, followerCount 
     const [writeLoading, setWriteLoading] = useState(false)
     const { isLoading: signLoading, signTypedDataAsync } = useSignTypedData({
         onError(error) {
-            toast.error(error?.message)
+            toast.error("User rejected denied message signature")
         }
     })
     const [createUnfollowTypedData, { loading: typedDataLoading }] = useMutation(

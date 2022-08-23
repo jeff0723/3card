@@ -39,7 +39,7 @@ const Mirror = ({ post }: Props) => {
 
     const { isLoading: signLoading, signTypedDataAsync } = useSignTypedData({
         onError(error) {
-            toast.error(error?.message)
+            toast.error("User rejected denied message signature")
         }
     })
 

@@ -26,6 +26,7 @@ const Container = styled.div<{ collected: boolean }>`
         color: rgba(0,148,255);
     }
 `
+
 const Collect = ({ post }: Props) => {
     const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
     const currentUser = useAppSelector(state => state.user.currentUser)
@@ -34,9 +35,9 @@ const Collect = ({ post }: Props) => {
         isAuthenticated ? post?.hasCollectedByMe : false)
     const [count, setCount] = useState<number>(post?.stats?.totalAmountOfCollects)
 
-    const { isLoading: signLoading, signTypedDataAsync, isError } = useSignTypedData({
+    const { isLoading: signLoading, signTypedDataAsync } = useSignTypedData({
         onError(error) {
-            toast.error(error?.message)
+            toast.error("User rejected denied message signature")
         }
     })
     const onCompleted = () => {
@@ -89,23 +90,23 @@ const Collect = ({ post }: Props) => {
                     })
 
 
-                    // const { profileId, pubId, data: collectData } = typedData?.value
-                    // const { v, r, s } = splitSignature(signature)
-                    // const sig = { v, r, s, deadline }
-                    // const inputStruct = {
-                    //     collector: address,
-                    //     profileId,
-                    //     pubId,
-                    //     data: collectData,
-                    //     sig
-                    // }
+                    const { profileId, pubId, data: collectData } = typedData?.value
+                    const { v, r, s } = splitSignature(signature)
+                    const sig = { v, r, s, deadline }
+                    const inputStruct = {
+                        collector: address,
+                        profileId,
+                        pubId,
+                        data: collectData,
+                        sig
+                    }
 
-                    // const {
-                    //     data: { broadcast: result }
-                    // } = await broadcast({ variables: { request: { id, signature } } })
+                    const {
+                        data: { broadcast: result }
+                    } = await broadcast({ variables: { request: { id, signature } } })
 
-                    // if ('reason' in result)
-                    //     write?.({ recklesslySetUnpreparedArgs: inputStruct })
+                    if ('reason' in result)
+                        write?.({ recklesslySetUnpreparedArgs: inputStruct })
                 } catch (error) {
                     console.warn('[Sign Error]', error)
                 }
