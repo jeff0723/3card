@@ -185,6 +185,7 @@ const NewMessageModal = (props: Props) => {
                                             searchInput ? 'visible' : 'invisible'
                                         )} onClick={() => {
                                             setSearchInput('')
+                                            setProfile(undefined)
                                         }}>
                                             <HiOutlineX />
 
