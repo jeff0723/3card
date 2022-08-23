@@ -24,7 +24,7 @@ const Follow = ({ profile, setFollowed, followed }: Props) => {
     const currentUser = useAppSelector(state => state.user.currentUser)
     const { isLoading: signLoading, signTypedDataAsync } = useSignTypedData({
         onError(error) {
-            toast.error("User rejected denied message signature")
+            toast.error("User denied message signature")
         }
     })
     const { isLoading: writeLoading, write } = useContractWrite({

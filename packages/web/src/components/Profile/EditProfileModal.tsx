@@ -50,7 +50,7 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
     const [photoUploading, setPhotoUploading] = useState<boolean>(false)
     const { isLoading: signLoading, signTypedDataAsync } = useSignTypedData({
         onError(error) {
-            toast.error("User rejected denied message signature")
+            toast.error("User denied message signature")
         }
     })
     const [updateImageOpen, setUpdateImageOpen] = useState<boolean>(false)

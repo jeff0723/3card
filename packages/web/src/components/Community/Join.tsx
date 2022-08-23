@@ -24,7 +24,7 @@ const Join = ({ community }: Props) => {
     const { address } = useAccount()
     const { isLoading: signLoading, signTypedDataAsync } = useSignTypedData({
         onError(error) {
-            toast.error("User rejected denied message signature")
+            toast.error("User denied message signature")
         }
     })
 
