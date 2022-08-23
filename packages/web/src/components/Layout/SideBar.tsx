@@ -8,7 +8,7 @@ import {
 import { GET_PROFILE_BY_ADDRESS } from "graphql/query/user"
 import Cookies from "js-cookie"
 import Link from 'next/link'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { updateLoadingStatus } from 'state/application/reducer'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
@@ -78,6 +78,9 @@ function SideBar({ }: Props) {
     const [selectedTab, setSelectedTab] = useState<Tab>(currentTab(pathname))
     const [open, setOpen] = useState(false)
     const { isConnected, address } = useAccount()
+    useEffect(() => {
+        setSelectedTab((currentTab(pathname)))
+    }, [pathname])
     const { signMessageAsync, isLoading: signLoading } = useSignMessage({
         onError(error) {
             toast.error(error?.message);

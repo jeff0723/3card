@@ -30,6 +30,7 @@ const ChatPage: NextPage<Props> = () => {
     const [messages, setMessages] = useState<Message[]>()
     const [loading, setLoading] = useState(false)
     const [checkSuccess, setCheckSuccess] = useState(false)
+    const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
     const isApplicationLoading = useAppSelector(state => state.application.isApplicationLoading)
     const [getProfileByAddress, { error: errorProfiles, loading: profilesLoading }] =
         useLazyQuery(GET_PROFILE_BY_ADDRESS,
@@ -56,10 +57,6 @@ const ChatPage: NextPage<Props> = () => {
 
     }
     const checkIfInConversation = async () => {
-        if (!currentUser && !isApplicationLoading) {
-            router.push("/")
-            return
-        }
         if (currentUser && chatId?.includes('-')) {
             //@ts-ignore
             const list = chatId.split('-')
@@ -105,6 +102,9 @@ const ChatPage: NextPage<Props> = () => {
         }
     }, [checkSuccess, chatId])
 
+    if (!isApplicationLoading && !isAuthenticated) {
+        router.push('/')
+    }
 
     return (
         <div className='grid grid-cols-3 w-full'>

@@ -1,19 +1,23 @@
 import Sidebar from 'components/Message/Sidebar'
 import Button from 'components/UI/Button'
 import type { NextPage } from 'next'
-import { useAppDispatch } from 'state/hooks'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import { setIsNewMessageModalOpen } from 'state/application/reducer'
+import { useRouter } from 'next/router'
 
 type Props = {}
 
 const ChatHome: NextPage = (props: Props) => {
-
+    const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
+    const router = useRouter()
     const dispatch = useAppDispatch()
     const openModal = () => {
         dispatch(setIsNewMessageModalOpen({ isNewMessageModalOpen: true }))
     }
-
+    if (!isAuthenticated) {
+        router.push('/')
+    }
 
     return (
         <div className='grid grid-cols-3 w-full'>

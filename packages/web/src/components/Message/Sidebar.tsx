@@ -62,7 +62,7 @@ const Sidebar: FC<Props> = () => {
                     <FaPlus className='text-[20px]' />
                 </div>
             </div>
-            {conversations
+            {isAuthenticated && currentUser && conversations
                 .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
                 .map((item, index) => (
                     <ConversationCard
