@@ -2,7 +2,6 @@ import { useLazyQuery } from '@apollo/client'
 import { NEXT_API_KEY } from 'constants/constants'
 import { GET_PROFILE_BY_ADDRESS } from 'graphql/query/user'
 import Cookies from 'js-cookie'
-import mixpanel from 'mixpanel-browser'
 import { useEffect } from 'react'
 import { updateLoadingStatus } from 'state/application/reducer'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
@@ -11,6 +10,7 @@ import {
     setIsAuthenticated,
     setIsConnected
 } from "state/user/reducer"
+import { Mixpanel } from 'utils/Mixpanel'
 
 import { useAccount } from 'wagmi'
 type Props = {}
@@ -36,15 +36,15 @@ const UserUpdater = (props: Props) => {
             dispatch(
                 setCurrentUser({ currentUser: profilesData?.profiles?.items[0] })
             );
-            mixpanel.identify(profilesData?.profilesData?.profiles?.items[0].id)
-            mixpanel.people.set({
+            Mixpanel.identify(profilesData?.profilesData?.profiles?.items[0].id)
+            Mixpanel.people.set({
                 address: profilesData?.profilesData?.profiles?.items[0].ownedBy,
                 handle: profilesData?.profilesData?.profiles?.items[0].handle,
                 name: profilesData?.profilesData?.profiles?.items[0].name,
             })
         } else {
-            mixpanel.identify('0x00')
-            mixpanel.people.set({
+            Mixpanel.identify('0x00')
+            Mixpanel.people.set({
                 name: 'Anonymous',
             })
         }
@@ -57,15 +57,15 @@ const UserUpdater = (props: Props) => {
                     dispatch(
                         setCurrentUser({ currentUser: profilesData?.profiles?.items[0] })
                     );
-                    mixpanel.identify(profilesData?.profilesData?.profiles?.items[0].id)
-                    mixpanel.people.set({
+                    Mixpanel.identify(profilesData?.profilesData?.profiles?.items[0].id)
+                    Mixpanel.people.set({
                         address: profilesData?.profilesData?.profiles?.items[0].ownedBy,
                         handle: profilesData?.profilesData?.profiles?.items[0].handle,
                         name: profilesData?.profilesData?.profiles?.items[0].name,
                     })
                 } else {
-                    mixpanel.identify('0x00')
-                    mixpanel.people.set({
+                    Mixpanel.identify('0x00')
+                    Mixpanel.people.set({
                         name: 'Anonymous',
                     })
                 }

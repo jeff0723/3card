@@ -159,8 +159,11 @@ const CreateCommentModal = ({ open, setOpen, post, setCount, count }: Props) => 
         useMutation(BROADCAST_MUTATION, {
             onCompleted: (data) => {
                 console.log('broadcast completed', data)
+                toast.success('Comment created successfully')
                 Mixpanel.track("publication.comment", { result: 'succcess' })
-
+                setCount(count + 1)
+                setOpen(false)
+                setCommentInput("")
             },
             onError(error) {
                 // if (error.message === ERRORS.notMined) {
