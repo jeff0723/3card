@@ -6,6 +6,7 @@ import { Publication } from 'generated/types';
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
+
 dayjs.extend(relativeTime)
 type Props = {
     comment: Publication

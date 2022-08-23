@@ -17,6 +17,8 @@ import { LensHubProxy } from 'abis/LensHubProxy';
 import { useMutation } from '@apollo/client';
 import { CreateCollectBroadcastItemResult } from 'generated/types'
 import { CREATE_COLLECT_TYPED_DATA_MUTATION } from 'graphql/mutation/create-collect-mutation';
+import { Mixpanel } from 'utils/Mixpanel';
+
 type Props = {
     post: Publication
 }
@@ -44,6 +46,7 @@ const Collect = ({ post }: Props) => {
         setCount(count + 1)
         setCollected(true)
         toast.success('Post has been collected!')
+        Mixpanel.track("publication.collect", { result: 'success' })
     }
     const { isLoading: writeLoading, write } = useContractWrite({
         addressOrName: LENSHUB_PROXY,
@@ -55,18 +58,18 @@ const Collect = ({ post }: Props) => {
         },
         onError(error) {
             toast.error(error.message)
+            Mixpanel.track("publication.collect", { result: 'write_error' })
+
         }
     })
 
     const [broadcast, { loading: broadcastLoading }] = useMutation(
         BROADCAST_MUTATION,
         {
-            onCompleted: (data) => {
-                console.log(data)
-            },
+            onCompleted,
             onError(error) {
-
                 console.error('[Broadcast Error]', error)
+                Mixpanel.track("publication.collect", { result: 'broadcast_error' })
             }
         }
     )

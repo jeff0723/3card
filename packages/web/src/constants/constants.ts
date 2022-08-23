@@ -1,5 +1,8 @@
 export const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY
 
+export const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN ?? ''
+export const IS_DEVELOPMENT = process.env.NODE_ENV === 'development'
+
 export const API_URL = process.env.NEXT_PUBLIC_ENV === 'production'
     ? 'https://api.lens.dev'
     : 'https://api-mumbai.lens.dev'
@@ -22,7 +25,7 @@ export const CHAIN_TO_NAME: ChainIdMap = {
     42: 'kovan'
 }
 
-export const NEXT_API_KEY = process.env.NEXT_PUBLIC_ENDPOINT_URL? process.env.NEXT_PUBLIC_API_KEY : undefined;
+export const NEXT_API_KEY = process.env.NEXT_PUBLIC_ENDPOINT_URL ? process.env.NEXT_PUBLIC_API_KEY : undefined;
 
 //address
 

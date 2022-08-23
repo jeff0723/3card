@@ -25,6 +25,7 @@ import { BROADCAST_MUTATION } from 'graphql/mutation/broadcast-mutation';
 import omit from 'utils/omit';
 import splitSignature from 'utils/splitSignature';
 import { makeStorageClient } from 'utils/web3-storage';
+import mixpanel from 'mixpanel-browser';
 
 type Props = {
     open: boolean;
@@ -88,6 +89,7 @@ const CreateCommunity = ({ open, setOpen }: Props) => {
                 setOpen(false)
                 setPostInput("")
                 toast.success('Successfully sent transaction: ' + hash)
+                mixpanel.track("publication.creat_community", { result: 'success' })
                 toast.promise(
                     wait(),
                     {
@@ -107,6 +109,8 @@ const CreateCommunity = ({ open, setOpen }: Props) => {
             },
             onError: (error) => {
                 toast.error(error?.message)
+                mixpanel.track("publication.creat_community", { result: 'write_error' })
+
             }
         })
 
@@ -166,12 +170,16 @@ const CreateCommunity = ({ open, setOpen }: Props) => {
         useMutation(BROADCAST_MUTATION, {
             onCompleted: (data) => {
                 console.log('broadcast completed', data)
+                mixpanel.track("publication.creat_community", { result: 'success' })
+
             },
             onError(error) {
                 // if (error.message === ERRORS.notMined) {
                 //   toast.error(error.message)
                 // }
                 console.error('[Broadcast Error]', error)
+                mixpanel.track("publication.creat_community", { result: 'broad_cast' })
+
             }
         })
     const onSubmit = handleSubmit(async (data) => {

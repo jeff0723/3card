@@ -24,6 +24,7 @@ import { makeStorageClient } from 'utils/web3-storage';
 import { v4 as uuid } from 'uuid';
 import { useContractWrite, useSignTypedData } from 'wagmi';
 import UpdateProfileImageDialog from './UpdateProfileImageDialog';
+import { Mixpanel } from 'utils/Mixpanel';
 
 type Props = {
     open: boolean;
@@ -74,6 +75,8 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
                 const { wait, hash } = data
                 setOpen(false)
                 toast.success('Successfully sent transaction: ' + hash)
+                Mixpanel.track("publication.edit_profile", { result: 'success' })
+
                 toast.promise(
                     wait(),
                     {
@@ -93,6 +96,8 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
             },
             onError: (error) => {
                 toast.error(error?.message)
+                Mixpanel.track("publication.edit_profile", { result: 'write_error' })
+
             }
         })
     const [createSetProfileMetadataTypedData, { loading: typedDataLoading }] = useMutation(
@@ -141,12 +146,16 @@ const EditProfileModal = ({ open, setOpen }: Props) => {
         useMutation(BROADCAST_MUTATION, {
             onCompleted: (data) => {
                 console.log('broadcast completed', data)
+                Mixpanel.track("publication.edit_profile", { result: 'success' })
+
             },
             onError(error) {
                 // if (error.message === ERRORS.notMined) {
                 //   toast.error(error.message)
                 // }
                 console.error('[Broadcast Error]', error)
+                Mixpanel.track("publication.edit_profile", { result: 'broadcast_error' })
+
             }
         })
     const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

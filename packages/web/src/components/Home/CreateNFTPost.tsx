@@ -28,7 +28,9 @@ import ConsiderationCard from './ConsiderationCard';
 import SelectNFT, { trimAddress } from './SelectNFT';
 import { ItemType } from '@opensea/seaport-js/lib/constants';
 import { CreateOrderInput } from '@opensea/seaport-js/lib/types';
-import { create } from 'domain';
+
+import { Mixpanel } from 'utils/Mixpanel';
+
 type Props = {
     open: boolean;
     setOpen: (open: boolean) => void;
@@ -83,6 +85,8 @@ const CreateNFTPost = ({ open, setOpen }: Props) => {
                 setOpen(false)
                 setPostInput("")
                 toast.success('Successfully sent transaction: ' + hash)
+                Mixpanel.track("publication.nft_post", { result: 'success' })
+
                 toast.promise(
                     wait(),
                     {
@@ -102,6 +106,8 @@ const CreateNFTPost = ({ open, setOpen }: Props) => {
             },
             onError: (error) => {
                 toast.error(error?.message)
+                Mixpanel.track("publication.nft_post", { result: 'write_error' })
+
             }
         })
 
@@ -161,12 +167,16 @@ const CreateNFTPost = ({ open, setOpen }: Props) => {
         useMutation(BROADCAST_MUTATION, {
             onCompleted: (data) => {
                 console.log('broadcast completed', data)
+                Mixpanel.track("publication.nft_post", { result: 'success' })
+
             },
             onError(error) {
                 // if (error.message === ERRORS.notMined) {
                 //   toast.error(error.message)
                 // }
                 console.error('[Broadcast Error]', error)
+                Mixpanel.track("publication.nft_post", { result: 'broadcast_error' })
+
             }
         })
     const handleCreate = async () => {

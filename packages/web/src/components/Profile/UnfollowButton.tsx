@@ -13,6 +13,7 @@ import { useAccount, useContractWrite, useSigner, useSignTypedData } from 'wagmi
 import { Dispatch, useState } from 'react'
 import { Spinner } from 'components/UI/Spinner'
 import { Contract, Signer } from 'ethers'
+import { Mixpanel } from 'utils/Mixpanel';
 
 type Props = {
     profile: Profile
@@ -65,11 +66,14 @@ const UnfollowButton = ({ profile, setFollowed, setFollowerCount, followerCount 
                             if (followerCount && setFollowerCount) {
                                 setFollowerCount(followerCount - 1)
                                 toast.success(`Successfully sent transation: ${tx.hash}`)
+                                Mixpanel.track("publication.unfollow", { result: 'success' })
+
                             }
                             setFollowed(false)
                         }
                         await tx.wait()
                         toast.success('Unfollowed successfully!')
+
                     } catch {
                         toast.error('User rejected request')
                     } finally {

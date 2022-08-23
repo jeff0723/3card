@@ -21,6 +21,7 @@ import styled from 'styled-components'
 import { useAccount, useSignMessage } from 'wagmi'
 import CreateProfileModal from "./CreateProfileModal"
 import ProfileCard from "./ProfileCard"
+import { Mixpanel } from 'utils/Mixpanel';
 
 type Props = {}
 
@@ -95,6 +96,8 @@ function SideBar({ }: Props) {
                 return toast.error("Something went wrong!");
 
             // Get signature
+            Mixpanel.track("publication.lens_login_sign_click")
+
             const signature = await signMessageAsync({
                 message: challenge?.data?.challenge?.text,
             });
@@ -105,9 +108,12 @@ function SideBar({ }: Props) {
             });
             Cookies.set("accessToken", auth?.data?.authenticate?.accessToken);
             Cookies.set("refreshToken", auth?.data?.authenticate?.refreshToken);
+
             // Get authed profiles
             dispatch(setIsConnected({ isConnected: true }));
             dispatch(setIsAuthenticated({ isAuthenticated: true }));
+            Mixpanel.track("publication.lens_login", { result: 'success' })
+
             toast.success("Logged in successfully!");
 
             const { data: profilesData } = await getProfileByAddress({
@@ -118,8 +124,22 @@ function SideBar({ }: Props) {
                 dispatch(
                     setCurrentUser({ currentUser: profilesData?.profiles?.items[0] })
                 );
+                Mixpanel.identify(profilesData?.profilesData?.profiles?.items[0].id)
+                Mixpanel.people.set({
+                    address: profilesData?.profilesData?.profiles?.items[0].ownedBy,
+                    handle: profilesData?.profilesData?.profiles?.items[0].handle,
+                    name: profilesData?.profilesData?.profiles?.items[0].name,
+                })
+
+            } else {
+                Mixpanel.identify('0x00')
+                Mixpanel.people.set({
+                    name: 'Anonymous',
+                })
             }
         } catch (err) {
+            Mixpanel.track("publication.lens_login", { result: 'auth_err' })
+
         } finally {
             dispatch(updateLoadingStatus({ isApplicationLoading: false }));
         }
@@ -129,14 +149,20 @@ function SideBar({ }: Props) {
         <div className='border border-transparent border-r-[#2F3336] flex flex-col justify-between px-4 pb-4'>
             <Column>
                 <Link href='/'>
-                    <div onClick={() => { setSelectedTab(Tab.Home) }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                    <div onClick={() => {
+                        Mixpanel.track('visit_home')
+                        setSelectedTab(Tab.Home)
+                    }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
                         <Text isSelectedTab={Tab.Home == selectedTab}>
                             Home
                         </Text>
                     </div>
                 </Link>
                 <Link href='/explore' >
-                    <div onClick={() => { setSelectedTab(Tab.Communities) }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                    <div onClick={() => {
+                        Mixpanel.track('visit_communities')
+                        setSelectedTab(Tab.Communities)
+                    }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
                         <Text isSelectedTab={Tab.Communities == selectedTab}>
                             Communities
                         </Text>
@@ -147,21 +173,30 @@ function SideBar({ }: Props) {
                     currentUser && (
                         <>
                             <Link href='/messages'>
-                                <div onClick={() => { setSelectedTab(Tab.Messages) }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                                <div onClick={() => {
+                                    Mixpanel.track('visit_messages')
+                                    setSelectedTab(Tab.Messages)
+                                }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
                                     <Text isSelectedTab={Tab.Messages == selectedTab}>
                                         Messages
                                     </Text>
                                 </div>
                             </Link>
                             <Link href={`/card`}>
-                                <div onClick={() => { setSelectedTab(Tab.Card) }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                                <div onClick={() => {
+                                    Mixpanel.track('visit_card')
+                                    setSelectedTab(Tab.Card)
+                                }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
                                     <Text isSelectedTab={Tab.Card == selectedTab}>
                                         Card
                                     </Text>
                                 </div>
                             </Link>
                             <Link href={`/user/${currentUser.handle}`}>
-                                <div onClick={() => { setSelectedTab(Tab.Profile) }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                                <div onClick={() => {
+                                    Mixpanel.track('visit_profile')
+                                    setSelectedTab(Tab.Profile)
+                                }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
                                     <Text isSelectedTab={Tab.Profile == selectedTab}>
                                         Profile
                                     </Text>

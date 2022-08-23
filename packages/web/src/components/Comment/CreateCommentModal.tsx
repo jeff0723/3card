@@ -28,6 +28,8 @@ import getIPFSLink from 'utils/getIPFSLink';
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { CREATE_COMMENT_TYPED_DATA_MUTATION } from 'graphql/mutation/create-comment';
+import { Mixpanel } from 'utils/Mixpanel';
+
 dayjs.extend(relativeTime)
 
 type Props = {
@@ -68,6 +70,7 @@ const CreateCommentModal = ({ open, setOpen, post, setCount, count }: Props) => 
                 setOpen(false)
                 setCommentInput("")
                 toast.success('Successfully sent transaction: ' + hash)
+                Mixpanel.track("publication.comment", { result: 'success' })
                 toast.promise(
                     wait(),
                     {
@@ -87,6 +90,8 @@ const CreateCommentModal = ({ open, setOpen, post, setCount, count }: Props) => 
             },
             onError: (error) => {
                 toast.error(error?.message)
+                Mixpanel.track("publication.comment", { result: 'error' })
+
             }
         })
 
@@ -154,12 +159,15 @@ const CreateCommentModal = ({ open, setOpen, post, setCount, count }: Props) => 
         useMutation(BROADCAST_MUTATION, {
             onCompleted: (data) => {
                 console.log('broadcast completed', data)
+                Mixpanel.track("publication.comment", { result: 'succcess' })
+
             },
             onError(error) {
                 // if (error.message === ERRORS.notMined) {
                 //   toast.error(error.message)
                 // }
                 console.error('[Broadcast Error]', error)
+                Mixpanel.track("publication.comment", { result: 'broadcast_error' })
             }
         })
     const createComment = async () => {

@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client';
 import { Publication } from 'generated/types';
 import { ADD_REACTION_MUTATION, REMOVE_REACTION_MUTATION } from 'graphql/mutation/add-reaction-mutation';
+import { Mixpanel } from 'utils/Mixpanel';
 import { on } from 'process';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -37,24 +38,26 @@ const Like = ({ post }: Props) => {
 
   const [addReaction] = useMutation(ADD_REACTION_MUTATION, {
     onCompleted() {
-      console.log('like')
+      Mixpanel.track("publication.like", { result: 'success' })
     },
     onError(error) {
       setLiked(!liked)
       setCount(count - 1)
       toast.error(error.message)
+      Mixpanel.track("publication.like", { result: 'error' })
 
     }
   })
 
   const [removeReaction] = useMutation(REMOVE_REACTION_MUTATION, {
     onCompleted() {
-      console.log('dislike')
+      Mixpanel.track("publication.removelike", { result: 'success' })
     },
     onError(error) {
       setLiked(!liked)
       setCount(count + 1)
       toast.error(error.message)
+      Mixpanel.track("publication.removelike", { result: 'error' })
 
     }
   })

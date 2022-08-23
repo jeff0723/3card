@@ -13,6 +13,8 @@ import { LENSHUB_PROXY } from 'constants/constants';
 import { LensHubProxy } from 'abis/LensHubProxy';
 import { useMutation } from '@apollo/client';
 import { CreateMirrorBroadcastItemResult } from 'generated/types'
+import { Mixpanel } from 'utils/Mixpanel';
+
 type Props = {
     post: Publication
 }
@@ -47,6 +49,7 @@ const Mirror = ({ post }: Props) => {
         setCount(count + 1)
         setMirrored(true)
         toast.success('Post has been mirrored!')
+        Mixpanel.track("publication.mirror", { result: 'success' })
     }
 
     const { isLoading: writeLoading, write } = useContractWrite({
@@ -59,18 +62,20 @@ const Mirror = ({ post }: Props) => {
         },
         onError(error: any) {
             toast.error(error?.data?.message ?? error?.message)
+            Mixpanel.track("publication.mirror", { result: 'write_error' })
+
         }
     })
 
     const [broadcast, { loading: broadcastLoading }] = useMutation(
         BROADCAST_MUTATION,
         {
-            onCompleted: (data) => {
-                console.log(data)
-            },
+            onCompleted,
             onError(error) {
 
                 console.error('[Broadcast Error]', error)
+                Mixpanel.track("publication.mirror", { result: 'broadcast_error' })
+
             }
         }
     )

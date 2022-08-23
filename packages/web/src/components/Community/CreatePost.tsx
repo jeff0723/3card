@@ -17,6 +17,7 @@ import splitSignature from 'utils/splitSignature';
 import { uploadIpfs } from 'utils/uploadToIPFS';
 import { v4 as uuid } from 'uuid';
 import { useContractWrite, useSignTypedData } from 'wagmi';
+import { Mixpanel } from 'utils/Mixpanel';
 
 
 type Props = {
@@ -46,6 +47,7 @@ const CreatePost = ({ communityId }: Props) => {
                 const { wait, hash } = data
                 setPostInput("")
                 toast.success('Successfully sent transaction: ' + hash)
+                Mixpanel.track("publication.community_post", { result: 'success' })
                 toast.promise(
                     wait(),
                     {
@@ -65,6 +67,8 @@ const CreatePost = ({ communityId }: Props) => {
             },
             onError: (error) => {
                 toast.error(error?.message)
+                Mixpanel.track("publication.community_post", { result: 'write_error' })
+
             }
         })
 
@@ -129,12 +133,16 @@ const CreatePost = ({ communityId }: Props) => {
         useMutation(BROADCAST_MUTATION, {
             onCompleted: (data) => {
                 console.log('broadcast completed', data)
+                Mixpanel.track("publication.community_post", { result: 'success' })
+
             },
             onError(error) {
                 // if (error.message === ERRORS.notMined) {
                 //   toast.error(error.message)
                 // }
                 console.error('[Broadcast Error]', error)
+                Mixpanel.track("publication.community_post", { result: 'broadcast_error' })
+
             }
         })
     const createPost = async () => {

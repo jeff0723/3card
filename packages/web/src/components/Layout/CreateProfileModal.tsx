@@ -12,6 +12,7 @@ import { useMutation } from "@apollo/client";
 import { CREATE_PROFILE_MUTATION } from "graphql/mutation/create-profile";
 import Pending from "./Pending";
 import { v4 as uuid } from 'uuid';
+import { Mixpanel } from 'utils/Mixpanel';
 
 
 type Props = {
@@ -81,12 +82,15 @@ const CreateProfileModal = ({ open, setOpen }: Props) => {
                     return;
                 }
                 toast.success("Create profile transaction sent!");
+                Mixpanel.track("publication.create_profile", { result: 'success' })
 
                 closeModal();
 
             },
             onError: (error) => {
                 toast.error(`create profile error: ${error}`);
+                Mixpanel.track("publication.create_profile", { result: 'error' })
+
             },
         });
     };

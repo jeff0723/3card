@@ -11,6 +11,7 @@ import { useAppSelector } from 'state/hooks'
 import { useAccount, useContractWrite, useSignTypedData } from 'wagmi'
 import { Dispatch } from 'react'
 import { Spinner } from 'components/UI/Spinner'
+import { Mixpanel } from 'utils/Mixpanel';
 
 type Props = {
     profile: Profile
@@ -38,6 +39,8 @@ const FollowButton = ({ profile, setFollowed, setFollowerCount, followerCount }:
             setFollowed(true)
             setFollowerCount(followerCount + 1)
             toast.success('Successfully sent transaction: ' + hash)
+            Mixpanel.track("publication.follow", { result: 'success' })
+
             toast.promise(
                 wait(),
                 {
@@ -56,18 +59,24 @@ const FollowButton = ({ profile, setFollowed, setFollowerCount, followerCount }:
         },
         onError(error: any) {
             toast.error(error?.data?.message ?? error?.message)
+            Mixpanel.track("publication.follow", { result: 'write_error' })
+
         }
     })
     const [broadcast, { data: broadcastData, loading: broadcastLoading }] =
         useMutation(BROADCAST_MUTATION, {
             onCompleted: (data) => {
                 console.log('broadcast completed', data)
+                Mixpanel.track("publication.follow", { result: 'success' })
+
             },
             onError(error) {
                 // if (error.message === ERRORS.notMined) {
                 //   toast.error(error.message)
                 // }
                 console.error('[Broadcast Error]', error)
+                Mixpanel.track("publication.follow", { result: 'broadcast_error' })
+
             }
         })
     const [createFollowTypedData, { loading: typedDataLoading }] = useMutation(

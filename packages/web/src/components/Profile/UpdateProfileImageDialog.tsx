@@ -17,6 +17,7 @@ import { useContractWrite, useSignTypedData } from 'wagmi'
 import { LENSHUB_PROXY } from 'constants/constants';
 import { LensHubProxy } from 'abis/LensHubProxy';
 import { Spinner } from 'components/UI/Spinner';
+import { Mixpanel } from 'utils/Mixpanel';
 
 
 type Props = {
@@ -36,6 +37,8 @@ const UpdateProfileImageDialog = ({ open, setOpen, avatar, setPhotoPreviewUrl }:
   })
   const onCompleted = () => {
     toast.success('Profile Image updated successfully!')
+    Mixpanel.track("publication.update_profile_image", { result: 'success' })
+
     setOpen(false)
   }
 
@@ -54,14 +57,15 @@ const UpdateProfileImageDialog = ({ open, setOpen, avatar, setPhotoPreviewUrl }:
     },
     onError(error: any) {
       toast.error(error?.data?.message ?? error?.message)
+      Mixpanel.track("publication.update_profile_image", { result: 'write_error' })
+
     }
   })
   const [broadcast, { data: broadcastData, loading: broadcastLoading }] =
     useMutation(BROADCAST_MUTATION, {
-      onCompleted: (data) => {
-        console.log(data)
-      },
+      onCompleted,
       onError(error) {
+        Mixpanel.track("publication.update_profile_image", { result: 'broadcast_error' })
 
         console.error('[Broadcast Error]', error)
 

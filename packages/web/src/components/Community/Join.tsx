@@ -12,6 +12,7 @@ import { useAppSelector } from 'state/hooks'
 import omit from 'utils/omit'
 import splitSignature from 'utils/splitSignature'
 import { useAccount, useContractWrite, useSignTypedData } from 'wagmi'
+import { Mixpanel } from 'utils/Mixpanel';
 
 type Props = {
     community: Publication
@@ -37,6 +38,8 @@ const Join = ({ community }: Props) => {
             const { wait, hash } = data
 
             toast.success('Successfully sent transaction: ' + hash)
+            Mixpanel.track("publication.join_community", { result: 'success' })
+
             toast.promise(
                 wait(),
                 {
@@ -56,6 +59,8 @@ const Join = ({ community }: Props) => {
         },
         onError(error: any) {
             toast.error(error?.data?.message ?? error?.message)
+            Mixpanel.track("publication.join_community", { result: 'error' })
+
         }
     })
 
@@ -64,9 +69,13 @@ const Join = ({ community }: Props) => {
         {
             onCompleted: (data) => {
                 console.log('broadcast completed', data)
+                Mixpanel.track("publication.join_community", { result: 'success' })
+
             },
             onError(error) {
                 console.error('[Broadcast Error]', error)
+                Mixpanel.track("publication.join_community", { result: 'broadcast_error' })
+
             }
         }
     )
