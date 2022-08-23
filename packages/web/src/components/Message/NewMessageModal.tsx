@@ -19,6 +19,7 @@ import { FiX } from "react-icons/fi";
 import { HiOutlineX, HiSearch } from 'react-icons/hi';
 import { setIsNewMessageModalOpen } from 'state/application/reducer';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { Mixpanel } from 'utils/Mixpanel';
 import { useAccount } from 'wagmi';
 type Props = {}
 
@@ -43,6 +44,8 @@ const NewMessageModal = (props: Props) => {
 
     const createNewConversation = async () => {
         if (!searchInput) return
+        Mixpanel.track('new_message_click')
+
         if (searchInput && address) {
             if (!profile) { alert("Please select a user below!") }
             let opponentAddress = profile?.ownedBy
@@ -67,6 +70,7 @@ const NewMessageModal = (props: Props) => {
                         closeModal()
                         router.push(`/messages/${converstaionId}`)
                     }
+
                 } catch (e) {
                     toast.error("Something went wrong")
                     console.log(e)

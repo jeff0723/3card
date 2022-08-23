@@ -53,6 +53,7 @@ const Explore: NextPage = (props: Props) => {
             console.error('[Query Error]', error)
         }
     })
+    console.log(data)
     return (
         <div className='flex flex-col px-4 gap-4 overflow-y-auto'>
             <div>

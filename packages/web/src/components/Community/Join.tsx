@@ -6,7 +6,7 @@ import { LENSHUB_PROXY } from 'constants/constants'
 import { Publication, CreateCollectBroadcastItemResult } from 'generated/types'
 import { BROADCAST_MUTATION } from 'graphql/mutation/broadcast-mutation'
 import { CREATE_COLLECT_TYPED_DATA_MUTATION } from 'graphql/mutation/create-collect-mutation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useAppSelector } from 'state/hooks'
 import omit from 'utils/omit'
@@ -19,7 +19,7 @@ type Props = {
 }
 
 const Join = ({ community }: Props) => {
-    const [joined, setJoined] = useState(community?.hasCollectedByMe)
+    const [joined, setJoined] = useState<boolean>()
     const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
     const { address } = useAccount()
     const { isLoading: signLoading, signTypedDataAsync } = useSignTypedData({
@@ -28,7 +28,11 @@ const Join = ({ community }: Props) => {
         }
     })
 
-
+    useEffect(() => {
+        if (community) {
+            setJoined(community?.hasCollectedByMe)
+        }
+    }, [community])
     const { isLoading: writeLoading, write } = useContractWrite({
         addressOrName: LENSHUB_PROXY,
         contractInterface: LensHubProxy,
@@ -70,6 +74,8 @@ const Join = ({ community }: Props) => {
             onCompleted: (data) => {
                 console.log('broadcast completed', data)
                 Mixpanel.track("publication.join_community", { result: 'success' })
+                setJoined(true)
+                toast.success('Successfully joined community')
 
             },
             onError(error) {
@@ -135,7 +141,7 @@ const Join = ({ community }: Props) => {
             }
         })
     }
-
+    console.log(joined)
     return (
         <Button
             onClick={createCollect}

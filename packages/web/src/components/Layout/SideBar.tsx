@@ -22,6 +22,7 @@ import { useAccount, useSignMessage } from 'wagmi'
 import CreateProfileModal from "./CreateProfileModal"
 import ProfileCard from "./ProfileCard"
 import { Mixpanel } from 'utils/Mixpanel';
+import { useRouter } from "next/router"
 
 type Props = {}
 
@@ -48,11 +49,33 @@ enum Tab {
     Profile,
     Notifications
 }
+const pathToTab = {
+    '/': Tab.Home,
+    '/explore': Tab.Communities,
+    '/messages': Tab.Messages,
+    '/card': Tab.Card,
+    '/profile': Tab.Profile,
+    '/notifications': Tab.Notifications
+}
+const currentTab = (path: string): Tab => {
+    switch (path) {
+        case '/': return Tab.Home
+        case '/explore': return Tab.Communities
+        case '/messages': return Tab.Messages
+        case '/card': return Tab.Card
+        case '/profile': return Tab.Profile
+        case '/notifications': return Tab.Notifications
+        default: return Tab.Home
+    }
+}
+
 function SideBar({ }: Props) {
+
+    const { pathname } = useRouter()
     const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
     const currentUser = useAppSelector(state => state.user.currentUser)
     const dispatch = useAppDispatch()
-    const [selectedTab, setSelectedTab] = useState<Tab>(Tab.Home)
+    const [selectedTab, setSelectedTab] = useState<Tab>(currentTab(pathname))
     const [open, setOpen] = useState(false)
     const { isConnected, address } = useAccount()
     const { signMessageAsync, isLoading: signLoading } = useSignMessage({

@@ -15,7 +15,7 @@ const Comment = ({ post }: Props) => {
     const [count, setCount] = useState(post?.stats?.totalAmountOfComments)
     const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
     return (
-        <div className='flex gap-2 text-white hover:text-sky-400 items-center' onClick={(e) => {
+        <div className='flex gap-2 text-white hover:text-primary-blue items-center' onClick={(e) => {
             if (!isAuthenticated) {
                 toast.error("Please login first!")
             }

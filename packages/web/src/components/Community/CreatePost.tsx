@@ -133,6 +133,8 @@ const CreatePost = ({ communityId }: Props) => {
         useMutation(BROADCAST_MUTATION, {
             onCompleted: (data) => {
                 console.log('broadcast completed', data)
+                setPostInput("")
+                toast.success('Post created successfully!')
                 Mixpanel.track("publication.community_post", { result: 'success' })
 
             },

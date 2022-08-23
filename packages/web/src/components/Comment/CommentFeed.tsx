@@ -1,10 +1,12 @@
+import Collect from 'components/Actions/Collect'
+import Comment from 'components/Actions/Comment'
+import Like from 'components/Actions/Like'
+import Mirror from 'components/Actions/Mirror'
 import dayjs from 'dayjs'
 import { Publication } from 'generated/types'
-import getIPFSLink from 'utils/getIPFSLink'
-import { BiArrowBack } from 'react-icons/bi'
-import { BsChat } from "react-icons/bs"
-import { HiOutlineBookmark, HiOutlineHeart, HiOutlineSwitchHorizontal } from "react-icons/hi"
 import Link from 'next/link'
+import getIPFSLink from 'utils/getIPFSLink'
+
 type Props = {
     comment: Publication
 }
@@ -33,10 +35,10 @@ const CommentFeed = ({ comment }: Props) => {
                         {comment?.metadata.content}
                     </div>
                     <div className='flex justify-around text-gray-400'>
-                        <div className='flex items-center gap-1'><BsChat className='text-[20px]' /> <div className='text-[15px]'>{comment?.stats?.totalAmountOfComments}</div></div>
-                        <div className='flex items-center gap-1'><HiOutlineHeart className='text-[20px]' /><div className='text-[15px]'> {comment?.stats?.totalUpvotes}</div></div>
-                        <div className='flex items-center gap-1'><HiOutlineSwitchHorizontal className='text-[20px]' /><div > {comment?.stats?.totalAmountOfMirrors}</div></div>
-                        <div className='flex items-center gap-1'><HiOutlineBookmark className='text-[20px]' /><div className='text-[15px]'> {comment?.stats?.totalAmountOfComments}</div></div>
+                        <Comment post={comment} />
+                        <Like post={comment} />
+                        <Mirror post={comment} />
+                        <Collect post={comment} />
                     </div>
                 </div>
             </div>

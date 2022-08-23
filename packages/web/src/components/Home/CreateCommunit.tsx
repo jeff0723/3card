@@ -43,7 +43,7 @@ const CreateCommunity = ({ open, setOpen }: Props) => {
     const [avatar, setAvatar] = useState("")
     const [imageUploading, setImageUploading] = useState(false)
     const [previewImage, setPreviewImage] = useState("")
-    const { register, handleSubmit, getValues } = useForm<FormValues>();
+    const { register, handleSubmit, getValues, reset } = useForm<FormValues>();
 
     const [selectedModule, setSelectedModule] =
         useState<EnabledModule>()
@@ -66,7 +66,7 @@ const CreateCommunity = ({ open, setOpen }: Props) => {
                 const filename = uuid() + ".png"
                 const file = new File([e.target.files[0]], filename)
                 const cid = await client.put([file])
-                setAvatar(`https://ipfs.infura.io/${cid}/${filename}`)
+                setAvatar(`https://ipfs.infura.io/ipfs/${cid}/${filename}`)
             } finally {
                 const objectUrl = URL.createObjectURL(e.target.files[0])
                 setPreviewImage(objectUrl)
@@ -82,12 +82,12 @@ const CreateCommunity = ({ open, setOpen }: Props) => {
         {
             addressOrName: LENSHUB_PROXY,
             contractInterface: LensHubProxy,
-            functionName: 'post',
+            functionName: 'postWithSig',
             mode: 'recklesslyUnprepared',
             onSuccess: async (data) => {
                 const { wait, hash } = data
                 setOpen(false)
-                setPostInput("")
+                reset()
                 toast.success('Successfully sent transaction: ' + hash)
                 mixpanel.track("publication.creat_community", { result: 'success' })
                 toast.promise(
@@ -170,6 +170,9 @@ const CreateCommunity = ({ open, setOpen }: Props) => {
         useMutation(BROADCAST_MUTATION, {
             onCompleted: (data) => {
                 console.log('broadcast completed', data)
+                setOpen(false)
+                reset()
+                toast.success('Successfully created community!')
                 mixpanel.track("publication.creat_community", { result: 'success' })
 
             },

@@ -130,8 +130,8 @@ const Collect = ({ post }: Props) => {
         })
     }
     return (
-        <Container collected={collected} className='flex gap-2 text-white hover:text-sky-400 items-center' onClick={createCollect}>
-            <div className='flex justify-center items-center w-8 h-8 rounded-full  hover:bg-primary-blue hover:bg-opacity-20 '>
+        <Container collected={collected} className='flex gap-2 items-center' onClick={createCollect}>
+            <div className='flex justify-center items-center w-8 h-8 rounded-full  hover:bg-primary-blue hover:bg-opacity-30 '>
                 {
                     collected ? <HiBookmark className='text-[20px]' /> : <HiOutlineBookmark className='text-[20px]' />
                 }
