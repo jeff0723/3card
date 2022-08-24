@@ -2,6 +2,7 @@ import { IS_PRODUCTION, MIXPANEL_TOKEN } from 'constants/constants'
 import mixpanel, { Dict } from 'mixpanel-browser'
 
 const enabled = MIXPANEL_TOKEN && IS_PRODUCTION
+console.log("enabled:", enabled)
 export const Mixpanel = {
     identify: (id: string) => {
         if (enabled) mixpanel.identify(id)
