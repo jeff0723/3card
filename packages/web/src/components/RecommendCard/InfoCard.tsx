@@ -9,6 +9,9 @@ import FollowButton from "components/Profile/FollowButton";
 import Follow from "./Follow";
 import { useRouter } from "next/router";
 import { useAppSelector } from "state/hooks";
+import formatAddress from "utils/formatAddress";
+import { ETHERSCAN_URL } from "constants/constants";
+import { ExternalLink } from "components/Utils";
 
 type Props = {
     recommendAddress: string,
@@ -55,6 +58,9 @@ const InfoCard = ({ recommendAddress, tags, netWorth }: Props) => {
             <div className='flex flex-col py-[16px]'>
                 <div>{recommendUser?.name}</div>
                 <div className='text-gray-400'>@{recommendUser?.handle}</div>
+                <ExternalLink href={`${ETHERSCAN_URL}/address/${recommendAddress}`} ><div className='text-gray-400 hover:text-primary-blue hover:underline'>
+                    {formatAddress(recommendAddress)}</div>
+                </ExternalLink>
 
 
             </div>
@@ -78,6 +84,7 @@ const InfoCard = ({ recommendAddress, tags, netWorth }: Props) => {
                     {recommendUser?.bio ? recommendUser?.bio : 'No bio'}
                 </div>
             </div>
+
             <div className='w-full  py-[16px] flex flex-col'>
                 <div className='font-bold text-[15px]'>
                     Net worth:
@@ -86,6 +93,7 @@ const InfoCard = ({ recommendAddress, tags, netWorth }: Props) => {
                     ${formatNumber(parseFloat(netWorth.toFixed(1)))}
                 </div>
             </div>
+
             {tags.length > 0 &&
                 <div className='w-full flex justify-center flex-wrap gap-[10px]  py-[16px]'>
                     {tags.map((item, index) => (

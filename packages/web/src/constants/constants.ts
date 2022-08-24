@@ -5,6 +5,7 @@ export const IS_DEVELOPMENT = process.env.NODE_ENV === 'development'
 
 export const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 
+export const ETHERSCAN_URL = "https://etherscan.io"
 export const API_URL = process.env.NEXT_PUBLIC_ENV === 'production'
     ? 'https://api.lens.dev'
     : 'https://api-mumbai.lens.dev'
