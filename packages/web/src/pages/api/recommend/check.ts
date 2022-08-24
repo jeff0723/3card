@@ -10,10 +10,8 @@ import {
   ERROR_MESSAGE,
 } from 'scan-helper';
 import { CheckResult } from 'rec-helper';
-import { docClient, TABLE_NAME } from 'aws';
+import { docClient, TABLE_NAME, TABLE_SIZE } from 'aws';
 import { NEXT_API_KEY } from 'constants/constants';
-
-const TABLE_SIZE = 3000;
 
 export default async function handler(
   req: NextApiRequest,

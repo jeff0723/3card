@@ -12,7 +12,7 @@ export const docClient = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-1
 
 export const TABLE_NAME = 'lens-rec-table';
 
-export const TABLE_SIZE = 3000;
+export const TABLE_SIZE = 9000;
 
 export const BUCKET_NAME = '3card';
 
