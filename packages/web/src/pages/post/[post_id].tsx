@@ -9,6 +9,7 @@ import NewsFeed from 'components/Home/NewsFeed'
 import Search from 'components/Home/Search'
 import Button from 'components/UI/Button'
 import { Spinner } from 'components/UI/Spinner'
+import WithMentionTextArea from 'components/UI/WithMentionTextArea'
 import { APP_NAME, LENSHUB_PROXY } from 'constants/constants'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -274,9 +275,9 @@ const Post: NextPage = (props: Props) => {
                     <Collect post={publication} />
                 </div>
                 {currentUser && <div className='flex justify-between items-center py-4 border-b border-border-gray'>
-                    <div className='flex items-start gap-2'>
+                    <div className='flex items-center gap-2 w-full'>
                         <img src={getIPFSLink(currentUser?.picture?.original?.url)} className='w-12 h-12 rounded-full' />
-                        <div contentEditable defaultValue={commentInput} className='text-[20px] outline-none py-3' placeholder='Write your reply' onInput={(e) => setCommentInput(e?.currentTarget?.innerText)} />
+                        <WithMentionTextArea minHeight={32} postInput={commentInput} setPostInput={setCommentInput} placeholder="Write your reply" />
                     </div>
                     <div>
                         <Button

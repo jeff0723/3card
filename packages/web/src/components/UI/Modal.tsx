@@ -36,7 +36,7 @@ const Modal = ({ open, onClose, children, size = "md", position = "top" }: Props
                 }>
                     <div className={
                         clsx(
-                            { "flex items-center justify-center p-4 text-center": position == 'top' },
+                            { "flex h-screen items-start justify-center p-4 text-center": position == 'top' },
                             { "flex min-h-full items-center justify-center p-4 text-center": position == 'middle' })
 
                     }
@@ -57,7 +57,7 @@ const Modal = ({ open, onClose, children, size = "md", position = "top" }: Props
                                         { "max-w-md": size == 'md' },
                                         { "max-w-sm": size == 'sm' },
                                         { "max-w-xs": size == 'xs' },
-                                        "border border-white border-opacity-20 w-full transform overflow-hidden rounded-2xl bg-black p-4 text-left align-middle shadow-xl transition-all"
+                                        "border border-white border-opacity-20 w-full transform rounded-2xl bg-black p-4 text-left align-middle shadow-xl transition-all"
                                     )
                                 }
                             >

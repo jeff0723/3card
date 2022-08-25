@@ -13,6 +13,11 @@ body {
   display: none;
 }
 
+.mention-input textarea {
+  @apply outline-none
+  overflow-visible
+}
+
 
 [contenteditable=true]:empty:before{
   content: attr(placeholder);

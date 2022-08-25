@@ -29,6 +29,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { CREATE_COMMENT_TYPED_DATA_MUTATION } from 'graphql/mutation/create-comment';
 import { Mixpanel } from 'utils/Mixpanel';
+import WithMentionTextArea from 'components/UI/WithMentionTextArea';
 
 dayjs.extend(relativeTime)
 
@@ -45,7 +46,7 @@ type FormValues = {
 };
 const CreateCommentModal = ({ open, setOpen, post, setCount, count }: Props) => {
     const currentUser = useAppSelector(state => state.user.currentUser)
-    const [commentInput, setCommentInput] = useState<string | null>("")
+    const [commentInput, setCommentInput] = useState<string>("")
     const [selectedModule, setSelectedModule] =
         useState<EnabledModule>()
     const [onlyFollowers, setOnlyFollowers] = useState<boolean>(false)
@@ -243,14 +244,11 @@ const CreateCommentModal = ({ open, setOpen, post, setCount, count }: Props) => 
 
                         <img src={getIPFSLink(currentUser?.picture?.original.url)} alt="" className="w-10 h-10 rounded-full" />
                         <div className='flex flex-col w-full gap-2 '>
-                            <div className='min-h-[90px]  max-h-[600px] overflow-y-auto h-fit justify-center items-center ' >
-                                <div
-                                    contentEditable='true'
-                                    placeholder="Type your reply"
-                                    className='py-4 w-full h-full bg-transparent border-none outline-none text-[20px] break-all'
-                                    onInput={(e) => setCommentInput(e.currentTarget?.innerText)} />
 
-                            </div>
+                            <WithMentionTextArea postInput={commentInput} setPostInput={setCommentInput} placeholder="Type your reply" />
+
+
+
                             <div className='border-b border-border-gray' />
                             <div className='flex justify-between items-center'>
                                 <div className='flex text-[20px] text-primary-blue items-center gap-[10px]'>
@@ -286,7 +284,7 @@ const CreateCommentModal = ({ open, setOpen, post, setCount, count }: Props) => 
                     </div>
                 </div>
             </div>
-        </Modal>
+        </Modal >
     )
 }
 

@@ -22,6 +22,8 @@ import { uploadIpfs } from 'utils/uploadToIPFS';
 import { v4 as uuid } from 'uuid';
 import { useContractWrite, useSignTypedData } from 'wagmi';
 import { Mixpanel } from 'utils/Mixpanel';
+import { Mention, MentionsInput } from 'react-mentions'
+import WithMentionTextArea from 'components/UI/WithMentionTextArea';
 
 type Props = {
     open: boolean;
@@ -33,7 +35,7 @@ type FormValues = {
 };
 const CreatePost = ({ open, setOpen }: Props) => {
     const currentUser = useAppSelector(state => state.user.currentUser)
-    const [postInput, setPostInput] = useState<string | null>("")
+    const [postInput, setPostInput] = useState<string>("")
     const [selectedModule, setSelectedModule] =
         useState<EnabledModule>()
     const [onlyFollowers, setOnlyFollowers] = useState<boolean>(false)
@@ -189,6 +191,7 @@ const CreatePost = ({ open, setOpen }: Props) => {
             }
         })
     }
+    console.log(postInput)
     return (
         <Modal open={open} onClose={() => { setOpen(false) }} size={'lg'}>
             <div className='flex flex-col gap-2'>
@@ -203,14 +206,14 @@ const CreatePost = ({ open, setOpen }: Props) => {
                         <img src={getIPFSLink(currentUser?.picture?.original.url)} alt="" className="w-10 h-10 rounded-full" />
                     </div>
                     <div className='flex flex-col w-full gap-2 '>
-                        <div className='min-h-[90px]  max-h-[600px] overflow-y-auto h-fit justify-center items-center ' >
-                            <div
+
+                        {/* <div
                                 contentEditable='true'
                                 placeholder="What's in your mind"
                                 className=' w-full h-full bg-transparent border-none outline-none text-[20px] break-all'
-                                onInput={(e) => setPostInput(e.currentTarget?.innerText)} />
+                                onInput={(e) => setPostInput(e.currentTarget?.innerText)} /> */}
+                        <WithMentionTextArea postInput={postInput} setPostInput={setPostInput} placeholder="What's in your mind" />
 
-                        </div>
                         <div className='border-b border-border-gray' />
                         <div className='flex justify-between items-center'>
                             <div className='flex text-[20px] text-primary-blue items-center gap-[10px]'>

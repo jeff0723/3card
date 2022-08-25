@@ -30,6 +30,7 @@ import { ItemType } from '@opensea/seaport-js/lib/constants';
 import { CreateOrderInput } from '@opensea/seaport-js/lib/types';
 
 import { Mixpanel } from 'utils/Mixpanel';
+import WithMentionTextArea from 'components/UI/WithMentionTextArea';
 
 type Props = {
     open: boolean;
@@ -303,14 +304,10 @@ const CreateNFTPost = ({ open, setOpen }: Props) => {
                     </div>
                 </div>
                 <div className='py-4 flex flex-col gap-2 '>
-                    <div className='p-4 rounded-lg min-h-[120px]  max-h-[600px] overflow-y-auto h-fit justify-center items-center border border-border-gray' >
-                        <div
-                            contentEditable='true'
-                            placeholder="Write something about your NFT..."
-                            className=' w-full h-full bg-transparent border-none outline-none text-[20px] break-all'
-                            onInput={(e) => setPostInput(e.currentTarget?.innerText)} />
-
+                    <div className='p-4 rounded-lg border border-border-gray'>
+                        <WithMentionTextArea postInput={postInput} setPostInput={setPostInput} placeholder="Write something about your NFT..." />
                     </div>
+
                     {/* <div className='flex text-[20px] text-primary-blue items-center gap-[10px]'>
                         <RiImage2Line />
                         <AiOutlineFileGif />

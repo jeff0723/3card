@@ -151,8 +151,9 @@ const Home: NextPage<Props> = (props: Props) => {
       console.log('[Query Error]', err)
     })
   }
-
   return (
+
+
     <>
       <div className='grid grid-cols-12 w-full relative h-full'>
         <Content className="col-span-7" >
