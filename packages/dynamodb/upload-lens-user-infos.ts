@@ -9,8 +9,8 @@ const txScanURL = `https://api.etherscan.io/api?module=account&action=txlist&pag
 const erc20ScanURL = `https://api.etherscan.io/api?module=account&action=tokentx&page=1&offset=10000&sort=asc&startblock=0&endblock=${endBlock}&apikey=${apiKey}`;
 const nextDrawDate = new Date().toLocaleDateString();
 
-const startIndex = 3000;
-const endIndex = 6000;
+const startIndex = 9000;
+const endIndex = 12000;
 
 async function main() {
     // console.log(apiKey);
@@ -20,12 +20,13 @@ async function main() {
 
         const erc20res = await fetch(erc20ScanURL + '&address=' + user);
         if (!erc20res.ok) continue;
-        const erc20events = (await erc20res.json()).result;
-        console.log(`erc20event size:`, erc20events.size);
+        const erc20events = (await erc20res.json()).result as any[];
+        const erc20eventList = erc20events.filter(event => event.contractAddress !== '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2')
+        console.log(`erc20event size:`, erc20eventList.length);
         const erc20Payload = {
             Bucket: BUCKET_NAME,
             Key: `onchain/${user}/ether/erc20`,
-            Body: JSON.stringify(erc20events),
+            Body: JSON.stringify(erc20eventList),
         };
         s3.upload(erc20Payload).promise()
         .then(function (data) {

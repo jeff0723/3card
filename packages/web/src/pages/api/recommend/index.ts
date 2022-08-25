@@ -6,11 +6,10 @@ import {
   ERROR_MESSAGE,
 } from 'scan-helper';
 import { RecResult, getCorrelation } from 'rec-helper';
-import { TABLE_NAME, docClient } from 'aws';
+import { TABLE_NAME, TABLE_SIZE, docClient } from 'aws';
 import { NEXT_API_KEY } from 'constants/constants';
 
-const TABLE_SIZE = 3000;
-const SCAN_RANGE = 30;
+const SCAN_RANGE = Math.floor(TABLE_SIZE/100);
 const RANDOM_NUMBER_RANGE = TABLE_SIZE - SCAN_RANGE;
 const ONE_DAY_INTERVAL = 86400000;
 
