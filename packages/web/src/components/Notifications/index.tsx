@@ -10,6 +10,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { Spinner } from 'components/UI/Spinner'
 import Search from 'components/Home/Search'
 import NewsFeed from 'components/Home/NewsFeed'
+import MentionNotification from './MentionNotification'
 
 type Props = {}
 
@@ -48,14 +49,13 @@ const Notifications = (props: Props) => {
             `Fetched next 10 notifications Next:${pageInfo?.next}`
         )
     }
-    console.log(notifications)
     return (
         <div className='grid grid-cols-3 w-full '>
-            <div className='col-span-2 divide-y divide-border-gray overflow-y-auto no-scrollbar border-r border-border-gray' >
+            <div className='col-span-2 divide-y divide-border-gray overflow-scroll no-scrollbar border-r border-border-gray' >
                 <div className='p-4 text-[20px] font-bold'>
                     Notifications
                 </div>
-                <div id='scrollableDiv overflow-y-scroll '>
+                <div id='scrollableDiv' className='overflow-y-auto no-scrollbar h-screen' >
                     <InfiniteScroll
                         dataLength={notifications.length}
                         next={fetchMoreData}
@@ -63,17 +63,17 @@ const Notifications = (props: Props) => {
                         hasMore={pageInfo?.next && pageInfo?.totalCount && notifications.length !== pageInfo?.totalCount}
                         endMessage={<h4>Nothing more to show</h4>}
                         scrollableTarget="scrollableDiv"
-                        className='no-scrollbar divide-y divide-border-gray'
+                        className='divide-y divide-border-gray'
                     >
                         {notifications?.map((notification: Notification, index: number) => (
                             <div key={index} className="pl-10 pt-5 pb-5 pr-5">
                                 {notification?.__typename === 'NewFollowerNotification' && (
                                     <FollowerNotification notification={notification as any} />
                                 )}
-                                {/* {notification?.__typename === 'NewMentionNotification' && (
-                       <MentionNotification notification={notification as any} />
-                     )}
-                     {notification?.__typename === 'NewCommentNotification' && (
+                                {notification?.__typename === 'NewMentionNotification' && (
+                                    <MentionNotification notification={notification as any} />
+                                )}
+                                {/* {notification?.__typename === 'NewCommentNotification' && (
                        <CommentNotification notification={notification} />
                      )} */}
                                 {notification?.__typename === 'NewMirrorNotification' && (

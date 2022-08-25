@@ -35,6 +35,35 @@ export const NOTIFICATIONS_QUERY = gql`
               metadata {
                 content
               }
+              commentOn {
+                ... on Post {
+                  id
+                  metadata {
+                    content
+                  }
+                  profile {
+                    ...MinimalProfileFields
+                  }
+                }
+                ... on Comment {
+                  id
+                  metadata {
+                    content
+                  }
+                  profile {
+                    ...MinimalProfileFields
+                  }
+                }
+                ... on Mirror {
+                  id
+                  metadata {
+                    content
+                  }
+                  profile {
+                    ...MinimalProfileFields
+                  }
+                }
+              }
             }
           }
           createdAt
@@ -122,6 +151,8 @@ export const NOTIFICATIONS_QUERY = gql`
       }
       pageInfo {
         next
+        next
+        totalCount
       }
     }
   }
