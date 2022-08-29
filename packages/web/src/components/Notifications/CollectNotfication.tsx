@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client';
 import { UserProfile } from 'generated/3card-types';
 import { NewCollectNotification } from 'generated/types';
 import { GET_PROFILE_BY_ADDRESS } from 'graphql/query/user';
+import Link from 'next/link';
 import { FC, useState } from 'react';
 import { HiBookmark } from "react-icons/hi";
 import getIPFSLink from 'utils/getIPFSLink';
@@ -27,10 +28,18 @@ const CollectNotfication = ({ notification }: Props) => {
         <div className='flex gap-2 '>
             <HiBookmark className='mt-1 text-[30px]' />
             <div className='flex flex-col gap-2'>
-                <Avatar />
-                <div className='text-[15px]'>
-                    <span className='font-bold'>{profile?.name}</span> collected your post
-                </div>
+                <Link href={`/user/${profile?.handle}`}>
+                    <Avatar />
+                </Link>
+                <Link href={`/user/${profile?.handle}`}>
+                    <div className='text-[15px]'>
+
+                        <span className='font-bold hover:underline'>
+                            {profile?.name}
+                        </span>
+                        collected your post
+                    </div>
+                </Link>
                 <div className='text-[15px] text-gray-400'>
                     {notification?.collectedPublication?.metadata?.content}
                 </div>

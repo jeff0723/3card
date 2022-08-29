@@ -8,6 +8,7 @@ import { useQuery } from '@apollo/client'
 import { GET_PROFILE_BY_ADDRESS } from 'graphql/query/user'
 import getIPFSLink from 'utils/getIPFSLink'
 import { UserProfile } from 'generated/3card-types'
+import Link from 'next/link'
 dayjs.extend(relativeTime)
 type Props = {
     notification: NewFollowerNotification
@@ -30,12 +31,14 @@ const FollowerNotification = ({ notification }: Props) => {
     return (
         <div className='flex gap-2 '>
             <RiUser3Fill className='mt-1 text-[30px]' />
-            <div className='flex flex-col gap-2'>
-                <Avatar />
-                <div className='text-[15px]'>
-                    <span className='font-bold'>{profile?.name}</span> followed you
+            <Link href={`/user/${profile?.handle}`}>
+                <div className='flex flex-col gap-2'>
+                    <Avatar />
+                    <div className='text-[15px]'>
+                        <span className='font-bold hover:underline'>{profile?.name}</span> followed you
+                    </div>
                 </div>
-            </div>
+            </Link>
         </div>
     )
 }

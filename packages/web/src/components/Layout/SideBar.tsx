@@ -63,15 +63,19 @@ const currentTab = (path: string): Tab => {
         case '/explore': return Tab.Communities
         case '/messages': return Tab.Messages
         case '/card': return Tab.Card
-        case '/profile': return Tab.Profile
+        case '/user': return Tab.Profile
         case '/notifications': return Tab.Notifications
-        default: return Tab.Home
+        default:
+            if (path.includes('user')) return Tab.Profile
+            if (path.includes('messages')) return Tab.Messages
+            return Tab.Home
     }
 }
 
 function SideBar({ }: Props) {
 
     const { pathname } = useRouter()
+    console.log(pathname.includes('user'))
     const isAuthenticated = useAppSelector(state => state.user.isAuthenticated)
     const currentUser = useAppSelector(state => state.user.currentUser)
     const dispatch = useAppDispatch()
