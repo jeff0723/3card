@@ -47,7 +47,7 @@ const WithMentionTextArea: FC<Props> = ({ postInput, setPostInput, placeholder, 
                 '[Lazy Query]',
                 `Fetched ${data?.search?.items?.length} user mention result`
             )
-        }
+        },
     })
     const fetchUsers = (query: string, callback: any) => {
         if (!query) return
@@ -70,6 +70,7 @@ const WithMentionTextArea: FC<Props> = ({ postInput, setPostInput, placeholder, 
             )
             .then(callback)
     }
+    console.log("minHeight:", minHeight)
     return (
         <MentionsInput
             className={

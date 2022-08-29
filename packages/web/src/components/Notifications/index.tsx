@@ -49,6 +49,7 @@ const Notifications = (props: Props) => {
             `Fetched next 10 notifications Next:${pageInfo?.next}`
         )
     }
+
     return (
         <div className='grid grid-cols-3 w-full '>
             <div className='col-span-2 divide-y divide-border-gray overflow-scroll no-scrollbar border-r border-border-gray' >

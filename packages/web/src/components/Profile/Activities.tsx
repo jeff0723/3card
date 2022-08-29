@@ -24,6 +24,7 @@ const formatAddress = (address: string): string => {
     }
     return address
 }
+
 const Activities = ({ txList }: Props) => {
     // console.log(txList)
     return (
@@ -37,35 +38,35 @@ const Activities = ({ txList }: Props) => {
                             tx.functionName.split('(')[0] : 'NATIVE TRANSFER');
                         return (
                             <div key={idx}>
-                            <a href={`https://etherscan.io/tx/${tx.hash}`} target="_blank" rel="noopener noreferrer" key={tx.hash}>
-                                <div className='border-b border-border-gray py-2 grid grid-cols-3 w-full'>
-                                    <div className='flex flex-col'>
-                                        <div className='w-fit p-2 rounded-lg bg-green-400 bg-opacity-10 text-green-400'>{fxName.slice(0,20)}</div>
-                                        <p className='text-gray-400'>{dayjs(new Date(parseInt(tx.timeStamp) * 1000)).fromNow()}</p>
+                                <a href={`https://etherscan.io/tx/${tx.hash}`} target="_blank" rel="noopener noreferrer" key={tx.hash}>
+                                    <div className='border-b border-border-gray py-2 grid grid-cols-3 w-full'>
+                                        <div className='flex flex-col'>
+                                            <div className='w-fit p-2 rounded-lg bg-green-400 bg-opacity-10 text-green-400'>{fxName.slice(0, 20)}</div>
+                                            <p className='text-gray-400'>{dayjs(new Date(parseInt(tx.timeStamp) * 1000)).fromNow()}</p>
 
-                                    </div>
-                                    <div className='flex flex-col justify-center'>
+                                        </div>
+                                        <div className='flex flex-col justify-center'>
 
-                                        <div>From:
-                                            <a href={`https://etherscan.io/address/${tx.from}`} target='_blank' rel='noopener noreferrer'>
-                                                <span className='text-primary-blue hover:underline ml-2'>{formatAddress(from as string)}</span>
-                                            </a>
+                                            <div>From:
+                                                <a href={`https://etherscan.io/address/${tx.from}`} target='_blank' rel='noopener noreferrer'>
+                                                    <span className='text-primary-blue hover:underline ml-2'>{formatAddress(from as string)}</span>
+                                                </a>
+                                            </div>
+
+                                            <div>To:
+                                                <a href={`https://etherscan.io/address/${tx.to}`} target='_blank' rel='noopener noreferrer'>
+                                                    <span className='text-primary-blue hover:underline ml-2'>{formatAddress(to as string)}</span>
+                                                </a>
+                                            </div>
+
                                         </div>
 
-                                        <div>To:
-                                            <a href={`https://etherscan.io/address/${tx.to}`} target='_blank' rel='noopener noreferrer'>
-                                                <span className='text-primary-blue hover:underline ml-2'>{formatAddress(to as string)}</span>
-                                            </a>
+                                        <div className='flex flex-col justify-center'>
+                                            <p>Gas fee: {getGasFee(tx.gasUsed, tx.gasPrice).slice(0, 5)} ETH</p>
+                                            <p>Value: {getETH(tx.value).slice(0, 5)} ETH</p>
                                         </div>
-
                                     </div>
-
-                                    <div className='flex flex-col justify-center'>
-                                        <p>Gas fee: {getGasFee(tx.gasUsed, tx.gasPrice).slice(0, 5)} ETH</p>
-                                        <p>Value: {getETH(tx.value).slice(0, 5)} ETH</p>
-                                    </div>
-                                </div>
-                            </a>
+                                </a>
                             </div>
                         )
                     }
