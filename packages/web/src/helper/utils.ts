@@ -1,158 +1,42 @@
-const CoinGecko = require('coingecko-api');
+
 import { ethers } from 'ethers';
 
 export const provider = new ethers.providers.JsonRpcProvider(
     process.env.NEXT_PUBLIC_INFURA_MAINNET_URL,
 );
 
-export const scanAPIKeyMap = new Map<string, string | undefined>([
-    ['ether', process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY],
-    ['polygon', process.env.NEXT_PUBLIC_POLYGONSCAN_API_KEY],
-    ['bsc', process.env.NEXT_PUBLIC_BSCSCAN_API_KEY],
-]);
-
-export type NormalTx = {
-    blockNumber: string,
-    timeStamp: string,
-    hash: string,
-    nonce: string,
-    blockHash: string,
-    transactionIndex: string,
-    from: string,
-    fromEnsName?: string,
-    to: string,
-    toEnsName?: string,
-    value: string,
-    gas: string,
-    gasPrice: string,
-    isError: string,
-    txreceipt_status: string,
-    input: string,
-    contractAddress: string,
-    cumulativeGasUsed: string,
-    gasUsed: string,
-    confirmations: string,
-    methodId: string,
-    functionName: string,
+export enum SupportedChainId {
+    MAINNET = 1,
+    POLYGON = 137,
+    BSC = 56,
 };
 
-export type Frequency = {
-    address: string,
-    addressEnsName?: string,
-    frequency: number,
+export const SCAN_API_KEYS : { [key in SupportedChainId]: string | undefined } = {
+    [SupportedChainId.MAINNET]: process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY,
+    [SupportedChainId.POLYGON]: process.env.NEXT_PUBLIC_POLYGONSCAN_API_KEY,
+    [SupportedChainId.BSC]: process.env.NEXT_PUBLIC_BSCSCAN_API_KEY,
 }
 
-export type ScanRankingResult = {
-    account: string,
-    chain: string,
-    txlist: NormalTx[],
-    ranking: Frequency[],
-    endblock: number,
-    awsinfo?: string,
+export const WRAPPED_TOKEM_ADDRESSES : { [key in SupportedChainId]: string } = {
+    [SupportedChainId.MAINNET]: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+    [SupportedChainId.POLYGON]: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+    [SupportedChainId.BSC]: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
 };
 
-export type ERC20Event = {
-    blockNumber: string,
-    timeStamp: string,
-    hash: string,
-    nonce: string,
-    blockHash: string,
-    from: string,
-    contractAddress: string,
-    to: string,
-    value: string,
-    tokenName: string,
-    tokenSymbol: string,
-    tokenDecimal: string,
-    transactionIndex: string,
-    gas: string,
-    gasPrice: string,
-    gasUsed: string,
-    cumulativeGasUsed: string,
-    input: string,
-    confirmations: string,
+export enum ErrorMessage {
+    INVALID_API_KEY = 'invalid api key',
+    INVALID_ADDRESS = 'invalid address',
+    UNSPORTTED_CHAIN = 'unsuportted chain',
+    SCAN_QUERY_ERROR = 'scan query error',
+    AWS_QUERY_ERROR = 'aws query error',
+    AWS_UPLOAD_ERROR = 'aws upload error',
 };
-
-export type ERC20Asset = {
-    contractAddress: string,
-    tokenName: string,
-    tokenSymbol: string,
-    balance: string,
-};
-
-export type ScanERC20Result = {
-    account: string,
-    chain: string,
-    erc20events: ERC20Event[],
-    erc20assets: ERC20Asset[],
-    endblock: number,
-    awsinfo?: string,
-};
-
-export type ERC721Event = {
-    blockNumber: string,
-    timeStamp: string,
-    hash: string,
-    nonce: string,
-    blockHash: string,
-    from: string,
-    contractAddress: string,
-    to: string,
-    tokenID: string,
-    tokenName: string,
-    tokenSymbol: string,
-    tokenDecimal: string,
-    transactionIndex: string,
-    gas: string,
-    gasPrice: string,
-    gasUsed: string,
-    cumulativeGasUsed: string,
-    input: string,
-    confirmations: string,
-};
-
-export type ERC721Asset = {
-    contractAddress: string,
-    tokenName: string,
-    tokenSymbol: string,
-    tokenIdList: string[],
-};
-
-export type ScanERC721Result = {
-    account: string,
-    chain: string,
-    erc721events: ERC721Event[],
-    erc721assets: ERC721Asset[],
-    endblock: number,
-    awsinfo?: string,
-};
-
-export const ERROR_MESSAGE = Object.freeze({
-    INVALID_API_KEY: 'invalid api key',
-    INVALID_ADDRESS: 'invalid address',
-    UNSPORTTED_CHAIN: 'unsuportted chain',
-    AWS_QUERY_ERROR: 'aws query error',
-    AWS_UPLOAD_ERROR: 'aws upload error',
-    SCAN_QUERY_ERROR: 'scan query error',
-});
 
 export type ScanError = {
     account: string | string[] | undefined,
-    chain: string,
     message: string,
     details?: string,
 };
-
-export const CoinGeckoClient = new CoinGecko();
-
-export async function priceToUsdByTokenAddress(tokenAddresses: string[]) {
-    //only ethereum chain address is available
-    const data = await CoinGeckoClient.simple.fetchTokenPrice({
-        contract_addresses: tokenAddresses,
-        vs_currencies: 'usd'
-    })
-    return data;
-}
 
 export const ADDRESS_TAGS = new Map<string, string>([
     ['0x7a250d5630b4cf539739df2c5dacb4c659f2488d', 'Uniswap V2 Router'],

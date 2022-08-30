@@ -1,4 +1,4 @@
-import { Frequency } from "scan-helper";
+import { Frequency } from "./ranking-scanner";
 
 export type RecResult = {
     account: string,

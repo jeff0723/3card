@@ -16,4 +16,4 @@ export const TABLE_SIZE = 9000;
 
 export const BUCKET_NAME = '3card';
 
-export const S3 = new AWS.S3();
+export const s3 = new AWS.S3();
