@@ -49,14 +49,7 @@ enum Tab {
     Profile,
     Notifications
 }
-const pathToTab = {
-    '/': Tab.Home,
-    '/explore': Tab.Communities,
-    '/messages': Tab.Messages,
-    '/card': Tab.Card,
-    '/profile': Tab.Profile,
-    '/notifications': Tab.Notifications
-}
+
 const currentTab = (path: string): Tab => {
     switch (path) {
         case '/': return Tab.Home
@@ -243,7 +236,14 @@ function SideBar({ }: Props) {
                                     </Text>
                                 </div>
                             </Link>
-
+                            <div onClick={() => {
+                                // Mixpanel.track('visit_profile')
+                                // setSelectedTab(Tab.Profile)
+                            }} className='rounded-md hover:bg-white hover:bg-opacity-10'>
+                                <Text isSelectedTab={false}>
+                                    Lending
+                                </Text>
+                            </div>
                         </>
                     )
                 }
